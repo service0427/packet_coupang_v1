@@ -1,0 +1,2237 @@
+[
+  {
+    "timestamp": "2025-11-22T22:14:57.222000",
+    "url": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+    "method": "GET",
+    "resource_type": "document",
+    "headers": {
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Linux\""
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:14:57.526003",
+    "url": "https://www.coupang.com/fNOLxy/ax110/y3p8h/eg/SGkEpGpai3/dShZdgwB/OWcYMHYg/fhppAQ?v=30b34637-d339-7e79-9714-24bb76b01720&t=767176107",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:14:58.482822",
+    "url": "blob:https://www.coupang.com/c7150def-0d8b-4c25-afee-e9245301d608",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "accept": "*/*",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:00.578383",
+    "url": "https://www.coupang.com/fNOLxy/ax110/y3p8h/eg/SGkEpGpai3/dShZdgwB/OWcYMHYg/fhppAQ?t=767176107",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"body\":\"\\\"|ac:K\\\"R\\\"i-&m\\\"G\\\"=+>-Z\\\" \\\"D&Ghwue.15ZhKc\\\"U\\\"=* #V\\\"H\\\"y\\\"z\\\"9B+jM\\\"D\\\"S\\\"m%%Wi8\\\";&Nk0\\\"O\\\"j\\\"}\\\"o%dS3\\\"p\\\"\\\"[\\\"p}W_f\\\"Z\\\"cOu`v\\\"Q\\\"=KR`I\\\"i\\\"H\\\"$\\\\\\\"%Tw&qXu\\\\\\\"K\\\\\\\"Bo^\\\\\\\"VO\\\"R\\\"zxCD,\\\"%\\\"6U\\\\\\\"tGzu3\\\\\\\"#\\\\\\\"D>4p_{6Y?h \\\\\\\"icpfn[_7z\\\"VtSo:\\\"A\\\"tbw6@Egb(~CdT95/FcF>JQx8cj`*;Y0/9eGLL4NPNCF=ZH~ ;[{t%_5.]_%|O,ko\\\"Y-hc;`J*Em<5*M+UO*k,/\\\"^\\\"&]yJ4\\\"(\\\"):;|x6%Q0OLL9lGhc1&n\\\"Y#\\\\\\\"aBfbA\\\\\\\"$\\\\\\\"z8qJQeJ|\\\\\\\"P\\\"nJab1\\\",\\\";\\\"e\\\"f{atl\\\"(\\\"r{\\\"$\\\"8D}z&\\\"Y\\\"0ak)\\\"7s?ShB<bq&+Rh{&R6}.MWFP]y&cxSk}"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:00.853142",
+    "url": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+    "method": "GET",
+    "resource_type": "document",
+    "headers": {
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Linux\""
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.865350",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/2466ac1b7643523a.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.865617",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/92430d4ae9a9d605.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.865794",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/7b6ca234eb123eeb.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.865988",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/17b6f855bd8d90c8.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.866320",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/c78d9907aeec2bbb.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.866561",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/753fd7a723bb9ca8.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.866755",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/4866c133497f94ef.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.866893",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/9a7571a0f4651006.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.866983",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/d495ef3b53c66f00.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867080",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/23cafd9539eb2739.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867172",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/2cfcdc254e2e12a7.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867256",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/bbe52ccec0951673.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867344",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/51fbaadd4cafeba5.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867429",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/47a4d112ef89c24a.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867504",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/2ab7a7e694b4d099.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867618",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/css/516ba02212076515.css",
+    "method": "GET",
+    "resource_type": "stylesheet",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867699",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/webpack-24f00c6b0d8f93ed.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867773",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/10a6a20f-cf6916bdb0d80d31.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867848",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/2230-77d93568ab1edc03.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867920",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/main-app-64b67b30eccb4665.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.867998",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/app/global-error-0ffc7c0629879365.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.868071",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/app/not-found-4b2334d4a6596d1a.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.868371",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/6433-2b3c1896c9922a6c.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.868570",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/4489-68b5cdfa7740d8d5.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.868688",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/2905-183edaf3c9af19f8.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.868781",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/433-7eb6db1c4ef3a8d0.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.868865",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/3784-650ceecbaa85bc84.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.868952",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/175-86b0232924e66eea.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.869241",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/4889-31329f7675f517a5.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.869378",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/7025-bcf8390421c7865f.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.869894",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/app/srp/page-6965a3ae7ffad19e.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.870060",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/409ba913-2104ccd804fa0099.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.870177",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/9894-e27a5a67c7595a74.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.870314",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/1150-57808d2932bc78f0.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.870429",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/app/srp/layout-3ccb3b94d998940d.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.876902",
+    "url": "https://www.coupang.com/fNOLxy/ax110/y3p8h/eg/D1kEpGpai35pNLa3/DCRTdgwB/MAwFMRA_/Gyk",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:01.877088",
+    "url": "https://www.coupang.com/fNOLxy/ax110/y3p8h/eg/SGkEpGpai3/dShZdgwB/OWcYMHYg/fhppAQ?v=30b34637-d339-7e79-9714-24bb76b01720",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.211484",
+    "url": "https://img1a.coupangcdn.com/image/coupang/common/bg_aside_sprite_161005.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.212091",
+    "url": "https://static.coupangcdn.com/image/coupang/common/ico_new.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.212258",
+    "url": "https://img1a.coupangcdn.com/image/coupang/search/search_assets_160912.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.212363",
+    "url": "https://img1a.coupangcdn.com/image/coupang/search/search_assets_170529.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.212464",
+    "url": "https://img1a.coupangcdn.com/image/coupang/search/search_product_assets_170324.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.212577",
+    "url": "https://img1a.coupangcdn.com/image/coupang/list/ico_paging.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.212681",
+    "url": "https://static.coupangcdn.com/ea/cmg_paperboy/image/1646271114206/C0-Left_basic.jpg",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.212764",
+    "url": "https://static.coupangcdn.com/ya/cmg_paperboy/image/1761806876802/Untitled-1.jpg",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.212849",
+    "url": "https://image7.coupangcdn.com/image/coupang/common/logo_coupang_w350.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.212935",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/media/search.85cd3dbf.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.213111",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/media/person.07e45e52.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.213264",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/media/cart.ccef8f9e.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.213539",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/coupang-play.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.213684",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/rocket-delivery.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.213934",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/rocket-fresh.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.214039",
+    "url": "https://image.coupangcdn.com/image/coupang/common/fbi_icon_3x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.214119",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/biz.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.214237",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/oversea-delivery.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.214320",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/gold-box.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.214395",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/new-item-of-month.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.214471",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/omp.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.214567",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/wow.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.214652",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/benefit.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.214976",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/returned-market.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215089",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/sustainable-market.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215177",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/event.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215263",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/travel.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215342",
+    "url": "https://image.coupangcdn.com/image/coupang/home/icons/web/kr/sell-on-coupang.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215415",
+    "url": "https://image.coupangcdn.com/image/badges/falcon/v1/web/rocket-all@2x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215491",
+    "url": "https://image.coupangcdn.com/image/coupang/rds/logo/iphone_2x/rds_logo_rlux_light_101719300269126@2x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215579",
+    "url": "https://image.coupangcdn.com/image/badges/falcon/v1/web/txt_rocket@2x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215662",
+    "url": "https://image.coupangcdn.com/image/badges/falcon/v1/web/txt_jikgu@2x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215770",
+    "url": "https://image.coupangcdn.com/image/badges/top_brand/c-avenue.svg",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215858",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/acaf/1728c0a2076d805d9d88bebba98ea3f0d77553fbb643d2d97e64be980e2a.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.215938",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/3590/8689854709eb0aaaf0194068d9323a00541d69d953fdd0ec67b2340a4e89.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216021",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/8f8d/6a41f1362f856ff0378b060e2ff75dc0b885940edc3523712e6b2d79350b.jpg",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216099",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/d5bb/1922703ddb30b2e92bdce03dcb318285547c6da0829d86c2cc9198b0dba7.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216204",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/retail/images/d1f15b59-cb0e-4fd2-a649-1442db6141a81517587405643587786.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216290",
+    "url": "https://image.coupangcdn.com/image/badges/cou_pick/web/coupick@2x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216365",
+    "url": "https://image.coupangcdn.com/image/badges/falcon/v1/web/rocket-fresh@2x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216441",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/3b3a/29bcfec71c7f96c93b580e2df31da837e3779be4f7c74f953bd1d0535197.jpg",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216529",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/7b9e/af1e8c37ad96f201d338569157e49f8d1ce77aee89d1b79f798c9d3368d5.jpg",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216611",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/1291/39645b2afeeb9ed35f5ba39db9d48d9d5eb849b2c05895c889dfe734dbe8.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216697",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/5593/7c939a401b0201aae4f85d69ec98043c47d54690dfbaebbe1db5ed2a04dc.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.216779",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/24a2/95e891ee9728041dba8a08b20142d5340b4dff37d0ab358716966a87a356.jpg",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.300651",
+    "url": "https://www.coupang.com/fNOLxy/ax110/y3p8h/eg/D1kEpGpai35pNLa3/DCRTdgwB/MAwFMRA_/Gyk",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain;charset=UTF-8",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"sensor_data\":\"3;0;1;0;4539955;KzEaA0A0D1632h6nMGIRKV4KsoP6FSABLaEmYzyfOFU=;52,0,0,0,2,0;wkL?wU,k-\\\"2x\\\"qQdm*\\\"AK_Y\\\"[\\\"AL&Y\\\")\\\"[|z\\\"/(W9QS5yqh)/Ya26\\\"AKw\\\"8\\\")U]>[Hdbp`U9w0D/wxp1:o$Wm%-:#i)5tf^Kaa}w3|+fJh%wXns2Cy7m$JQlI9`oi?FO^b.,DLC-w8hPBJP*S\\\"7\\\"oGU\\\"+\\\"I80]sm%^..UOasDe>|2gw`y`!%EA,A3}kcWGD=t#5eAUwcW%VP-`1iE!Ih*K[!!5)ytd/HsK:c(7J[g4e^i*G|F0-(_5j BU TPQx\\\"=b.\\\"rs@\\\"m3j@A,k\\\"Gs%mx,uxMvW545R=xixfa#SJ4%=lSQL_r&?eq{5xb<SR@l\\\"=%I\\\">{,\\\"-4iS[\\\"9NB\\\"W-w`J\\\"8EV\\\"RX^6]<fS%R ?\\\"R7$+\\\"I\\\"\\\"J\\\"u|X\\\"N\\\"C"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.358846",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.328Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"acfd4a69-a6e3-4df8-a83b-00355c7d0510\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"extra\":{\"sentTime\":\"2025-11-22T13:15:02.328Z\",\"navigationStart\":1763817300848,\"re"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.363971",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.361Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\"},\"extra\":{\"sentTime\":\"2025-11-22T13:15:02.361Z\",\"navigationStart\":1763817300848,\"redirectStart\":0,\"fetchStart\":1763817300851,\"domainLookupStart\":1763817300851,\"connectStart\":1763817300851,\"secureConnectionStart\":0,\"requestStart\":1763817300852,\"responseStart\":1763"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.365310",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.362Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\"},\"extra\":{\"sentTime\":\"2025-11-22T13:15:02.362Z\",\"navigationStart\":1763817300848,\"redirectStart\":0,\"fetchStart\":1763817300851,\"domainLookupStart\":1763817300851,\"connectStart\":1763817300851,\"secureConnectionStart\":0,\"requestStart\":1763817300852,\"responseStart\":1763"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.551133",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.549Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\"},\"extra\":{\"sentTime\":\"2025-11-22T13:15:02.549Z\",\"navigationStart\":1763817300848,\"redirectStart\":0,\"fetchStart\":1763817300851,\"domainLookupStart\":1763817300851,\"connectStart\":1763817300851,\"secureConnectionStart\":0,\"requestStart\":1763817300852,\"responseStart\":1763"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.823295",
+    "url": "https://o1409312.ingest.us.sentry.io/api/4508515308797952/envelope/?sentry_version=7&sentry_key=e6c1feabe91121d1b641d5f4df119287&sentry_client=sentry.javascript.nextjs%2F10.22.0",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain;charset=UTF-8",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"event_id\":\"338f5102df674e67a014a06033d4344d\",\"sent_at\":\"2025-11-22T13:15:02.819Z\",\"sdk\":{\"name\":\"sentry.javascript.nextjs\",\"version\":\"10.22.0\"},\"trace\":{\"environment\":\"prod\",\"release\":\"prod-71ac3d6293e865b896f120df45ac0233a502aac5\",\"public_key\":\"e6c1feabe91121d1b641d5f4df119287\",\"trace_id\":\"db059ca437c74327b7402a475e82516e\",\"org_id\":\"1409312\"}}\n{\"type\":\"event\"}\n{\"exception\":{\"values\":[{\"type\":\"Error\",\"value\":\"Minified React error #418; visit https://react.dev/errors/418?args[]=text&args[]= for"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.853261",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.837Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":83,\"schemaVersion\":3},\"data\":{\"domain\":\"list\",\"logCategory\":\"im"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.853473",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.838Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":10384,\"schemaVersion\":1},\"data\":{\"domain\":\"srp\",\"logCategory\":\""
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.853817",
+    "url": "https://front.coupangcdn.com/front-web-next/_next/static/chunks/711.bdbd1af0b1114d98.js",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "origin": "https://www.coupang.com",
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.854004",
+    "url": "https://www.coupang.com/n-api/abtest/options",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"94174\":false}"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.854431",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.844Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":15704,\"schemaVersion\":1},\"data\":{\"domain\":\"srp\",\"logCategory\":\""
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.854634",
+    "url": "https://www.coupang.com/n-api/reliability",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "accept": "application/json",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"landing\":{\"domain\":\"srp\",\"success\":true}}"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.854833",
+    "url": "https://www.coupang.com/n-api/srp/jikgu-promotion?q=%ED%98%B8%EB%B0%95+%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.855227",
+    "url": "https://reco.coupang.com/recommend/widget?productIds=9183773210%2C9183773210%2C9021512661%2C9183773210%2C5757041374%2C9024146312%2C4892312604%2C9183773210%2C8705044838%2C9183773210%2C8475913155%2C9024146312%2C5757041374%2C2372056363%2C9160875565%2C8705044838%2C7790750693%2C5757041374%2C2106304697%2C6817398021%2C8444687533%2C8705044838%2C7319899585%2C7925742562%2C7275947438%2C7571347963%2C5757041374%2C9061173786%2C2372056363%2C8243592423%2C8492869549%2C2372056363%2C2106304697%2C7925742562%2C8444687533&widgetId=WIDGET_PC_SRP_001&minCount=5&maxCount=15",
+    "method": "GET",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "x-web-parity": "true",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.855427",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.848Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":238,\"schemaVersion\":41},\"data\":{\"logCategory\":\"impression\",\"log"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.855582",
+    "url": "https://www.coupang.com/n-api/srp/omp-widget?q=%ED%98%B8%EB%B0%95+%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "accept": "application/json, text/plain, */*",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.855878",
+    "url": "https://www.coupang.com/n-api/web-adapter/proxy",
+    "method": "GET",
+    "resource_type": "document",
+    "headers": {
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "upgrade-insecure-requests": "1",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": "\"Linux\""
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.879134",
+    "url": "https://img1a.coupangcdn.com/image/coupang/common/ic_mic.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.879773",
+    "url": "https://reco.coupang.com/api/v2/viewed-products?page=0",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "x-web-parity": "true",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.879931",
+    "url": "https://www.coupang.com/n-api/web-adapter/cart-count?_=1763817302763",
+    "method": "GET",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "x-requested-with": "XMLHttpRequest",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "accept": "application/json, text/javascript, */*; q=0.01",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.880069",
+    "url": "https://img1a.coupangcdn.com/image/coupang/common/pc_gnb_arrow-left-gray@2x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.880175",
+    "url": "https://img1a.coupangcdn.com/image/coupang/common/pc_gnb_arrow-right@2x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.880282",
+    "url": "https://www.coupang.com/n-api/reliability",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "accept": "application/json",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"landing\":{\"domain\":\"wa\",\"success\":true}}"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.880384",
+    "url": "https://mercury.coupang.com/e.gif?r=ChBuNkRPVkV3Q3JwZ3FsdUhjEg4xNzUuMjIzLjE5LjEwMRjOyNDdqjMgASosemNVenNoVWVCaE5ZYUFJcy8rUVlSY1ZWdFJRZzZOVkZGUUNMbzRJejNQST0yBEZMQVRCFzE3NjM4MTY2ODU0MDcyNTAxNDY1MTc4UPPzxAVaCmltcHJlc3Npb256A1dFQooBBG1hcnOQAeGJC5gBphqgAfPzxAXCARA5R2xFSUN0RnNFZnZGaFJl&t=2",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.880470",
+    "url": "https://mercury.coupang.com/e.gif?r=ChBzc1FIVmtJbWpkeGE1TnJkEg4xNzUuMjIzLjE5LjEwMRjOyNDdqjMgASosemNVenNoVWVCaE5ZYUFJcy8rUVlSY1ZWdFJRZzZOVkZGUUNMbzRJejNQST0yBEZMQVRCFzE3NjM4MTY2ODU0MDcyNTAxNDY1MTc4UKTnxQVaCmltcHJlc3Npb256A1dFQooBBG1hcnOQAeGJC5gBphqgAaTnxQWwAYCHpw7CARA5R2xFSUN0RnNFZnZGaFJl&t=2",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.880632",
+    "url": "https://mercury.coupang.com/e.gif?r=407b2970-c7a5-11f0-8e1a-661193791a5d%7E1&korePlacement=15&koreSubPlacement=1",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.906302",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.902Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":4345,\"schemaVersion\":12},\"data\":{\"logCategory\":\"system\",\"logTyp"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:02.917013",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:02.914Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\"},\"extra\":{\"sentTime\":\"2025-11-22T13:15:02.914Z\",\"navigationStart\":1763817300848,\"redirectStart\":0,\"fetchStart\":1763817300851,\"domainLookupStart\":1763817300851,\"connectStart\":1763817300851,\"secureConnectionStart\":0,\"requestStart\":1763817300852,\"responseStart\":1763"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.147741",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.146Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":116,\"schemaVersion\":22},\"data\":{\"domain\":\"srp\",\"logCategory\":\"v"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.306764",
+    "url": "blob:https://www.coupang.com/2db3e768-4df4-4832-90d0-6e4a1094cbf9",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "accept": "*/*",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.335984",
+    "url": "https://mercury.coupang.com/e.gif?r=407b2970-c7a5-11f0-b24c-e0c824e20800%7E1&korePlacement=19&templateId=6258",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.336359",
+    "url": "https://thumbnail3.coupangcdn.com/thumbnails/remote/292x292q65ex/image/vendor_inventory/d5bb/1922703ddb30b2e92bdce03dcb318285547c6da0829d86c2cc9198b0dba7.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.337191",
+    "url": "https://image12.coupangcdn.com/image/cmg/srp/topBanner/android/cta_arrow_xxxhdpi.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.337328",
+    "url": "https://image.coupangcdn.com/image/cmg/common/tooltip-icon@2x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.356369",
+    "url": "https://static.coupangcdn.com/image/cmg/common/rating-star/RDS.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.361114",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.353Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":14741,\"schemaVersion\":32},\"data\":{\"domain\":\"srp\",\"logCategory\":"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.361518",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.355Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":2851,\"schemaVersion\":2},\"data\":{\"domain\":\"srp\",\"logCategory\":\"i"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.361839",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.357Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":14741,\"schemaVersion\":32},\"data\":{\"domain\":\"srp\",\"logCategory\":"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.362051",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.358Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":14741,\"schemaVersion\":32},\"data\":{\"domain\":\"srp\",\"logCategory\":"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.362175",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.358Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"d2eb3ff7-0ef6-486c-87fd-49072ddae937\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"extra\":{\"sentTime\":\"2025-11-22T13:15:03.358Z\",\"navigationStart\":1763817300848,\"re"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.405864",
+    "url": "https://www.coupang.com/fNOLxy/ax110/y3p8h/eg/D1kEpGpai35pNLa3/DCRTdgwB/MAwFMRA_/Gyk",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain;charset=UTF-8",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"sensor_data\":\"3;0;1;0;4539955;KzEaA0A0D1632h6nMGIRKV4KsoP6FSABLaEmYzyfOFU=;9,57,0,0,4,151;e\\\"_7Q\\\"Fo;\\\"=iK\\\"[\\\"v:C]lKt~]#Y!b8.|*3HgC)vAI+6iJ6>YH5W5M[c`A(}<Dr#`xHUDN<1*0b{iMqfDvSh7H(-A+f%7sX^A&8UNu[-jQn!wc\\\"d\\\"-|:u\\\"X}\\\"Po\\\"neDB\\\">Mmg\\\"yC\\\"a;kU\\\"SZ%\\\"g;(G\\\"y\\\" q4TC >3Rc&1^a\\\":p`\\\"ps4@\\\";\\\"ORrMe\\\"**G\\\"Y<M\\\"IOg(H\\\"H38\\\"^!lFX(z\\\"pl=n\\\"OK3k2\\\"m/8`\\\"j\\\"GZ{\\\"U^X\\\"N,K)\\\"H\\\"Z-\\\"#\\\")P#R\\\"X@o\\\":$.is\\\"l\\\"2\\\"[=5k\\\"usR\\\"_{n\\\"*E(h\\\"f\\\"SPmOk<oe/-)Xi48S=xa]\\\";\\\"<}4C\\\"bmmk-4]2-j<.*6yGjm\\\"[<,\\\"2+`>c+u\\\"mEVih2~kG"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.485447",
+    "url": "https://www.coupang.com/fNOLxy/ax110/y3p8h/eg/D1kEpGpai35pNLa3/DCRTdgwB/MAwFMRA_/Gyk",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain;charset=UTF-8",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"sensor_data\":\"3;0;1;0;4539955;KzEaA0A0D1632h6nMGIRKV4KsoP6FSABLaEmYzyfOFU=;17,57,0,0,4,151;e\\\"_7Q\\\"Fo;\\\"=iK\\\"[\\\"v:C]lKt~]#Y!b8.|*3HgC)vAI+6iJ6>YH5W5M[c`A(}<Dr#`xHUDN<1*0b{iMqfDvSh7H(-A+f%7sX^A&8UNu[-jQn!wc\\\"d\\\"-|:u\\\"X}\\\"Po\\\"neDB\\\">Mmg\\\"yC\\\"a;kU\\\"SZ%\\\"g;(G\\\"y\\\" q4TC >3Rc&1^a\\\":p`\\\"ps4@\\\";\\\"ORrMe\\\"**G\\\"Y<M\\\"IOg(H\\\"H38\\\"^!lFX(z\\\"pl=n\\\"OK3k2\\\"m/8`\\\"j\\\"GZ{\\\"U^X\\\"N,K)\\\"H\\\"Z-\\\"#\\\")P#R\\\"X@o\\\":$.is\\\"l\\\"2\\\"[=5k\\\"usR\\\"_{n\\\"*E(h\\\"f\\\"SPmOk<oe/-)Xi48S=xa]\\\";\\\"<}4C\\\"bmmk-4]2-j<.*6yGjm\\\"[<,\\\"2+`>c+u\\\"mEVih2~k"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.485718",
+    "url": "https://www.coupang.com/n-api/reliability",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "accept": "application/json",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"conversion\":{\"event\":\"srp_to_sdp\"}}"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.518948",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.502Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":124,\"schemaVersion\":47},\"data\":{\"logCategory\":\"event\",\"logType\""
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.519464",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.503Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":152,\"schemaVersion\":2},\"data\":{\"domain\":\"srp\",\"logCategory\":\"im"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.519611",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/retail/images/7ae46334-3ec1-4caa-969b-85684a9edff23515057289519092844.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.519700",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/retail/images/1103155747636346-b2f7ae03-4a37-460a-a592-ac089de84c11.jpg",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.519782",
+    "url": "https://thumbnail.coupangcdn.com/thumbnails/remote/320x320ex/image/vendor_inventory/c2f9/445fbcd909943be46774d6e58edd516d9e07b00edada0b0cf6b5bdabaa43.jpg",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.527263",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.524Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":1335,\"schemaVersion\":7},\"data\":{\"logType\":\"impression\",\"product"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.527595",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.525Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":1335,\"schemaVersion\":4},\"data\":{\"domain\":\"srp\",\"logCategory\":\"i"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.552014",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.549Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\"},\"extra\":{\"sentTime\":\"2025-11-22T13:15:03.549Z\",\"navigationStart\":1763817300848,\"redirectStart\":0,\"fetchStart\":1763817300851,\"domainLookupStart\":1763817300851,\"connectStart\":1763817300851,\"secureConnectionStart\":0,\"requestStart\":1763817300852,\"responseStart\":1763"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.568001",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:03.565Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\"},\"extra\":{\"sentTime\":\"2025-11-22T13:15:03.565Z\",\"navigationStart\":1763817300848,\"redirectStart\":0,\"fetchStart\":1763817300851,\"domainLookupStart\":1763817300851,\"connectStart\":1763817300851,\"secureConnectionStart\":0,\"requestStart\":1763817300852,\"responseStart\":1763"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.572715",
+    "url": "https://img1a.coupangcdn.com/image/coupang/search/sp_bookmark.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:03.572868",
+    "url": "https://img1a.coupangcdn.com/image/coupang/search/sp_floating_header_bookmark.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:04.462135",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:04.458Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":12734,\"schemaVersion\":1},\"data\":{\"pageName\":\"www.coupang.com\",\""
+  },
+  {
+    "timestamp": "2025-11-22T22:15:04.529999",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:04.525Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":14741,\"schemaVersion\":32},\"data\":{\"domain\":\"srp\",\"logCategory\":"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:04.530451",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:04.527Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":14741,\"schemaVersion\":32},\"data\":{\"domain\":\"srp\",\"logCategory\":"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:04.530599",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:04.527Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":14741,\"schemaVersion\":32},\"data\":{\"domain\":\"srp\",\"logCategory\":"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:04.558299",
+    "url": "https://static.coupangcdn.com/image/fodium/desktop/widget-srp-alsoviewedproducts-20170314@1x.png",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://front.coupangcdn.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:04.558667",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:04.554Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\",\"web\":{\"pvid\":\"4472e0a7-05dc-4c65-bc45-5e3850f37dde\",\"rvid\":\"\",\"url\":\"https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C\",\"referrer\":\"\"}},\"meta\":{\"schemaId\":238,\"schemaVersion\":41},\"data\":{\"logCategory\":\"impression\",\"log"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:04.665987",
+    "url": "https://www.coupang.com/fNOLxy/ax110/y3p8h/eg/SGkEpGpai3/dShZdgwB/OWcYMHYg/fhppAQ",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"body\":\"\\\"x&\\\"<\\\"\\\"Dk%S\\\"4}M]Ne\\\"j1*\\\"y\\\"+DlDY757C~oG|!Ycqyz?/{KL\\\":{`Y4!bEwCKT=u)1Rd?iQsQq*9F9dt$d+yWP2:oY\\\";M[\\\"[W[FR?^EwX|GVc\\\"w#\\\"K\\\"_<J&\\\"PF\\\"*\\\"\\\"4\\\"z\\\"z\\\"j\\\"1hYv\\\"KWH\\\"!\\\"A#*ll%$gQ0k@8+|?@-Pbfe<LW0ogL?l~o\\\"iewkd\\\"?}U\\\"vjPp9i8,siA\\\"Q(\\\"7\\\"zIcO;21A1H?G}\\\"/eec{;,`a\"}"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:05.814873",
+    "url": "https://ljc.coupang.com/api/v2/submit?appCode=coupang&market=KR",
+    "method": "POST",
+    "resource_type": "fetch",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "text/plain",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"common\":{\"platform\":\"web\",\"pcid\":\"17638166854072501465178\",\"memberSrl\":\"\",\"libraryVersion\":\"0.13.16\",\"lang\":\"ko-KR\",\"resolution\":\"1280x720\",\"eventTime\":\"2025-11-22T13:15:05.809Z\",\"webBuildNo\":\"71ac3d6293e865b896f120df45ac0233a502aac5\"},\"extra\":{\"sentTime\":\"2025-11-22T13:15:05.809Z\",\"navigationStart\":1763817300848,\"redirectStart\":0,\"fetchStart\":1763817300851,\"domainLookupStart\":1763817300851,\"connectStart\":1763817300851,\"secureConnectionStart\":0,\"requestStart\":1763817300852,\"responseStart\":1763"
+  },
+  {
+    "timestamp": "2025-11-22T22:15:06.386123",
+    "url": "https://mercury.coupang.com/e.gif?r=ChBzc1FIVmtJbWpkeGE1TnJkEg4xNzUuMjIzLjE5LjEwMRjOyNDdqjMgASosemNVenNoVWVCaE5ZYUFJcy8rUVlSY1ZWdFJRZzZOVkZGUUNMbzRJejNQST0yBEZMQVRCFzE3NjM4MTY2ODU0MDcyNTAxNDY1MTc4UKTnxQVaBHZpZXd6A1dFQooBBG1hcnOQAeGJC5gBphqgAaTnxQWwAYCHpw7CARA5R2xFSUN0RnNFZnZGaFJl&t=3",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:06.386633",
+    "url": "https://mercury.coupang.com/e.gif?r=ChBuNkRPVkV3Q3JwZ3FsdUhjEg4xNzUuMjIzLjE5LjEwMRjOyNDdqjMgASosemNVenNoVWVCaE5ZYUFJcy8rUVlSY1ZWdFJRZzZOVkZGUUNMbzRJejNQST0yBEZMQVRCFzE3NjM4MTY2ODU0MDcyNTAxNDY1MTc4UPPzxAVaBHZpZXd6A1dFQooBBG1hcnOQAeGJC5gBphqgAfPzxAXCARA5R2xFSUN0RnNFZnZGaFJl&t=3",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:06.411867",
+    "url": "blob:https://www.coupang.com/0cb3ab3f-5eeb-4363-a942-999a39810d5a",
+    "method": "GET",
+    "resource_type": "script",
+    "headers": {
+      "accept": "*/*",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:06.798093",
+    "url": "https://mercury.coupang.com/e.gif?r=407b2970-c7a5-11f0-b24c-e0c824e20800%7E2&korePlacement=19&templateId=6258",
+    "method": "GET",
+    "resource_type": "image",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": null
+  },
+  {
+    "timestamp": "2025-11-22T22:15:08.514211",
+    "url": "https://www.coupang.com/fNOLxy/ax110/y3p8h/eg/SGkEpGpai3/dShZdgwB/OWcYMHYg/fhppAQ",
+    "method": "POST",
+    "resource_type": "xhr",
+    "headers": {
+      "sec-ch-ua-platform": "\"Linux\"",
+      "referer": "https://www.coupang.com/np/search?q=%ED%98%B8%EB%B0%95%20%EB%8B%AC%EB%B9%9B%EC%8B%9D%ED%98%9C",
+      "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36",
+      "sec-ch-ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\"",
+      "content-type": "application/json",
+      "sec-ch-ua-mobile": "?0"
+    },
+    "post_data": "{\"body\":\"\\\"|ac:K\\\"R\\\"i-&m\\\"G\\\"=+>-Z\\\" \\\"D&Ghwue.15ZhKc\\\"U\\\"=* #V\\\"H\\\"y\\\"z\\\"9B+jM\\\"D\\\"S\\\"m)&Tm8\\\";&Nk0\\\"O\\\"j\\\"}\\\"o%dS3\\\"p\\\"\\\"[\\\"p}W_f\\\"Z\\\"cOu`v\\\"Q\\\"=KR`I\\\"i\\\"H\\\"$\\\\\\\"%Tw&qXu\\\\\\\"K\\\\\\\"Bo^\\\\\\\"VO\\\"R\\\"zxCD,\\\"%\\\"6U\\\\\\\"tGzu3\\\\\\\"#\\\\\\\"D>4p_{6Y?h \\\\\\\"igtil^^=~B\\\"M^q6v\\\"6\\\"gG`sud3Y|G^S;7.C9v;F)G8bj`(B*/.d<FH}3O!LEvh2AR :.zy!baZZePSK.kp[\\\"76?Ic<J1t94z@FGXz||x-\\\"1\\\"6$L9o\\\"u\\\"p;&s=i*iZ#X3L}hk,.L]\\\"2X\\\\\\\"2wTKF\\\\\\\"x\\\\\\\"qgMSi>&|\\\\\\\"Z\\\"#mf-~\\\"j\\\"R\\\"=\\\"Tqnl \\\")\\\"yH\\\"1\\\"{)##A\\\"$\\\"`r1/\\\"}RVfH <S)!NP$c.,!0U0DNW%$evUi."
+  }
+]

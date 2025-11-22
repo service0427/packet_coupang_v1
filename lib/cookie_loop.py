@@ -133,34 +133,32 @@ def generate_cookies_loop(version, proxy, loop_count):
             abck_value = abck['value'] if abck else None
             abck_valid = '~-1~' in abck_value if abck_value else False
 
-            # Save to database
+            # Skip invalid cookies
+            if not abck_valid:
+                print(f"⚠️ [{i}/{loop_count}] 유효하지 않은 쿠키 - 건너뜀 | {load_time}ms")
+                continue
+
+            # Save to database (only valid cookies)
+            # proxy_url에서 socks5:// 제거하여 host:port만 저장
+            proxy_stripped = proxy.replace('socks5://', '') if proxy else None
             insert_id = insert_one("""
                 INSERT INTO cookies
-                (proxy_ip, proxy_url, chrome_version, chrome_major,
-                 cookie_data, cookie_count, abck_value, abck_valid, source_domain, status)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (proxy_ip, proxy_url, chrome_version, cookie_data)
+                VALUES (%s, %s, %s, %s)
             """, (
                 proxy_ip or 'direct',
-                proxy,
+                proxy_stripped,
                 version_number,
-                major_version,
-                json.dumps(cookies),
-                len(cookies),
-                abck_value,
-                abck_valid,
-                'login.coupang.com',
-                'active'
+                json.dumps(cookies)
             ))
 
-            status = '✅' if abck_valid else '⚠️'
-            print(f"{status} ID: {insert_id} | 쿠키: {len(cookies)}개 | Akamai: {len(akamai_cookies)}개 | {load_time}ms")
+            print(f"✅ ID: {insert_id} | 쿠키: {len(cookies)}개 | Akamai: {len(akamai_cookies)}개 | {load_time}ms")
 
             results.append({
                 'iteration': i,
                 'cookie_id': insert_id,
                 'cookie_count': len(cookies),
                 'akamai_count': len(akamai_cookies),
-                'abck_valid': abck_valid,
                 'load_time': load_time,
             })
 
@@ -174,11 +172,9 @@ def generate_cookies_loop(version, proxy, loop_count):
     print('완료')
     print('─' * 50)
 
-    valid_count = sum(1 for r in results if r['abck_valid'])
     cookie_ids = [r['cookie_id'] for r in results]
 
-    print(f"생성: {len(results)}개")
-    print(f"Valid: {valid_count}개")
+    print(f"저장: {len(results)}개")
     print(f"IDs: {', '.join(map(str, cookie_ids))}")
 
     return results

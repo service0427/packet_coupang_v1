@@ -5,6 +5,7 @@
 import sys
 import random
 import subprocess
+import requests
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
@@ -17,12 +18,31 @@ from cookie_loop import generate_cookies_loop
 BASE_DIR = Path(__file__).parent.parent
 CHROME_DIR = BASE_DIR / 'chrome-versions' / 'files'
 
-PROXIES = [
-    'socks5://14.37.117.98:10027',
-    'socks5://14.37.117.98:10028',
-    'socks5://14.37.117.98:10029',
-    'socks5://14.37.117.98:10030',
-]
+PROXY_API_URL = 'http://mkt.techb.kr:3001/api/proxy/status'
+
+def get_proxies_from_api(remain=60):
+    """API에서 프록시 목록 조회
+
+    Args:
+        remain: 최소 남은 트래픽 (기본: 60)
+
+    Returns:
+        list: socks5:// 형식의 프록시 URL 리스트
+    """
+    try:
+        resp = requests.get(f'{PROXY_API_URL}?remain={remain}', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            if data.get('success') and data.get('proxies'):
+                proxies = []
+                for p in data['proxies']:
+                    proxy_addr = p.get('proxy')
+                    if proxy_addr:
+                        proxies.append(f'socks5://{proxy_addr}')
+                return proxies
+    except Exception as e:
+        print(f"⚠️  프록시 API 오류: {e}")
+    return []
 
 def cleanup_previous():
     """이전 프로세스 정리"""
@@ -81,19 +101,39 @@ def run_cookie(args):
     print("쿠키 생성")
     print("=" * 60)
     print(f"시작: {datetime.now().strftime('%H:%M:%S')}")
-    print(f"쓰레드: {args.threads}, 조합당: {args.loop}개")
 
     versions = get_chrome_versions()
     if not versions:
         print("❌ Chrome 버전 없음")
         return
 
+    # 프록시 목록 가져오기
+    if args.proxy:
+        # 특정 프록시 지정 시
+        proxies = [args.proxy]
+    else:
+        # API에서 프록시 조회
+        print("프록시 조회 중...")
+        proxies = get_proxies_from_api(remain=60)
+        if not proxies:
+            print("❌ 사용 가능한 프록시 없음")
+            return
+        print(f"프록시: {len(proxies)}개 조회됨")
+
+    # -t 미지정 시 프록시 개수만큼 자동 설정
+    if args.threads is None:
+        thread_count = len(proxies)
+    else:
+        thread_count = min(args.threads, len(proxies))
+
+    print(f"쓰레드: {thread_count}, 조합당: {args.loop}개")
     print(f"Chrome: {', '.join(versions)}")
 
     tasks = []
-    for i in range(args.threads):
+    for i in range(thread_count):
         version = args.version or random.choice(versions)
-        proxy = args.proxy or PROXIES[i % len(PROXIES)]
+        # 중복 없이 프록시 할당
+        proxy = proxies[i]
         tasks.append((i + 1, version, proxy, args.loop))
 
     print(f"\n작업:")
@@ -102,7 +142,7 @@ def run_cookie(args):
     print("=" * 60)
 
     results = []
-    with ThreadPoolExecutor(max_workers=args.threads) as executor:
+    with ThreadPoolExecutor(max_workers=thread_count) as executor:
         futures = {executor.submit(run_task, *t): t for t in tasks}
         for future in as_completed(futures):
             result = future.result()

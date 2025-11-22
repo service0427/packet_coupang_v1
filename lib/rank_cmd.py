@@ -11,6 +11,7 @@ from urllib.parse import quote
 
 # Add lib directory to path
 sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent / 'click-tracker'))
 
 from common import (
     timestamp, get_cookie_by_id, get_latest_cookie, get_fingerprint,
@@ -18,6 +19,7 @@ from common import (
 )
 from extractor.product_extractor import ProductExtractor
 from traceid import generate_traceid
+from realistic_click import realistic_click
 
 BASE_DIR = Path(__file__).parent.parent
 
@@ -50,23 +52,71 @@ def fetch_page(page_num, query, trace_id, cookies, fingerprint, proxy):
     except Exception as e:
         return {'page': page_num, 'success': False, 'products': [], 'error': str(e)[:50]}
 
-def click_product(product_url, cookies, fingerprint, proxy, referer):
-    """상품 클릭"""
+def click_product(product_url, cookies, fingerprint, proxy, referer, verbose=True):
+    """상품 클릭 (상세 정보 출력)"""
     full_url = f'https://www.coupang.com{product_url}'
 
     try:
         resp = make_request(full_url, cookies, fingerprint, proxy, referer)
         size = len(resp.content)
 
+        # 상세 정보 출력
+        if verbose:
+            print(f"\n{'─' * 60}")
+            print("📤 Request")
+            print(f"{'─' * 60}")
+            print(f"  URL: {full_url[:80]}...")
+            print(f"  Method: GET")
+            print(f"  Referer: {referer[:60]}..." if referer else "  Referer: None")
+
+            # Request Headers (주요 항목)
+            req_headers = resp.request.headers if hasattr(resp, 'request') and hasattr(resp.request, 'headers') else {}
+            if req_headers:
+                print(f"  Headers:")
+                for key in ['User-Agent', 'Accept', 'Sec-Ch-Ua', 'Sec-Fetch-Site']:
+                    if key in req_headers:
+                        val = req_headers[key]
+                        if len(val) > 50:
+                            val = val[:50] + '...'
+                        print(f"    {key}: {val}")
+
+            print(f"\n{'─' * 60}")
+            print("📥 Response")
+            print(f"{'─' * 60}")
+            print(f"  Status: {resp.status_code}")
+            print(f"  Size: {size:,} bytes")
+
+            # Response Headers (주요 항목)
+            resp_headers = dict(resp.headers) if hasattr(resp, 'headers') else {}
+            if resp_headers:
+                print(f"  Headers:")
+                for key in ['Content-Type', 'Content-Encoding', 'Server', 'X-Cache']:
+                    if key.lower() in [k.lower() for k in resp_headers]:
+                        actual_key = next(k for k in resp_headers if k.lower() == key.lower())
+                        print(f"    {actual_key}: {resp_headers[actual_key]}")
+
+            # 쿠키 정보
+            if resp.cookies:
+                print(f"  Set-Cookie: {len(resp.cookies)}개")
+
+            print(f"{'─' * 60}\n")
+
+        # 결과 판정
         if size > 100000:
-            return {'success': True, 'status': resp.status_code, 'size': size}
+            return {
+                'success': True,
+                'status': resp.status_code,
+                'size': size,
+                'url': full_url,
+                'response_headers': dict(resp.headers) if hasattr(resp, 'headers') else {}
+            }
         elif resp.status_code == 403:
             return {'success': False, 'status': 403, 'size': size, 'error': 'BLOCKED_403'}
         else:
-            return {'success': False, 'status': resp.status_code, 'size': size, 'error': 'INVALID_RESPONSE'}
+            return {'success': False, 'status': resp.status_code, 'size': size, 'error': f'INVALID_RESPONSE_{size}B'}
 
     except Exception as e:
-        return {'success': False, 'status': None, 'size': 0, 'error': str(e)[:50]}
+        return {'success': False, 'status': None, 'size': 0, 'error': str(e)[:100]}
 
 def run_rank(args):
     """상품 등수 체크 실행"""
@@ -93,7 +143,9 @@ def run_rank(args):
         return
 
     cookies = parse_cookies(cookie_record)
-    proxy = args.proxy or cookie_record['proxy_url']
+    # DB에는 host:port만 저장, 사용시 socks5:// 추가
+    db_proxy = cookie_record['proxy_url']
+    proxy = args.proxy or (f'socks5://{db_proxy}' if db_proxy else None)
 
     print(f"타겟: {args.product_id}")
     print(f"검색어: {args.query}")
@@ -237,15 +289,32 @@ def run_rank(args):
             'url': found['url']
         }
 
-        if args.click:
-            print(f"\n[{timestamp()}] 클릭 테스트...")
-            referer = f'https://www.coupang.com/np/search?q={quote(args.query)}'
-            click_result = click_product(found['url'], cookies, fingerprint, proxy, referer)
+        # 상품 클릭 (기본 동작) - 실제 브라우저 트래픽 재현
+        if not getattr(args, 'no_click', False):
+            print(f"\n[{timestamp()}] 상품 클릭...")
+
+            # URL에서 itemId, vendorItemId 파싱
+            from urllib.parse import urlparse, parse_qs
+            parsed_url = urlparse(found['url'])
+            params = parse_qs(parsed_url.query)
+
+            product_info = {
+                'productId': found['productId'],
+                'itemId': params.get('itemId', [''])[0],
+                'vendorItemId': params.get('vendorItemId', [''])[0],
+                'url': found['url'],
+                'rank': found['rank']
+            }
+
+            search_url = f'https://www.coupang.com/np/search?q={quote(args.query)}'
+            click_result = realistic_click(product_info, search_url, cookies, fingerprint, proxy)
 
             if click_result['success']:
-                print(f"✅ 클릭 성공 ({click_result['size']:,} bytes)")
+                page_result = click_result.get('product_page', {})
+                print(f"✅ 클릭 성공 ({page_result.get('size', 0):,} bytes)")
             else:
-                print(f"❌ 클릭 실패: {click_result.get('error')}")
+                page_result = click_result.get('product_page', {})
+                print(f"❌ 클릭 실패: {page_result.get('error', 'Unknown')}")
 
             report['click'] = click_result
     else:
@@ -264,3 +333,5 @@ def run_rank(args):
         json.dump(report, f, ensure_ascii=False, indent=2)
 
     print(f"\n📁 리포트: {report_path}")
+
+    return report

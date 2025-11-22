@@ -60,43 +60,24 @@ def create_tables():
 
         -- Chrome 버전 정보
         chrome_version VARCHAR(50) NOT NULL COMMENT '쿠키 생성에 사용된 Chrome 버전',
-        chrome_major INT NOT NULL COMMENT '메이저 버전',
-
-        -- 핑거프린트 연결
-        fingerprint_id INT COMMENT 'fingerprints 테이블 FK',
 
         -- 쿠키 데이터
         cookie_data JSON NOT NULL COMMENT '전체 쿠키 배열',
-        cookie_count INT DEFAULT 0 COMMENT '쿠키 개수',
-
-        -- Akamai 쿠키 검증
-        abck_value TEXT COMMENT '_abck 쿠키 값',
-        abck_valid BOOLEAN DEFAULT FALSE COMMENT '_abck에 ~-1~ 포함 여부',
-
-        -- 도메인 정보
-        source_domain VARCHAR(100) DEFAULT 'www.coupang.com' COMMENT '쿠키 생성 도메인',
 
         -- 사용 통계
         use_count INT DEFAULT 0 COMMENT '사용 횟수',
         success_count INT DEFAULT 0 COMMENT '성공 횟수',
         fail_count INT DEFAULT 0 COMMENT '실패 횟수',
-        last_used_at TIMESTAMP NULL COMMENT '마지막 사용 시간',
-        last_result VARCHAR(50) COMMENT '마지막 결과 (SUCCESS, BLOCKED 등)',
 
-        -- 상태 관리
-        status ENUM('active', 'expired', 'blocked', 'exhausted') DEFAULT 'active',
-        expires_at TIMESTAMP NULL COMMENT '만료 시간',
-
-        -- 메타데이터
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        -- 시간 (3개)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '쿠키 생성',
+        locked_at TIMESTAMP NULL COMMENT '호출 시작',
+        last_used_at TIMESTAMP NULL COMMENT '사용 완료',
 
         -- 인덱스
         INDEX idx_proxy_ip (proxy_ip),
-        INDEX idx_status (status),
-        INDEX idx_chrome_major (chrome_major),
         INDEX idx_created_at (created_at),
-        FOREIGN KEY (fingerprint_id) REFERENCES fingerprints(id) ON DELETE SET NULL
+        INDEX idx_use_count (use_count)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
     COMMENT='브라우저 생성 쿠키 저장 (IP 바인딩 포함)';
     """
