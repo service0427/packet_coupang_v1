@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//d/OneDrive/Documents/**)",
+      "Read(//d/Downloads/**)",
+      "WebSearch",
+      "Read(//c/Users/servi/AppData/Local/Programs/Python/Python313/Lib/site-packages/curl_cffi/requests/**)",
+      "Read(//c/Users/servi/AppData/Local/Programs/Python/Python313/Lib/site-packages/curl_cffi/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

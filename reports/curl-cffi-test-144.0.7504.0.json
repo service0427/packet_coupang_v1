@@ -1,0 +1,39 @@
+{
+  "timestamp": "2025-11-21T17:04:35.778Z",
+  "chromeVersion": "144.0.7504.0",
+  "mode": "test",
+  "query": "노트북",
+  "results": [
+    {
+      "page": 1,
+      "status_code": 200,
+      "size": 1656331,
+      "result": "SUCCESS"
+    },
+    {
+      "page": 2,
+      "status_code": 200,
+      "size": 690926,
+      "result": "SUCCESS"
+    },
+    {
+      "page": 3,
+      "status_code": 200,
+      "size": 698371,
+      "result": "SUCCESS"
+    },
+    {
+      "page": 4,
+      "status_code": 200,
+      "size": 689266,
+      "result": "SUCCESS"
+    },
+    {
+      "page": 5,
+      "status_code": 200,
+      "size": 713529,
+      "result": "SUCCESS"
+    }
+  ],
+  "successRate": 1
+}

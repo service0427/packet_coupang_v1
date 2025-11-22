@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Cookies (sensitive data)
+cookies/*.json
+
+# User data
+user-data/
+
+# Chrome versions (large binaries)
+chrome-versions/files/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+.env
+
+# Temporary files
+*.tmp
+*.temp
+
+# Archive (large files)
+archive/

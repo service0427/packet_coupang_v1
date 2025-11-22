@@ -1,0 +1,10 @@
+{
+  "proxy_id": 30,
+  "proxy_ip": "220.78.239.88",
+  "proxy_port": 10018,
+  "cookie_file": "proxy_220_78_239_88_10018.json",
+  "cookie_count": 14,
+  "created_at": "2025-10-10T14:12:51.370Z",
+  "browser": "Real Chrome (CDP)",
+  "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
+}

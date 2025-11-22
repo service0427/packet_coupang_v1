@@ -1,0 +1,280 @@
+{
+  "metadata": {
+    "version": "2.0.0",
+    "lastUpdated": "2025-10-12",
+    "totalVersions": 48,
+    "workingVersions": 25,
+    "description": "Chrome version TLS compatibility - Direct TLS profile loading (no presets)"
+  },
+  "versions": {
+    "141.0.7390.76": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true,
+      "notes": "현재 사용 중인 버전, 완벽 작동"
+    },
+    "141.0.7383.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "140.0.7339.207": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "140.0.7330.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "139.0.7258.154": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "139.0.7258.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "138.0.7204.183": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "138.0.7204.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "137.0.7151.119": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "137.0.7151.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "136.0.7103.113": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true,
+      "notes": "호환성 테스트로 해결됨 (default 전략)"
+    },
+    "136.0.7103.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "135.0.7049.114": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true,
+      "notes": "호환성 테스트로 해결됨 (minimal_tls 전략 필요)"
+    },
+    "135.0.7049.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "134.0.6998.165": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true,
+      "notes": "호환성 테스트로 해결됨 (minimal_tls 전략 필요)"
+    },
+    "134.0.6998.112": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true,
+      "notes": "호환성 테스트로 해결됨 (default 전략)"
+    },
+    "134.0.6998.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "133.0.6943.141": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "133.0.6943.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "132.0.6834.159": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "132.0.6834.110": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "132.0.6834.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true,
+      "notes": "호환성 테스트로 해결됨 (chrome132 전략 필요)"
+    },
+    "131.0.6778.264": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "131.0.6778.108": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "131.0.6778.0": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true
+    },
+    "130.0.6723.116": {
+      "status": "working",
+      "browserMode": true,
+      "packetMode": true,
+      "notes": "Chrome 130 전용 프리셋 사용"
+    },
+    "130.0.6723.0": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "129.0.6668.100": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "129.0.6668.0": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "128.0.6613.137": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "128.0.6613.0": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "127.0.6533.119": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "127.0.6533.0": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "126.0.6478.182": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "126.0.6478.0": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "125.0.6422.176": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "125.0.6422.141": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "125.0.6422.0": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "124.0.6367.207": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "124.0.6367.0": {
+      "status": "blocked",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "경량 응답 244KB, 패킷 HTTP/2 ERROR"
+    },
+    "123.0.6312.122": {
+      "status": "removed",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "패킷 모드 불가로 제거됨 (curl-cffi 한계, X25519Kyber768 미지원)"
+    },
+    "123.0.6312.0": {
+      "status": "removed",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "패킷 모드 불가로 제거됨 (curl-cffi 한계)"
+    },
+    "122.0.6261.128": {
+      "status": "removed",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "패킷 모드 불가로 제거됨 (curl-cffi 한계)"
+    },
+    "122.0.6261.0": {
+      "status": "removed",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "패킷 모드 불가로 제거됨 (curl-cffi 한계)"
+    },
+    "121.0.6167.184": {
+      "status": "removed",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "패킷 모드 불가로 제거됨 (curl-cffi 한계)"
+    },
+    "121.0.6167.0": {
+      "status": "removed",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "패킷 모드 불가로 제거됨 (curl-cffi 한계)"
+    },
+    "120.0.6099.109": {
+      "status": "removed",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "패킷 모드 불가로 제거됨 (curl-cffi 한계)"
+    },
+    "120.0.6099.0": {
+      "status": "removed",
+      "browserMode": false,
+      "packetMode": false,
+      "notes": "패킷 모드 불가로 제거됨 (curl-cffi 한계)"
+    }
+  }
+}

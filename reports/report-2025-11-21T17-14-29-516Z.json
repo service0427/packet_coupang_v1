@@ -1,0 +1,14 @@
+{
+  "timestamp": "2025-11-21T17:14:29.516Z",
+  "chromeVersion": "144.0.7504.0",
+  "mode": "browser",
+  "action": "coupang_main_access",
+  "cookieFile": "D:\\dev\\git\\local-packet-coupang\\cookies\\chrome144.0.7504.0_cookies.json",
+  "cookieCount": 19,
+  "loadTime": 4243,
+  "status": "SUCCESS",
+  "goal": "Browser cookie → curl-cffi 활용 테스트",
+  "nextSteps": [
+    "curl-cffi로 쿠키 테스트 필요"
+  ]
+}
