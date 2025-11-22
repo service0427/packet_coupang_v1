@@ -3,12 +3,20 @@ node_modules/
 
 # Cookies (sensitive data)
 cookies/*.json
+cookies/proxy_cookies/
+cookies/real_chrome_proxy_cookies/
 
 # User data
 user-data/
 
 # Chrome versions (large binaries)
 chrome-versions/files/
+
+# Reports (test data)
+reports/*.json
+
+# Config (DB credentials)
+config.json
 
 # Logs
 *.log
@@ -20,11 +28,13 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+.claude/
 
 # Python
 __pycache__/
 *.pyc
 .env
+venv/
 
 # Temporary files
 *.tmp
@@ -32,3 +42,7 @@ __pycache__/
 
 # Archive (large files)
 archive/
+
+# Old config files
+.coupang-config.json
+.coupang-test-config.json

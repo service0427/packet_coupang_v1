@@ -5,9 +5,17 @@
       "Read(//d/Downloads/**)",
       "WebSearch",
       "Read(//c/Users/servi/AppData/Local/Programs/Python/Python313/Lib/site-packages/curl_cffi/requests/**)",
-      "Read(//c/Users/servi/AppData/Local/Programs/Python/Python313/Lib/site-packages/curl_cffi/**)"
+      "Read(//c/Users/servi/AppData/Local/Programs/Python/Python313/Lib/site-packages/curl_cffi/**)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(chmod:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "Bash(./install-chrome-versions.sh:*)",
+      "Bash(bash:*)",
+      "Bash(/home/tech/packet_coupang_v1/chrome-versions/files/chrome-136.0.7103.113/chrome-linux64/chrome:*)"
     ],
     "deny": [],
     "ask": []
-  }
+  },
+  "outputStyle": "Explanatory"
 }

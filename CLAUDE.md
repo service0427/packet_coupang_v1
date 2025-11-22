@@ -2,6 +2,9 @@
 
 Claude Code 가이드 문서 - Coupang Akamai Bypass System
 
+## sudo
+Tech1324!
+
 ## Project Overview
 
 Coupang Akamai Bypass System - curl-cffi를 사용한 TLS 핑거프린트 매칭 기반 Akamai 우회
@@ -11,15 +14,17 @@ Coupang Akamai Bypass System - curl-cffi를 사용한 TLS 핑거프린트 매칭
 ## 주요 명령어
 
 ```bash
+# 초기 셋업 (Chrome 다운로드 + TLS 수집)
+./setup.sh
+
 # 쿠키 생성 (브라우저)
-npm run coupang browser 136
+node coupang-test.js browser 136
 
 # curl-cffi 테스트
-npm run coupang test 136
-
-# 또는 직접 실행
-node coupang-test.js browser 136
 node coupang-test.js test 136 "노트북"
+
+# TLS 프로파일 수집
+node extract-tls-profiles.js
 ```
 
 ## Akamai 우회 핵심 조건 (2025-11-22 검증)
