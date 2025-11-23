@@ -14,11 +14,57 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).parent))
 
 from cookie_loop import generate_cookies_loop
+from common import DEV_PROXY, toggle_dev_proxy, get_dev_proxy_ip
 
 BASE_DIR = Path(__file__).parent.parent
 CHROME_DIR = BASE_DIR / 'chrome-versions' / 'files'
 
 PROXY_API_URL = 'http://mkt.techb.kr:3001/api/proxy/status'
+
+
+def run_dev_cookie(args):
+    """개발용 쿠키 생성"""
+    print("=" * 60)
+    print("개발용 쿠키 생성")
+    print("=" * 60)
+
+    # IP 토글 (--toggle 옵션)
+    if args.toggle:
+        print("🔄 프록시 IP 토글 중...")
+        result = toggle_dev_proxy()
+        if not result.get('success'):
+            print(f"❌ IP 토글 실패: {result.get('error')}")
+            return
+        print(f"   새 IP: {result['ip']}")
+    else:
+        # 현재 IP 확인
+        current_ip = get_dev_proxy_ip()
+        if not current_ip:
+            print("❌ 프록시 IP 확인 실패")
+            return
+        print(f"현재 IP: {current_ip}")
+
+    # Chrome 버전
+    versions = get_chrome_versions()
+    if not versions:
+        print("❌ Chrome 버전 없음")
+        return
+
+    version = args.version or random.choice(versions)
+    print(f"Chrome: {version}")
+    print(f"프록시: {DEV_PROXY['socks5']}")
+    print(f"반복: {args.loop}")
+    print("=" * 60)
+
+    # 쿠키 생성
+    results = generate_cookies_loop(version, DEV_PROXY['socks5'], args.loop)
+
+    if results:
+        cookie_ids = [r['cookie_id'] for r in results]
+        print(f"\n✅ 생성 완료: {len(results)}개")
+        print(f"   IDs: {', '.join(map(str, cookie_ids))}")
+    else:
+        print("\n❌ 쿠키 생성 실패")
 
 def get_proxies_from_api(remain=60):
     """API에서 프록시 목록 조회
@@ -97,6 +143,11 @@ def run_cookie(args):
     if killed > 0:
         print(f"⚠️  이전 프로세스 {killed}개 정리됨")
 
+    # 개발 모드
+    if getattr(args, 'dev', False):
+        run_dev_cookie(args)
+        return
+
     print("=" * 60)
     print("쿠키 생성")
     print("=" * 60)
@@ -132,7 +183,6 @@ def run_cookie(args):
     tasks = []
     for i in range(thread_count):
         version = args.version or random.choice(versions)
-        # 중복 없이 프록시 할당
         proxy = proxies[i]
         tasks.append((i + 1, version, proxy, args.loop))
 

@@ -46,3 +46,7 @@ archive/
 # Old config files
 .coupang-config.json
 .coupang-test-config.json
+
+# Chrome profiles (browser cache)
+chrome-profiles/
+reports/

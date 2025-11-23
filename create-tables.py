@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parent / 'lib'))
-from db import get_cursor, test_connection
+from db import get_cursor
 
 def create_tables():
     """테이블 생성"""
@@ -82,6 +82,43 @@ def create_tables():
     COMMENT='브라우저 생성 쿠키 저장 (IP 바인딩 포함)';
     """
 
+    # cookie_usage_logs 테이블
+    usage_logs_sql = """
+    CREATE TABLE IF NOT EXISTS cookie_usage_logs (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+
+        -- 쿠키 정보
+        cookie_id INT NOT NULL COMMENT '쿠키 ID',
+        chrome_version VARCHAR(50) NOT NULL COMMENT 'Chrome 버전',
+        chrome_major INT NOT NULL COMMENT 'Chrome 메이저 버전',
+        proxy_ip VARCHAR(45) COMMENT '프록시 IP',
+
+        -- 사용 전 상태
+        is_first_use BOOLEAN NOT NULL COMMENT '최초 사용 여부',
+        has_previous_success BOOLEAN NOT NULL COMMENT '이전 성공 기록 여부',
+        use_count_before INT NOT NULL COMMENT '사용 전 use_count',
+        success_count_before INT NOT NULL COMMENT '사용 전 success_count',
+        age_seconds INT NOT NULL COMMENT '쿠키 나이 (초)',
+
+        -- 결과
+        success BOOLEAN NOT NULL COMMENT '실행 성공',
+        found BOOLEAN NOT NULL COMMENT '상품 발견',
+        rank_position INT COMMENT '발견 순위',
+        click_success BOOLEAN NOT NULL DEFAULT FALSE COMMENT '클릭 성공',
+        error_message VARCHAR(255) COMMENT '에러 메시지',
+
+        -- 시간
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+        -- 인덱스
+        INDEX idx_cookie_id (cookie_id),
+        INDEX idx_chrome_major (chrome_major),
+        INDEX idx_is_first_use (is_first_use),
+        INDEX idx_created_at (created_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+    COMMENT='쿠키 사용 로그';
+    """
+
     # 테이블 생성 실행
     with get_cursor() as cursor:
         print("Creating fingerprints table...")
@@ -91,6 +128,10 @@ def create_tables():
         print("\nCreating cookies table...")
         cursor.execute(cookies_sql)
         print("✅ cookies 테이블 생성 완료")
+
+        print("\nCreating cookie_usage_logs table...")
+        cursor.execute(usage_logs_sql)
+        print("✅ cookie_usage_logs 테이블 생성 완료")
 
         # 생성된 테이블 확인
         cursor.execute("SHOW TABLES")
@@ -108,11 +149,13 @@ def main():
     print("=" * 60)
 
     # 연결 테스트
-    if not test_connection():
-        print("❌ 데이터베이스 연결 실패")
+    try:
+        with get_cursor() as cursor:
+            cursor.execute("SELECT 1")
+        print("✅ 데이터베이스 연결 성공\n")
+    except Exception as e:
+        print(f"❌ 데이터베이스 연결 실패: {e}")
         return
-
-    print("✅ 데이터베이스 연결 성공\n")
 
     # 테이블 생성
     create_tables()
