@@ -159,7 +159,7 @@ def save_to_db(parsed):
         return False
 
 
-def print_summary(stats, start_time, interrupted=False):
+def print_summary(stats, start_time, subnet_stats, interrupted=False):
     """결과 요약 출력"""
     end_time = datetime.now()
     elapsed = (end_time - start_time).total_seconds()
@@ -179,7 +179,16 @@ def print_summary(stats, start_time, interrupted=False):
         if stats.get('cancelled', 0) > 0:
             print(f"🛑 취소: {stats['cancelled']}회")
     print(f"💾 DB 저장: {stats['saved']}건")
-    print(f"완료: {end_time.strftime('%H:%M:%S')}")
+
+    # 서브넷별 통계 (사용량 많은 순)
+    if subnet_stats:
+        print(f"\n--- 서브넷별 통계 ---")
+        sorted_subnets = sorted(subnet_stats.items(), key=lambda x: x[1]['total'], reverse=True)
+        for subnet, s in sorted_subnets[:10]:  # 상위 10개만
+            block_rate = s['blocked'] * 100 // s['total'] if s['total'] > 0 else 0
+            print(f"  {subnet}.* : {s['total']:2d}회 (차단:{s['blocked']} 발견:{s['found']}) {block_rate}%차단")
+
+    print(f"\n완료: {end_time.strftime('%H:%M:%S')}")
 
 
 def main():
@@ -211,6 +220,8 @@ def main():
         'saved': 0,
         'cancelled': 0
     }
+    # 서브넷별 통계: {subnet: {'total': 0, 'blocked': 0}}
+    subnet_stats = {}
 
     # Ctrl+C 핸들러
     def signal_handler(sig, frame):
@@ -270,10 +281,24 @@ def main():
                         cut_keyword += char
                     keyword = cut_keyword
 
+                # IP 서브넷 추출 (마지막 옥텟 제외)
+                proxy_ip = parsed.get('proxy_ip', '')
+                subnet = '.'.join(proxy_ip.split('.')[:3]) if proxy_ip else '?'
+
+                # 서브넷별 통계 수집
+                if subnet != '?':
+                    if subnet not in subnet_stats:
+                        subnet_stats[subnet] = {'total': 0, 'blocked': 0, 'found': 0}
+                    subnet_stats[subnet]['total'] += 1
+                    if parsed['blocked']:
+                        subnet_stats[subnet]['blocked'] += 1
+                    elif parsed['found']:
+                        subnet_stats[subnet]['found'] += 1
+
                 # 요약 출력 (고정폭 정렬)
                 keyword_padded = pad_to_width(keyword, 12)
                 cookie_id = parsed.get('cookie_id', '?')
-                print(f"[{task_id:3d}] {status} {rank_str} | {keyword_padded} | 쿠키:{cookie_id}")
+                print(f"[{task_id:3d}] {status} {rank_str} | {keyword_padded} | {cookie_id} | {subnet}")
 
                 # 상세 출력
                 if args.verbose:
@@ -290,7 +315,7 @@ def main():
         pass
 
     # 결과 요약
-    print_summary(stats, start_time, interrupted=cancelled)
+    print_summary(stats, start_time, subnet_stats, interrupted=cancelled)
 
 
 if __name__ == '__main__':
