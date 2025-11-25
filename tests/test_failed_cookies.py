@@ -19,9 +19,8 @@ from datetime import datetime
 sys.path.insert(0, str(Path(__file__).parent.parent / 'lib'))
 
 from common.db import execute_query
-from common.proxy import get_proxy_list, get_subnet
-from common.fingerprint import build_extra_fp, build_headers, get_fingerprint_by_version
-from common.proxy import parse_cookie_data
+from common.proxy import get_proxy_list, get_subnet, parse_cookie_data
+from common.fingerprint import build_extra_fp, build_headers, get_random_fingerprint
 from curl_cffi import requests
 
 
@@ -82,7 +81,7 @@ def test_cookie(cookie_record, proxy_url):
     Returns:
         (success: bool, detail: str)
     """
-    fp = get_fingerprint_by_version(cookie_record['chrome_version'], 'u22')
+    fp = get_random_fingerprint(verified_only=True)
     if not fp:
         return None, "핑거프린트 없음"
 

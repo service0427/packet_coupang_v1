@@ -59,7 +59,7 @@ def main():
     search_parser.add_argument('--product-id', default='9024146312', help='상품 ID (기본: 호박 달빛식혜)')
     search_parser.add_argument('--query', default='호박 달빛식혜', help='검색어')
     search_parser.add_argument('--max-page', type=int, default=13, help='최대 페이지')
-    search_parser.add_argument('--no-click', action='store_true', help='클릭 건너뛰기')
+    search_parser.add_argument('--no-click', action='store_true', help='클릭/직접접속 건너뛰기')
     search_parser.add_argument('--proxy', help='프록시 URL 직접 지정')
     search_parser.add_argument('--screenshot', action='store_true', help='상품 발견 시 스크린샷 저장')
 

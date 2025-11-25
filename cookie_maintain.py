@@ -13,7 +13,7 @@ from datetime import datetime
 
 sys.path.insert(0, str(Path(__file__).parent / 'lib'))
 
-from db import execute_query
+from common.db import execute_query
 
 # 설정
 LOCK_FILE = '/tmp/cookie_maintain.lock'

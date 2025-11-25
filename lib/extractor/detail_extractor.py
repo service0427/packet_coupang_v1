@@ -45,14 +45,21 @@ def extract_product_detail(html_content):
             pass
 
     # === 제목 ===
-    # h1.prod-buy-header__title 또는 og:title
-    title_match = re.search(r'<h1[^>]*class="[^"]*prod-buy-header__title[^"]*"[^>]*>([^<]+)</h1>', html_content)
+    # 우선순위: h1.product-title span > h1.prod-buy-header__title > og:title (쿠팡 제거)
+    title_match = re.search(r'<h1[^>]*class="[^"]*product-title[^"]*"[^>]*>\s*<span>([^<]+)</span>', html_content)
     if title_match:
         data['title'] = title_match.group(1).strip()
     else:
-        og_title = re.search(r'<meta property="og:title" content="([^"]+)"', html_content)
-        if og_title:
-            data['title'] = og_title.group(1)
+        title_match = re.search(r'<h1[^>]*class="[^"]*prod-buy-header__title[^"]*"[^>]*>([^<]+)</h1>', html_content)
+        if title_match:
+            data['title'] = title_match.group(1).strip()
+        else:
+            og_title = re.search(r'<meta property="og:title" content="([^"]+)"', html_content)
+            if og_title:
+                title = og_title.group(1)
+                # " | 쿠팡" 또는 " - 카테고리 | 쿠팡" 제거
+                title = re.sub(r'\s*[-|]\s*[^|]+\s*\|\s*쿠팡$', '', title)
+                data['title'] = title.strip()
 
     # === 현재 판매가 ===
     # class="price-amount final-price-amount" 패턴
@@ -188,6 +195,28 @@ def extract_product_detail(html_content):
         categories = [c.strip() for c in breadcrumb_matches if c.strip()]
         data['categories'] = categories
 
+    # === 썸네일 이미지 ===
+    # prod-image__items 영역의 이미지들
+    thumbnail_matches = re.findall(r'<img[^>]*class="[^"]*prod-image__item[^"]*"[^>]*src="([^"]+)"', html_content)
+    if thumbnail_matches:
+        data['thumbnail_images'] = thumbnail_matches
+    else:
+        # 대안: og:image
+        og_image = re.search(r'<meta property="og:image" content="([^"]+)"', html_content)
+        if og_image:
+            data['thumbnail_images'] = [og_image.group(1)]
+
+    # === 배송 뱃지 URL ===
+    # 로켓배송 아이콘 이미지
+    badge_match = re.search(r'<img[^>]*class="[^"]*delivery-badge[^"]*"[^>]*src="([^"]+)"', html_content)
+    if badge_match:
+        data['delivery_badge_url'] = badge_match.group(1)
+    else:
+        # 대안: rocket-icon 클래스 이미지
+        rocket_badge = re.search(r'<img[^>]*class="[^"]*rocket[^"]*"[^>]*src="([^"]+)"', html_content)
+        if rocket_badge:
+            data['delivery_badge_url'] = rocket_badge.group(1)
+
     return data
 
 
@@ -234,12 +263,14 @@ def convert_to_agent_format(product_data, product_info):
             product_data.get('delivery_type', '판매자배송'),
             'GENERAL'
         ),
+        'deliveryBadgeUrl': product_data.get('delivery_badge_url'),
         'rating': product_data.get('rating'),
         'reviewCount': product_data.get('review_count'),
         'sellerName': product_data.get('seller_name'),
         'soldOut': product_data.get('sold_out', False),
         'soldOutType': sold_out_type,
         'categories': product_data.get('categories', []),
+        'thumbnailImages': product_data.get('thumbnail_images', []),
         # ID 추출 우선순위:
         # 1. product_info (URL에서 파싱된 값) - rank_cmd에서 전달
         # 2. product_data (HTML __NEXT_DATA__에서 추출)

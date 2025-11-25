@@ -48,22 +48,95 @@ def get_random_product(product_list_id=None):
     return result[0] if result else None
 
 
+def direct_access_product(product_id, item_id, vendor_item_id, cookies, fingerprint, proxy):
+    """상품 URL 직접 접속으로 정보 추출
+
+    Args:
+        product_id: 상품 ID
+        item_id: 아이템 ID (없으면 None)
+        vendor_item_id: 벤더 아이템 ID (없으면 None)
+        cookies: 쿠키 딕셔너리
+        fingerprint: 핑거프린트 레코드
+        proxy: 프록시 URL
+
+    Returns:
+        dict: {success, productData, response_cookies_full}
+    """
+    from cffi.request import make_request, parse_response_cookies
+    from extractor.detail_extractor import extract_product_detail
+
+    # URL 구성
+    if item_id and vendor_item_id:
+        url = f'https://www.coupang.com/vp/products/{product_id}?itemId={item_id}&vendorItemId={vendor_item_id}'
+    else:
+        url = f'https://www.coupang.com/vp/products/{product_id}'
+
+    print(f"\n[{timestamp()}] 직접 접속...")
+    print(f"  URL: {url}")
+
+    try:
+        resp = make_request(url, cookies, fingerprint, proxy, referer='https://www.coupang.com/')
+        size = len(resp.content)
+
+        response_cookies, response_cookies_full = parse_response_cookies(resp)
+
+        print(f"  Status: {resp.status_code} | Size: {size:,} bytes")
+
+        if size > 100000:
+            product_data = extract_product_detail(resp.text)
+
+            if product_data:
+                print(f"\n{'─' * 70}")
+                print("📦 직접 접속 상품 정보")
+                print(f"{'─' * 70}")
+                for key, value in product_data.items():
+                    print(f"   {key}: {value}")
+                print(f"{'─' * 70}")
+
+            return {
+                'success': True,
+                'productData': product_data,
+                'response_cookies_full': response_cookies_full,
+                'size': size
+            }
+        else:
+            print(f"  ❌ 응답 크기 부족 ({size:,} bytes)")
+            return {
+                'success': False,
+                'error': f'INVALID_RESPONSE_{size}B',
+                'response_cookies_full': response_cookies_full,
+                'size': size
+            }
+
+    except Exception as e:
+        print(f"  ❌ 에러: {str(e)[:50]}")
+        return {
+            'success': False,
+            'error': str(e)[:100],
+            'response_cookies_full': [],
+            'size': 0
+        }
+
+
 def run_search(args):
     """상품 검색 실행"""
     print("=" * 70)
     print("상품 검색")
     print("=" * 70)
 
+    # 상품 정보 (직접 접속용)
+    product_info = None
+
     # --random: DB에서 키워드 선택
     if args.random:
         pl_id = args.pl_id
-        product = get_random_product(pl_id)
-        if not product:
+        product_info = get_random_product(pl_id)
+        if not product_info:
             print("❌ product_list 데이터 없음")
             return None
-        args.query = product['keyword']
-        args.product_id = product['product_id']
-        print(f"🎲 랜덤 선택 [PL#{product['id']}]: {args.query}")
+        args.query = product_info['keyword']
+        args.product_id = product_info['product_id']
+        print(f"🎲 랜덤 선택 [PL#{product_info['id']}]: {args.query}")
 
     # IP 바인딩 + 쿠키 선택
     if args.cookie_id:
@@ -201,6 +274,20 @@ def run_search(args):
     else:
         print(f"\n❌ 상품 미발견 ({len(result['all_products'])}개 검색)")
 
+        # 직접 접속으로 상품 정보 추출 (--no-click이 아니면 실행)
+        if not args.no_click:
+            item_id = product_info.get('item_id') if product_info else None
+            vendor_item_id = product_info.get('vendor_item_id') if product_info else None
+
+            direct_result = direct_access_product(
+                args.product_id, item_id, vendor_item_id,
+                cookies, fingerprint, proxy
+            )
+
+            # 직접 접속 응답 쿠키도 업데이트에 포함
+            if direct_result.get('response_cookies_full'):
+                result['response_cookies_full'].extend(direct_result['response_cookies_full'])
+
     # 통계 업데이트
     is_success = not blocked
     update_cookie_stats(cookie_record['id'], is_success)
@@ -237,7 +324,7 @@ if __name__ == '__main__':
     parser.add_argument('--product-id', default='9024146312')
     parser.add_argument('--query', default='호박 달빛식혜')
     parser.add_argument('--max-page', type=int, default=13)
-    parser.add_argument('--no-click', action='store_true')
+    parser.add_argument('--no-click', action='store_true', help='클릭/직접접속 건너뛰기')
     parser.add_argument('--random', action='store_true')
     parser.add_argument('--cookie-id', type=int)
     parser.add_argument('--proxy')
