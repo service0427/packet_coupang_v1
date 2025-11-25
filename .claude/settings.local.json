@@ -1,6 +1,7 @@
 {
   "permissions": {
     "allow": [
+      "Bash",
       "Read(//d/OneDrive/Documents/**)",
       "Read(//d/Downloads/**)",
       "WebSearch",
@@ -12,7 +13,14 @@
       "Bash(python3:*)",
       "Bash(./install-chrome-versions.sh:*)",
       "Bash(bash:*)",
-      "Bash(/home/tech/packet_coupang_v1/chrome-versions/files/chrome-136.0.7103.113/chrome-linux64/chrome:*)"
+      "Bash(/home/tech/packet_coupang_v1/chrome-versions/files/chrome-136.0.7103.113/chrome-linux64/chrome:*)",
+      "Bash(pip3 list:*)",
+      "Bash(pip3 install:*)",
+      "Bash(sudo -S apt-get update:*)",
+      "Bash(sudo -S apt-get install:*)",
+      "Bash(timedatectl:*)",
+      "Bash(sudo -S timedatectl:*)",
+      "Bash(PGPASSWORD='Tech1324!' psql:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,25 +1,57 @@
 """
 쿠키 생성 명령어
+
+브라우저(Playwright)를 통해 Akamai 쿠키 생성
 """
 
 import sys
 import random
 import subprocess
-import requests
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
+from curl_cffi import requests
 
-# Add lib directory to path
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from cookie_loop import generate_cookies_loop
-from common import DEV_PROXY, toggle_dev_proxy, get_dev_proxy_ip
+from browser.cookie_generator import generate_cookies
+from common.proxy import get_proxy_list
 
-BASE_DIR = Path(__file__).parent.parent
+# browser/cookie_cmd.py -> lib/ -> packet_coupang_v1/
+BASE_DIR = Path(__file__).parent.parent.parent
 CHROME_DIR = BASE_DIR / 'chrome-versions' / 'files'
 
-PROXY_API_URL = 'http://mkt.techb.kr:3001/api/proxy/status'
+# 개발용 프록시
+DEV_PROXY = {
+    'host': '112.161.54.7',
+    'port': '10018',
+    'toggle_port': '18',
+    'url': '112.161.54.7:10018',
+    'socks5': 'socks5://112.161.54.7:10018'
+}
+
+
+def toggle_dev_proxy():
+    """개발용 프록시 IP 토글"""
+    try:
+        toggle_url = f"http://{DEV_PROXY['host']}/toggle/{DEV_PROXY['toggle_port']}"
+        resp = requests.get(toggle_url, timeout=40)
+        return resp.json()
+    except Exception as e:
+        return {'success': False, 'error': str(e)}
+
+
+def get_dev_proxy_ip():
+    """개발용 프록시 현재 IP 조회"""
+    try:
+        resp = requests.get(
+            'https://api.ipify.org?format=json',
+            proxy=DEV_PROXY['socks5'],
+            timeout=10
+        )
+        return resp.json().get('ip')
+    except:
+        return None
 
 
 def run_dev_cookie(args):
@@ -37,7 +69,6 @@ def run_dev_cookie(args):
             return
         print(f"   새 IP: {result['ip']}")
     else:
-        # 현재 IP 확인
         current_ip = get_dev_proxy_ip()
         if not current_ip:
             print("❌ 프록시 IP 확인 실패")
@@ -57,7 +88,7 @@ def run_dev_cookie(args):
     print("=" * 60)
 
     # 쿠키 생성
-    results = generate_cookies_loop(version, DEV_PROXY['socks5'], args.loop)
+    results = generate_cookies(version, DEV_PROXY['socks5'], args.loop)
 
     if results:
         cookie_ids = [r['cookie_id'] for r in results]
@@ -66,29 +97,6 @@ def run_dev_cookie(args):
     else:
         print("\n❌ 쿠키 생성 실패")
 
-def get_proxies_from_api(remain=60):
-    """API에서 프록시 목록 조회
-
-    Args:
-        remain: 최소 남은 트래픽 (기본: 60)
-
-    Returns:
-        list: socks5:// 형식의 프록시 URL 리스트
-    """
-    try:
-        resp = requests.get(f'{PROXY_API_URL}?remain={remain}', timeout=10)
-        if resp.status_code == 200:
-            data = resp.json()
-            if data.get('success') and data.get('proxies'):
-                proxies = []
-                for p in data['proxies']:
-                    proxy_addr = p.get('proxy')
-                    if proxy_addr:
-                        proxies.append(f'socks5://{proxy_addr}')
-                return proxies
-    except Exception as e:
-        print(f"⚠️  프록시 API 오류: {e}")
-    return []
 
 def cleanup_previous():
     """이전 프로세스 정리"""
@@ -102,8 +110,9 @@ def cleanup_previous():
         pass
     return killed
 
+
 def get_chrome_versions():
-    """사용 가능한 Chrome 버전"""
+    """사용 가능한 Chrome 버전 (131+)"""
     versions = []
     for d in CHROME_DIR.iterdir():
         if d.is_dir() and d.name.startswith('chrome-'):
@@ -113,10 +122,11 @@ def get_chrome_versions():
                 versions.append(version.split('.')[0])
     return sorted(set(versions))
 
+
 def run_task(task_id, version, proxy, loop_count):
     """개별 작업 실행"""
     try:
-        results = generate_cookies_loop(version, proxy, loop_count)
+        results = generate_cookies(version, proxy, loop_count)
         cookie_ids = [r['cookie_id'] for r in results]
         return {
             'task_id': task_id,
@@ -137,6 +147,7 @@ def run_task(task_id, version, proxy, loop_count):
             'error': str(e)[:100]
         }
 
+
 def run_cookie(args):
     """쿠키 생성 실행"""
     killed = cleanup_previous()
@@ -144,7 +155,7 @@ def run_cookie(args):
         print(f"⚠️  이전 프로세스 {killed}개 정리됨")
 
     # 개발 모드
-    if getattr(args, 'dev', False):
+    if args.dev:
         run_dev_cookie(args)
         return
 
@@ -160,18 +171,17 @@ def run_cookie(args):
 
     # 프록시 목록 가져오기
     if args.proxy:
-        # 특정 프록시 지정 시
         proxies = [args.proxy]
     else:
-        # API에서 프록시 조회
         print("프록시 조회 중...")
-        proxies = get_proxies_from_api(remain=60)
+        proxy_list = get_proxy_list(min_remain=60)
+        proxies = [f"socks5://{p['proxy']}" for p in proxy_list]
         if not proxies:
             print("❌ 사용 가능한 프록시 없음")
             return
         print(f"프록시: {len(proxies)}개 조회됨")
 
-    # -t 미지정 시 프록시 개수만큼 자동 설정
+    # 쓰레드 수 결정
     if args.threads is None:
         thread_count = len(proxies)
     else:

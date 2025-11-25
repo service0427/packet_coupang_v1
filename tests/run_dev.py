@@ -10,9 +10,9 @@ import sys
 import argparse
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).parent / 'lib'))
+sys.path.insert(0, str(Path(__file__).parent.parent / 'lib'))
 
-from common import DEV_PROXY, toggle_dev_proxy, get_dev_proxy_ip
+from browser.cookie_cmd import DEV_PROXY, toggle_dev_proxy, get_dev_proxy_ip
 
 
 def main():

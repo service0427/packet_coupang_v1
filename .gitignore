@@ -50,3 +50,9 @@ archive/
 # Chrome profiles (browser cache)
 chrome-profiles/
 reports/
+
+# Screenshot cache and test files
+screenshot/cache/
+screenshot/*.html
+screenshot/*.png
+screenshot/*.json

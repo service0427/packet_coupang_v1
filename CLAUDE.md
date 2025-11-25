@@ -5,6 +5,9 @@ Claude Code 가이드 문서 - Coupang Akamai Bypass System
 ## sudo
 Tech1324!
 
+# Bash에서 ! 문자 이스케이프 필요
+PGPASSWORD=Tech1324\! psql -h mkt.techb.kr -U techb_pp -d v1_coupang
+
 ## Project Overview
 
 Coupang Akamai Bypass System - curl-cffi를 사용한 TLS 핑거프린트 매칭 기반 Akamai 우회
@@ -18,13 +21,11 @@ Coupang Akamai Bypass System - curl-cffi를 사용한 TLS 핑거프린트 매칭
 python3 coupang.py cookie
 python3 coupang.py cookie -t 4 -l 2  # 4 스레드, 조합당 2개
 
-# 상품 등수 체크
-python3 coupang.py rank
-python3 coupang.py rank --cookie-id 100 --product-id 12345678 --query "검색어"
-
-# 자동 실행
-python3 run_parallel.py      # 신규 쿠키 자동 병렬 실행
-python3 run_reuse.py         # 쿠키 재사용 테스트 (10분+ 경과)
+# 상품 검색
+python3 coupang.py search
+python3 coupang.py search --product-id 12345678 --query "검색어"
+python3 coupang.py search --random              # DB에서 랜덤 키워드
+python3 coupang.py search --screenshot          # 스크린샷 저장
 
 # 데이터베이스
 python3 create-tables.py     # 테이블 생성
@@ -53,12 +54,14 @@ python3 create-tables.py     # 테이블 생성
 
 **안정적 버전**: 136, 138, 140, 142
 
-### curl-cffi 커스텀 TLS 사용법
+### curl-cffi Custom TLS 사용법
+
+**중요**: `impersonate` 파라미터는 사용하지 않음. 항상 DB의 custom TLS 프로파일 사용.
 
 ```python
 from curl_cffi import requests
 
-# TLS 프로파일 로드
+# DB에서 fingerprint 로드 후 사용
 extra_fp = {
     'tls_signature_algorithms': sig_algs,  # 이름 리스트
     'tls_grease': True,
@@ -66,7 +69,6 @@ extra_fp = {
     'tls_cert_compression': 'brotli',
 }
 
-# 필수 헤더
 headers = {
     'User-Agent': profile['user_agent'],
     'Accept': 'text/html,application/xhtml+xml,...',
@@ -82,26 +84,17 @@ headers = {
     'upgrade-insecure-requests': '1',
 }
 
+# Custom TLS 방식 (DB 프로파일 사용)
 response = requests.get(
     url,
     headers=headers,
     cookies=cookies,
-    ja3=ja3_text,
-    akamai=akamai_text,
-    extra_fp=extra_fp,
+    ja3=ja3_text,        # DB fingerprints.ja3_text
+    akamai=akamai_text,  # DB fingerprints.akamai_text
+    extra_fp=extra_fp,   # DB fingerprints.signature_algorithms
     proxy=proxy,
     timeout=30
 )
-```
-
-### impersonate 사용 금지
-
-```python
-# FORBIDDEN - JA3가 실제 브라우저와 다름
-response = requests.get(url, impersonate='chrome136')
-
-# CORRECT - 직접 JA3/Akamai 지정
-response = requests.get(url, ja3=ja3_text, akamai=akamai_text, extra_fp=extra_fp)
 ```
 
 ## IP 바인딩 정책
@@ -130,25 +123,30 @@ proxy = f'socks5://{proxy_url}'
 
 ```
 packet_coupang_v1/
-├── coupang.py              # 메인 CLI (cookie, rank)
-├── run_parallel.py         # 신규 쿠키 자동 병렬 실행
-├── run_reuse.py            # 쿠키 재사용 테스트
+├── coupang.py              # 메인 CLI (cookie, search)
 ├── create-tables.py        # DB 테이블 생성
 │
 ├── lib/
-│   ├── cookie_cmd.py       # cookie 명령어 처리
-│   ├── cookie_loop.py      # Playwright 브라우저 쿠키 생성
-│   ├── rank_cmd.py         # rank 명령어 처리
-│   ├── common.py           # 공통 유틸리티 (DB, HTTP, IP)
-│   ├── db.py               # MySQL 연결
-│   ├── traceid.py          # 쿠팡 traceId 생성
-│   ├── realistic_click.py  # 상품 클릭 + sdkClick API
-│   └── extractor/
-│       └── product_extractor.py  # 상품 정보 추출
-│
-├── click-tracker/          # 개발/분석용
-│   ├── monitor_click.py    # Playwright 요청 추적
-│   └── click_simulator.py  # curl-cffi 클릭 테스트
+│   ├── common/             # 공통 모듈
+│   │   ├── db.py           # MySQL 연결
+│   │   ├── proxy.py        # 프록시/쿠키 바인딩
+│   │   └── fingerprint.py  # TLS 핑거프린트 관리
+│   │
+│   ├── browser/            # 브라우저 기반 (Playwright)
+│   │   ├── cookie_cmd.py   # cookie 명령어 처리
+│   │   └── cookie_generator.py  # 브라우저 쿠키 생성
+│   │
+│   ├── cffi/               # curl-cffi 기반
+│   │   ├── request.py      # HTTP 요청 (Custom TLS)
+│   │   ├── search.py       # 검색 모듈
+│   │   ├── click.py        # 클릭 모듈
+│   │   └── search_cmd.py   # search 명령어 처리
+│   │
+│   ├── extractor/          # HTML 파싱
+│   │   ├── search_extractor.py   # 검색 결과 추출
+│   │   └── detail_extractor.py   # 상품 상세 추출
+│   │
+│   └── screenshot/         # 스크린샷 모듈
 │
 ├── chrome-versions/
 │   ├── files/              # Chrome 실행 파일
@@ -268,38 +266,19 @@ curl "http://mkt.techb.kr:3001/api/proxy/status?remain=60"
 ### 쿠키 생성
 ```
 coupang.py cookie
-  → cookie_cmd.py: 프록시 API 조회, 병렬 실행
-    → cookie_loop.py: Playwright 브라우저 실행
+  → browser/cookie_cmd.py: 프록시 API 조회, 병렬 실행
+    → browser/cookie_loop.py: Playwright 브라우저 실행
       → login.coupang.com 접속
       → Akamai 쿠키 생성 (_abck 등)
       → DB 저장 (proxy_ip 포함)
 ```
 
-### Rank 체크
+### 상품 검색
 ```
-coupang.py rank
-  → rank_cmd.py
-    → DB에서 쿠키/핑거프린트 로드
-    → IP 바인딩 검증
-    → 검색 페이지 병렬 요청 (ThreadPoolExecutor)
-    → 상품 발견 시 클릭
-      → realistic_click.py: 상품 페이지 + sdkClick API
-    → reports/ 에 결과 저장
-```
-
-### 자동 실행
-```
-run_parallel.py
-  → 신규 쿠키 조회 (created_at 120초 이내)
-  → locked_at 설정 (중복 방지)
-  → ProcessPoolExecutor로 rank 병렬 실행
-  → 통계 업데이트 (success_count, fail_count)
-```
-
-### 쿠키 재사용
-```
-run_reuse.py
-  → 프록시 API에서 external_ip 조회
-  → 10분+ 경과 쿠키 매칭
-  → rank 실행 → 통계 업데이트
+coupang.py search
+  → cffi/search_cmd.py
+    → common/proxy.py: IP 바인딩 쿠키 자동 선택
+    → common/fingerprint.py: 랜덤 TLS 프로파일 선택
+    → cffi/search.py: 점진적 배치 검색 (Tier 1→2→3)
+    → cffi/click.py: 상품 발견 시 클릭
 ```

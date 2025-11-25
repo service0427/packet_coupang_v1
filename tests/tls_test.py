@@ -16,9 +16,9 @@ import subprocess
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-sys.path.insert(0, str(Path(__file__).parent / 'lib'))
+sys.path.insert(0, str(Path(__file__).parent.parent / 'lib'))
 
-from common import DEV_PROXY, get_dev_proxy_ip
+from browser.cookie_cmd import DEV_PROXY, get_dev_proxy_ip
 
 def test_proxy_basic():
     """1. 프록시 기본 연결 테스트 (httpbin.org)"""

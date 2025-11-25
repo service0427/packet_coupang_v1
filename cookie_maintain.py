@@ -20,12 +20,11 @@ LOCK_FILE = '/tmp/cookie_maintain.lock'
 
 
 def get_valid_cookie_count():
-    """유효한 쿠키 개수 조회"""
+    """유효한 쿠키 개수 조회 (60분 이내)"""
     result = execute_query("""
         SELECT COUNT(*) as cnt FROM cookies
-        WHERE created_at >= NOW() - INTERVAL 120 SECOND
-          AND use_count < 30
-          AND success_count >= fail_count
+        WHERE created_at >= NOW() - INTERVAL 60 MINUTE
+        AND source = 'local'
     """)
     return result[0]['cnt'] if result else 0
 
@@ -64,7 +63,7 @@ def main():
         # 유효한 쿠키 수 확인
         count = get_valid_cookie_count()
 
-        if count > 10:
+        if count > 1000:
             print(f"[{now}] ✅ 충분함 ({count}개)")
             return
 
@@ -72,7 +71,7 @@ def main():
 
         # 쿠키 생성
         result = subprocess.run(
-            ['python3', 'coupang.py', 'cookie', '-t', '10', '-l', '3'],
+            ['python3', 'coupang.py', 'cookie', '-t', '20', '-l', '5'],
             cwd=str(Path(__file__).parent),
             timeout=600
         )

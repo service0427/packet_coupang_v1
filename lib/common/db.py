@@ -7,8 +7,8 @@ import pymysql
 from pathlib import Path
 from contextlib import contextmanager
 
-# Load config
-config_path = Path(__file__).parent.parent / 'config.json'
+# Load config (common/db.py -> lib/ -> packet_coupang_v1/)
+config_path = Path(__file__).parent.parent.parent / 'config.json'
 with open(config_path) as f:
     config = json.load(f)
 
