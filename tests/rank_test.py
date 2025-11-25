@@ -4,6 +4,10 @@ Rank 테스트 - 병렬 실행
 python3 rank_test.py -n 100 -w 20
 
 Ctrl+C로 중단 시 현재까지 결과 출력
+
+서브넷 차단 관리:
+- 연속 5회 차단 시 해당 서브넷 제외
+- 성공 시 연속 차단 카운트 리셋
 """
 
 import sys
@@ -12,12 +16,56 @@ import subprocess
 import argparse
 import re
 import unicodedata
+import threading
 from datetime import datetime
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # 전역 취소 플래그
 cancelled = False
+
+# 서브넷별 연속 차단 카운트 (thread-safe)
+subnet_block_counts = {}  # {subnet: consecutive_block_count}
+subnet_lock = threading.Lock()
+BLOCK_THRESHOLD = 5  # 연속 차단 횟수 임계값
+
+
+def update_subnet_status(subnet, blocked):
+    """서브넷 차단 상태 업데이트
+
+    Args:
+        subnet: 서브넷 (예: '110.70.46')
+        blocked: 차단 여부
+
+    Returns:
+        bool: 해당 서브넷이 임계값 초과로 제외되었는지
+    """
+    if not subnet or subnet == '?':
+        return False
+
+    with subnet_lock:
+        if blocked:
+            subnet_block_counts[subnet] = subnet_block_counts.get(subnet, 0) + 1
+            if subnet_block_counts[subnet] >= BLOCK_THRESHOLD:
+                return True  # 임계값 초과
+        else:
+            # 성공 시 리셋
+            subnet_block_counts[subnet] = 0
+        return False
+
+
+def is_subnet_blocked(subnet):
+    """서브넷이 차단 임계값 초과인지 확인"""
+    if not subnet or subnet == '?':
+        return False
+    with subnet_lock:
+        return subnet_block_counts.get(subnet, 0) >= BLOCK_THRESHOLD
+
+
+def get_blocked_subnets():
+    """차단된 서브넷 목록 반환"""
+    with subnet_lock:
+        return [s for s, c in subnet_block_counts.items() if c >= BLOCK_THRESHOLD]
 
 
 def get_display_width(text):
@@ -40,6 +88,7 @@ def pad_to_width(text, width):
 
 sys.path.insert(0, str(Path(__file__).parent.parent / 'lib'))
 from common.db import insert_one, execute_query
+from common.proxy import get_proxy_list
 
 
 def parse_result(output):
@@ -74,6 +123,20 @@ def parse_result(output):
     if match:
         result['proxy_ip'] = match.group(1)
 
+    # TLS 버전 파싱: "TLS: Chrome 136" 또는 "TLS:136"
+    match = re.search(r'TLS[:\s]*(?:Chrome\s*)?(\d+)', output)
+    if match:
+        result['tls_version'] = int(match.group(1))
+
+    # 직접 접속 상품 제목 파싱: "title: 상품명"
+    match = re.search(r'^\s*title:\s*(.+)$', output, re.MULTILINE)
+    if match:
+        result['title'] = match.group(1).strip()
+
+    # 직접 접속 실패 여부 (403 차단 등)
+    if '응답 크기 부족' in output or '직접 접속' in output and '❌' in output:
+        result['direct_blocked'] = True
+
     # 상품 발견 여부
     result['found'] = '✅ 상품 발견' in output
 
@@ -94,9 +157,17 @@ def run_single_search(task_id):
             'returncode': -2
         }
 
+    # 차단된 서브넷 목록
+    blocked_subnets = get_blocked_subnets()
+
+    # 명령어 구성
+    cmd = ['python3', 'coupang.py', 'search', '--random']
+    if blocked_subnets:
+        cmd.extend(['--exclude-subnets', ','.join(blocked_subnets)])
+
     try:
         result = subprocess.run(
-            ['python3', 'coupang.py', 'search', '--random'],
+            cmd,
             capture_output=True,
             text=True,
             timeout=120,
@@ -159,36 +230,93 @@ def save_to_db(parsed):
         return False
 
 
-def print_summary(stats, start_time, subnet_stats, interrupted=False):
-    """결과 요약 출력"""
+def print_summary(stats, start_time, subnet_stats, ip_stats, proxy_count, per_ip, interrupted=False):
+    """결과 요약 출력 및 로그 저장"""
     end_time = datetime.now()
     elapsed = (end_time - start_time).total_seconds()
 
-    print("\n" + "=" * 70)
+    # 출력 내용 수집
+    lines = []
+    lines.append("=" * 70)
     if interrupted:
-        print("결과 요약 (중단됨)")
+        lines.append("결과 요약 (중단됨)")
     else:
-        print("결과 요약")
-    print("=" * 70)
-    print(f"총 실행: {stats['total']}회 | 소요: {elapsed:.1f}초")
+        lines.append("결과 요약")
+    lines.append("=" * 70)
+    lines.append(f"총 실행: {stats['total']}회 | 소요: {elapsed:.1f}초")
     if stats['total'] > 0:
-        print(f"✅ 발견: {stats['found']}회 ({stats['found']*100//stats['total']}%)")
-        print(f"❌ 미발견: {stats['not_found']}회")
-        print(f"🚫 차단: {stats['blocked']}회")
-        print(f"⚠️ 에러: {stats['error']}회")
+        found_rate = stats['found']*100//stats['total']
+        lines.append(f"✅ 발견: {stats['found']}회 ({found_rate}%)")
+        lines.append(f"❌ 미발견: {stats['not_found']}회")
+        lines.append(f"🚫 차단: {stats['blocked']}회")
+        lines.append(f"⚠️ 에러: {stats['error']}회")
         if stats.get('cancelled', 0) > 0:
-            print(f"🛑 취소: {stats['cancelled']}회")
-    print(f"💾 DB 저장: {stats['saved']}건")
+            lines.append(f"🛑 취소: {stats['cancelled']}회")
+    lines.append(f"💾 DB 저장: {stats['saved']}건")
 
     # 서브넷별 통계 (사용량 많은 순)
     if subnet_stats:
-        print(f"\n--- 서브넷별 통계 ---")
+        lines.append("")
+        lines.append("--- 서브넷별 통계 ---")
         sorted_subnets = sorted(subnet_stats.items(), key=lambda x: x[1]['total'], reverse=True)
         for subnet, s in sorted_subnets[:10]:  # 상위 10개만
             block_rate = s['blocked'] * 100 // s['total'] if s['total'] > 0 else 0
-            print(f"  {subnet}.* : {s['total']:2d}회 (차단:{s['blocked']} 발견:{s['found']}) {block_rate}%차단")
+            lines.append(f"  {subnet}.* : {s['total']:2d}회 (차단:{s['blocked']} 발견:{s['found']}) {block_rate}%차단")
 
-    print(f"\n완료: {end_time.strftime('%H:%M:%S')}")
+    # IP별 상세 통계 (서브넷별로 그룹화)
+    if ip_stats:
+        lines.append("")
+        lines.append("--- IP별 상세 통계 ---")
+
+        # 서브넷별로 그룹화
+        subnet_ips = {}
+        for ip, s in ip_stats.items():
+            subnet = '.'.join(ip.split('.')[:3])
+            if subnet not in subnet_ips:
+                subnet_ips[subnet] = []
+            subnet_ips[subnet].append((ip, s))
+
+        # 서브넷별 총 사용량 순으로 정렬
+        sorted_subnet_groups = sorted(
+            subnet_ips.items(),
+            key=lambda x: sum(ip[1]['total'] for ip in x[1]),
+            reverse=True
+        )
+
+        for subnet, ips in sorted_subnet_groups[:8]:  # 상위 8개 서브넷만
+            # 해당 서브넷의 총계
+            subnet_total = sum(ip[1]['total'] for ip in ips)
+            subnet_blocked = sum(ip[1]['blocked'] for ip in ips)
+            block_rate = subnet_blocked * 100 // subnet_total if subnet_total > 0 else 0
+
+            lines.append(f"  {subnet}.* ({subnet_total}회, {block_rate}%차단)")
+
+            # IP별 상세 (사용량 순)
+            sorted_ips = sorted(ips, key=lambda x: x[1]['total'], reverse=True)
+            for ip, s in sorted_ips:
+                last_octet = ip.split('.')[-1]
+                ip_block_rate = s['blocked'] * 100 // s['total'] if s['total'] > 0 else 0
+                status = "🚫" if ip_block_rate >= 80 else ("⚠️" if ip_block_rate >= 50 else "✅")
+                lines.append(f"    .{last_octet:>3}: {s['total']:2d}회 (차단:{s['blocked']} 발견:{s['found']}) {status}")
+
+    lines.append(f"\n완료: {end_time.strftime('%H:%M:%S.%f')[:12]}")
+
+    # 화면 출력
+    print("\n" + "\n".join(lines))
+
+    # 로그 파일 저장
+    log_dir = Path(__file__).parent.parent / 'logs'
+    log_dir.mkdir(exist_ok=True)
+    log_file = log_dir / f"rank_test_{start_time.strftime('%Y%m%d_%H%M%S')}.log"
+
+    with open(log_file, 'w', encoding='utf-8') as f:
+        f.write(f"Rank 테스트 결과\n")
+        f.write(f"시작: {start_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:23]}\n")
+        f.write(f"종료: {end_time.strftime('%Y-%m-%d %H:%M:%S.%f')[:23]}\n")
+        f.write(f"프록시: {proxy_count}개 | IP당: {per_ip}개\n")
+        f.write("\n".join(lines))
+
+    print(f"\n📄 로그 저장: {log_file}")
 
 
 def main():
@@ -196,17 +324,36 @@ def main():
 
     parser = argparse.ArgumentParser(description='Rank 테스트 - 병렬 실행')
     parser.add_argument('-n', '--count', type=int, default=10, help='총 실행 횟수 (기본: 10)')
-    parser.add_argument('-w', '--workers', type=int, default=10, help='동시 실행 수 (기본: 10)')
+    parser.add_argument('-w', '--workers', type=int, help='동시 실행 수 (생략: IP수 × 동시요청수)')
+    parser.add_argument('-p', '--per-ip', type=int, default=1, help='IP당 동시 요청 수 (기본: 1)')
+    parser.add_argument('--min-remain', type=int, default=30, help='프록시 최소 남은 시간 (초, 기본: 30)')
     parser.add_argument('--no-save', action='store_true', help='DB 저장 안함')
     parser.add_argument('-v', '--verbose', action='store_true', help='상세 출력')
     args = parser.parse_args()
+
+    # 프록시 수 조회하여 workers 자동 계산
+    proxies = get_proxy_list(min_remain=args.min_remain)
+    proxy_count = len(proxies)
+
+    if proxy_count == 0:
+        print("❌ 사용 가능한 프록시 없음")
+        return
+
+    if args.workers:
+        workers = args.workers
+    else:
+        workers = proxy_count * args.per_ip
+
+    # count가 workers보다 작으면 workers 조정
+    workers = min(workers, args.count)
 
     start_time = datetime.now()
     print("=" * 70)
     print(f"Rank 테스트 - 병렬 실행")
     print("=" * 70)
-    print(f"시작: {start_time.strftime('%H:%M:%S')}")
-    print(f"총 실행: {args.count}회 | 동시 실행: {args.workers}개")
+    print(f"시작: {start_time.strftime('%H:%M:%S.%f')[:12]}")
+    print(f"프록시: {proxy_count}개 | IP당: {args.per_ip}개 → 동시: {workers}개")
+    print(f"총 실행: {args.count}회")
     print(f"💡 Ctrl+C로 중단 가능 (현재까지 결과 출력)")
     print("=" * 70)
 
@@ -222,6 +369,8 @@ def main():
     }
     # 서브넷별 통계: {subnet: {'total': 0, 'blocked': 0}}
     subnet_stats = {}
+    # IP별 통계: {ip: {'total': 0, 'blocked': 0, 'found': 0}}
+    ip_stats = {}
 
     # Ctrl+C 핸들러
     def signal_handler(sig, frame):
@@ -233,7 +382,7 @@ def main():
     signal.signal(signal.SIGINT, signal_handler)
 
     try:
-        with ThreadPoolExecutor(max_workers=args.workers) as executor:
+        with ThreadPoolExecutor(max_workers=workers) as executor:
             # 모든 작업 제출
             futures = {executor.submit(run_single_search, i): i for i in range(1, args.count + 1)}
 
@@ -250,7 +399,8 @@ def main():
 
                 if result['returncode'] != 0 or result['stderr'] == 'TIMEOUT':
                     stats['error'] += 1
-                    print(f"[{task_id:3d}] ❌ 에러")
+                    now = datetime.now().strftime('%H:%M:%S.%f')[:12]
+                    print(f"[{now}] [{task_id:3d}] ❌ 에러")
                     continue
 
                 parsed = parse_result(result['stdout'])
@@ -295,10 +445,45 @@ def main():
                     elif parsed['found']:
                         subnet_stats[subnet]['found'] += 1
 
-                # 요약 출력 (고정폭 정렬)
+                # IP별 통계 수집
+                if proxy_ip:
+                    if proxy_ip not in ip_stats:
+                        ip_stats[proxy_ip] = {'total': 0, 'blocked': 0, 'found': 0}
+                    ip_stats[proxy_ip]['total'] += 1
+                    if parsed['blocked']:
+                        ip_stats[proxy_ip]['blocked'] += 1
+                    elif parsed['found']:
+                        ip_stats[proxy_ip]['found'] += 1
+
+                # 서브넷 차단 상태 업데이트 (연속 차단 추적)
+                newly_blocked = update_subnet_status(subnet, parsed['blocked'])
+                if newly_blocked:
+                    print(f"  ⛔ 서브넷 {subnet}.* 연속 {BLOCK_THRESHOLD}회 차단 → 제외")
+
+                # 요약 출력 (고정폭 정렬 + 타임스탬프)
+                now = datetime.now().strftime('%H:%M:%S.%f')[:12]
                 keyword_padded = pad_to_width(keyword, 12)
                 cookie_id = parsed.get('cookie_id', '?')
-                print(f"[{task_id:3d}] {status} {rank_str} | {keyword_padded} | {cookie_id} | {subnet}")
+                tls_ver = parsed.get('tls_version', '?')
+
+                # 미발견 시 직접접속으로 가져온 title 표시
+                title_info = ''
+                if not parsed['found'] and not parsed['blocked']:
+                    title = parsed.get('title', '')
+                    if title and title != 'null':
+                        # 제목 20자로 제한
+                        if get_display_width(title) > 20:
+                            cut_title = ''
+                            for char in title:
+                                if get_display_width(cut_title + char) > 17:
+                                    break
+                                cut_title += char
+                            title = cut_title + '...'
+                        title_info = f' | {title}'
+                    elif parsed.get('direct_blocked'):
+                        title_info = ' | (직접접속 차단)'
+
+                print(f"[{now}] [{task_id:3d}] {status} {rank_str} | {keyword_padded} | {cookie_id} | {tls_ver} | {subnet}{title_info}")
 
                 # 상세 출력
                 if args.verbose:
@@ -315,7 +500,7 @@ def main():
         pass
 
     # 결과 요약
-    print_summary(stats, start_time, subnet_stats, interrupted=cancelled)
+    print_summary(stats, start_time, subnet_stats, ip_stats, proxy_count, args.per_ip, interrupted=cancelled)
 
 
 if __name__ == '__main__':

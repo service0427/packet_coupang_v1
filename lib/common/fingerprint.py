@@ -11,10 +11,6 @@ import json
 import random
 from .db import execute_query
 
-# 검증된 Chrome 버전 (custom TLS) - DB에 있는 버전만
-VERIFIED_VERSIONS = [136]
-
-
 def get_fingerprint_by_version(chrome_version, platform='u22'):
     """특정 버전 핑거프린트 조회
 
@@ -48,22 +44,21 @@ def get_random_fingerprint(platform='u22', verified_only=True):
 
     Args:
         platform: 플랫폼 (u22/win11)
-        verified_only: True면 검증된 버전만, False면 131+ 전체
+        verified_only: True면 verified=1인 버전만, False면 전체
 
     Returns:
         dict: 핑거프린트 레코드 또는 None
     """
     if verified_only:
-        # 검증된 버전 중 랜덤
-        major = random.choice(VERIFIED_VERSIONS)
+        # DB에서 verified=1인 것 중 랜덤
         fps = execute_query(
-            "SELECT * FROM fingerprints WHERE chrome_major = %s AND platform = %s ORDER BY RAND() LIMIT 1",
-            (major, platform)
+            "SELECT * FROM fingerprints WHERE verified = 1 AND platform = %s ORDER BY RAND() LIMIT 1",
+            (platform,)
         )
     else:
-        # 131+ 전체 중 랜덤
+        # 전체 중 랜덤
         fps = execute_query(
-            "SELECT * FROM fingerprints WHERE chrome_major >= 131 AND platform = %s ORDER BY RAND() LIMIT 1",
+            "SELECT * FROM fingerprints WHERE platform = %s ORDER BY RAND() LIMIT 1",
             (platform,)
         )
 
@@ -77,7 +72,7 @@ def get_available_versions(platform='u22'):
         list: [{'chrome_major': 136, 'chrome_version': '136.0.7103.113', 'verified': True}, ...]
     """
     fps = execute_query(
-        "SELECT DISTINCT chrome_major, chrome_version FROM fingerprints WHERE platform = %s ORDER BY chrome_major",
+        "SELECT DISTINCT chrome_major, chrome_version, verified FROM fingerprints WHERE platform = %s ORDER BY chrome_major",
         (platform,)
     )
 
@@ -86,7 +81,7 @@ def get_available_versions(platform='u22'):
         result.append({
             'chrome_major': fp['chrome_major'],
             'chrome_version': fp['chrome_version'],
-            'verified': fp['chrome_major'] in VERIFIED_VERSIONS
+            'verified': bool(fp.get('verified', 0))
         })
 
     return result

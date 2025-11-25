@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from common.db import execute_query
 from common.proxy import get_bound_cookie, get_cookie_by_id, parse_cookie_data, get_subnet, update_cookie_stats, update_cookie_data
-from common.fingerprint import get_fingerprint_by_version, get_random_fingerprint, VERIFIED_VERSIONS
+from common.fingerprint import get_fingerprint_by_version, get_random_fingerprint
 from cffi.search import search_product
 from cffi.click import click_product, extract_ids_from_url
 from cffi.request import timestamp
@@ -151,7 +151,15 @@ def run_search(args):
     else:
         # IP 바인딩 자동 선택
         print("🔍 IP 바인딩 쿠키 탐색...")
-        bound = get_bound_cookie(min_remain=30, max_age_minutes=60)
+
+        # 제외할 서브넷 파싱
+        exclude_subnets = []
+        if hasattr(args, 'exclude_subnets') and args.exclude_subnets:
+            exclude_subnets = [s.strip() for s in args.exclude_subnets.split(',') if s.strip()]
+            if exclude_subnets:
+                print(f"  ⛔ 제외 서브넷: {len(exclude_subnets)}개")
+
+        bound = get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=exclude_subnets)
         if not bound:
             print("❌ IP 바인딩 매칭 실패")
             return None

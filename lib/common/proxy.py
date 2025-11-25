@@ -135,7 +135,7 @@ def parse_cookie_data(cookie_record):
     return cookies
 
 
-def get_bound_cookie(min_remain=30, max_age_minutes=60):
+def get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=None):
     """IP 바인딩된 프록시 + 쿠키 조합 반환
 
     핵심 알고리즘:
@@ -145,6 +145,7 @@ def get_bound_cookie(min_remain=30, max_age_minutes=60):
     Args:
         min_remain: 프록시 최소 남은 시간 (초)
         max_age_minutes: 쿠키 최대 나이 (분)
+        exclude_subnets: 제외할 서브넷 리스트 (예: ['110.70.14', '39.7.47'])
 
     Returns:
         dict: {
@@ -160,6 +161,8 @@ def get_bound_cookie(min_remain=30, max_age_minutes=60):
     if not proxies:
         return None
 
+    exclude_subnets = exclude_subnets or []
+
     # 프록시 목록 섞기
     random.shuffle(proxies)
 
@@ -168,6 +171,10 @@ def get_bound_cookie(min_remain=30, max_age_minutes=60):
         subnet = get_subnet(external_ip)
 
         if not subnet:
+            continue
+
+        # 차단된 서브넷 제외
+        if subnet in exclude_subnets:
             continue
 
         cookies = get_cookies_by_subnet(subnet, max_age_minutes)

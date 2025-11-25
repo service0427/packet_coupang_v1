@@ -62,6 +62,7 @@ def main():
     search_parser.add_argument('--no-click', action='store_true', help='클릭/직접접속 건너뛰기')
     search_parser.add_argument('--proxy', help='프록시 URL 직접 지정')
     search_parser.add_argument('--screenshot', action='store_true', help='상품 발견 시 스크린샷 저장')
+    search_parser.add_argument('--exclude-subnets', help='제외할 서브넷 (쉼표 구분, 예: 110.70.14,39.7.47)')
 
     args = parser.parse_args()
 

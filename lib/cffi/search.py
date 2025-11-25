@@ -146,8 +146,11 @@ def search_product(query, target_product_id, cookies, fingerprint, proxy,
 
     cookies_ref = cookies.copy()  # 쿠키 업데이트용
 
+    # 검색 결과 없음 플래그 (1페이지 0개면 조기 종료)
+    no_results = False
+
     for batch_idx, pages in enumerate(batches):
-        if found or blocked:
+        if found or blocked or no_results:
             break
 
         if verbose:
@@ -198,6 +201,12 @@ def search_product(query, target_product_id, cookies, fingerprint, proxy,
                         for f in futures:
                             f.cancel()
                         break
+
+        # Tier 1 완료 후 검색 결과가 0개면 조기 종료
+        if batch_idx == 0 and len(all_products) == 0 and not blocked:
+            no_results = True
+            if verbose:
+                print(f"  ⚠️ 검색 결과 없음 - 조기 종료")
 
     # 실제 순위 계산
     all_products.sort(key=lambda p: (p['_page'], p.get('rank') or 999))
