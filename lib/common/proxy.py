@@ -71,13 +71,14 @@ def check_external_ip(proxy_url):
         return None
 
 
-def get_cookies_by_subnet(subnet, max_age_minutes=60, valid_only=True):
+def get_cookies_by_subnet(subnet, max_age_minutes=60, valid_only=True, max_fail_count=2):
     """서브넷으로 쿠키 조회
 
     Args:
         subnet: /24 서브넷 (예: '192.168.1')
         max_age_minutes: 최대 쿠키 나이 (분)
         valid_only: True면 init_status='valid'만
+        max_fail_count: 최대 허용 실패 횟수 (기본: 2, 3회 이상 실패면 제외)
 
     Returns:
         list: 쿠키 레코드 리스트
@@ -85,24 +86,28 @@ def get_cookies_by_subnet(subnet, max_age_minutes=60, valid_only=True):
     if valid_only:
         cookies = execute_query("""
             SELECT id, proxy_ip, proxy_url, chrome_version, cookie_data, init_status,
+                   fail_count, success_count,
                    TIMESTAMPDIFF(MINUTE, created_at, NOW()) as age_minutes
             FROM cookies
             WHERE proxy_ip LIKE %s
               AND created_at >= NOW() - INTERVAL %s MINUTE
               AND init_status = 'valid'
-            ORDER BY RAND()
+              AND fail_count <= %s
+            ORDER BY fail_count ASC, created_at DESC
             LIMIT 5
-        """, (f"{subnet}.%", max_age_minutes))
+        """, (f"{subnet}.%", max_age_minutes, max_fail_count))
     else:
         cookies = execute_query("""
             SELECT id, proxy_ip, proxy_url, chrome_version, cookie_data, init_status,
+                   fail_count, success_count,
                    TIMESTAMPDIFF(MINUTE, created_at, NOW()) as age_minutes
             FROM cookies
             WHERE proxy_ip LIKE %s
               AND created_at >= NOW() - INTERVAL %s MINUTE
-            ORDER BY RAND()
+              AND fail_count <= %s
+            ORDER BY fail_count ASC, created_at DESC
             LIMIT 5
-        """, (f"{subnet}.%", max_age_minutes))
+        """, (f"{subnet}.%", max_age_minutes, max_fail_count))
 
     return cookies if cookies else []
 
