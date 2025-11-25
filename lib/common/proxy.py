@@ -209,7 +209,7 @@ def update_cookie_stats(cookie_id, success):
             UPDATE cookies
             SET use_count = use_count + 1,
                 success_count = success_count + 1,
-                last_used_at = NOW()
+                last_success_at = NOW()
             WHERE id = %s
         """, (cookie_id,))
     else:
@@ -217,7 +217,7 @@ def update_cookie_stats(cookie_id, success):
             UPDATE cookies
             SET use_count = use_count + 1,
                 fail_count = fail_count + 1,
-                last_used_at = NOW()
+                last_fail_at = NOW()
             WHERE id = %s
         """, (cookie_id,))
 
@@ -282,7 +282,7 @@ def update_cookie_data(cookie_id, response_cookies_full):
     if updated_count > 0:
         execute_query("""
             UPDATE cookies
-            SET cookie_data = %s, last_used_at = NOW()
+            SET cookie_data = %s, last_success_at = NOW()
             WHERE id = %s
         """, (json.dumps(cookie_data), cookie_id))
 

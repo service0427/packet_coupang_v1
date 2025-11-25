@@ -91,6 +91,23 @@ from common.db import insert_one, execute_query
 from common.proxy import get_proxy_list
 
 
+def cleanup_old_logs(log_dir, max_count=30):
+    """오래된 로그 파일 정리
+
+    Args:
+        log_dir: 로그 디렉토리 경로
+        max_count: 유지할 최대 로그 파일 수
+    """
+    log_files = sorted(log_dir.glob('rank_test_*.log'), key=lambda f: f.stat().st_mtime, reverse=True)
+
+    # max_count 초과분 삭제
+    for old_file in log_files[max_count:]:
+        try:
+            old_file.unlink()
+        except Exception:
+            pass
+
+
 def parse_result(output):
     """출력에서 결과 파싱"""
     result = {}
@@ -308,6 +325,9 @@ def print_summary(stats, start_time, subnet_stats, ip_stats, proxy_count, per_ip
     log_dir = Path(__file__).parent.parent / 'logs'
     log_dir.mkdir(exist_ok=True)
     log_file = log_dir / f"rank_test_{start_time.strftime('%Y%m%d_%H%M%S')}.log"
+
+    # 오래된 로그 정리 (최대 30개 유지)
+    cleanup_old_logs(log_dir, max_count=30)
 
     with open(log_file, 'w', encoding='utf-8') as f:
         f.write(f"Rank 테스트 결과\n")

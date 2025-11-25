@@ -69,10 +69,11 @@ def create_tables():
         success_count INT DEFAULT 0 COMMENT '성공 횟수',
         fail_count INT DEFAULT 0 COMMENT '실패 횟수',
 
-        -- 시간 (3개)
+        -- 시간
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '쿠키 생성',
         locked_at TIMESTAMP NULL COMMENT '호출 시작',
-        last_used_at TIMESTAMP NULL COMMENT '사용 완료',
+        last_success_at TIMESTAMP NULL COMMENT '마지막 성공 시간',
+        last_fail_at TIMESTAMP NULL COMMENT '마지막 실패 시간',
 
         -- 인덱스
         INDEX idx_proxy_ip (proxy_ip),
