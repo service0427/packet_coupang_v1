@@ -16,7 +16,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from common.db import execute_query
-from common.proxy import get_bound_cookie, get_cookie_by_id, parse_cookie_data, get_subnet, update_cookie_stats, update_cookie_data
+from common.proxy import get_bound_cookie, get_cookie_by_id, parse_cookie_data, get_subnet, update_cookie_stats, update_cookie_data, get_proxy_list
 from common.fingerprint import get_fingerprint_by_version, get_random_fingerprint
 from cffi.search import search_product
 from cffi.click import click_product, extract_ids_from_url
@@ -146,8 +146,27 @@ def run_search(args):
             print(f"❌ 쿠키 ID {args.cookie_id} 없음")
             return None
         cookies = parse_cookie_data(cookie_record)
-        proxy = args.proxy or (f"socks5://{cookie_record['proxy_url']}" if cookie_record['proxy_url'] else None)
-        print(f"📍 쿠키 ID: {cookie_record['id']} (지정)")
+
+        # 쿠키의 IP 서브넷과 매칭되는 현재 사용 가능한 프록시 찾기
+        if args.proxy:
+            proxy = args.proxy
+        else:
+            cookie_subnet = get_subnet(cookie_record['proxy_ip'])
+            proxies = get_proxy_list(min_remain=30)
+            matching_proxy = None
+            for p in proxies:
+                if get_subnet(p.get('external_ip')) == cookie_subnet:
+                    matching_proxy = f"socks5://{p['proxy']}"
+                    break
+            if matching_proxy:
+                proxy = matching_proxy
+                print(f"📍 쿠키 ID: {cookie_record['id']} (지정) - 서브넷 매칭 프록시 사용")
+                print(f"   쿠키 IP: {cookie_record['proxy_ip']} → 프록시 서브넷: {cookie_subnet}.*")
+            else:
+                # 매칭 프록시 없으면 원래 proxy_url 사용 (경고 출력)
+                proxy = f"socks5://{cookie_record['proxy_url']}" if cookie_record['proxy_url'] else None
+                print(f"⚠️ 쿠키 ID: {cookie_record['id']} (지정) - 서브넷 매칭 프록시 없음!")
+                print(f"   쿠키 IP: {cookie_record['proxy_ip']} - 원래 프록시 사용 (차단 가능성 높음)")
     else:
         # IP 바인딩 자동 선택
         print("🔍 IP 바인딩 쿠키 탐색...")
@@ -171,7 +190,12 @@ def run_search(args):
         match_icon = "✅" if bound['match_type'] == 'exact' else "🔗"
         print(f"  {match_icon} 쿠키 ID: {cookie_record['id']} ({bound['match_type']})")
         print(f"     IP: {bound['external_ip']} (서브넷: {get_subnet(bound['external_ip'])}.*)")
-        print(f"     나이: {cookie_record['age_minutes']:.0f}분")
+        # 경과 시간 표시
+        created_age = cookie_record.get('created_age_seconds', 0) or 0
+        last_success_age = cookie_record.get('last_success_age_seconds')
+        last_success_str = f"{last_success_age}초" if last_success_age else "없음"
+        print(f"     경과: 생성 {created_age}초 | 최종성공 {last_success_str}")
+        print(f"     상태: {cookie_record.get('init_status', '?')} | 소스: {cookie_record.get('source', '?')} | 쿠키버전: {cookie_record.get('chrome_version', '?')}")
 
     # TLS 핑거프린트 선택 (검증된 버전 중 랜덤)
     fingerprint = get_random_fingerprint(verified_only=True)
@@ -200,6 +224,63 @@ def run_search(args):
     )
 
     search_time = (datetime.now() - start_time).total_seconds()
+
+    # 페이지 에러가 있고 상품 미발견 시 재시도 (curl 타임아웃, TLS 에러 등)
+    page_errors = result.get('page_errors', [])
+    retry_errors = ['curl: (28)', 'curl: (35)', 'TLS connect error', 'Operation timed out']
+    has_retry_error = any(
+        any(err in e.get('error', '') for err in retry_errors)
+        for e in page_errors
+    )
+
+    if not result['found'] and not result['blocked'] and has_retry_error and not args.cookie_id:
+        print(f"\n🔄 네트워크 에러 발생 - 다른 프록시로 재시도...")
+
+        # 현재 서브넷 제외하고 새 쿠키 탐색
+        current_subnet = get_subnet(cookie_record['proxy_ip'])
+        retry_exclude = [current_subnet] if current_subnet else []
+        if hasattr(args, 'exclude_subnets') and args.exclude_subnets:
+            retry_exclude.extend([s.strip() for s in args.exclude_subnets.split(',') if s.strip()])
+
+        retry_bound = get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=retry_exclude)
+        if retry_bound:
+            retry_cookie_record = retry_bound['cookie_record']
+            retry_cookies = retry_bound['cookies']
+            retry_proxy = retry_bound['proxy']
+            retry_fingerprint = get_random_fingerprint(verified_only=True)
+
+            print(f"  ✅ 새 쿠키 ID: {retry_cookie_record['id']}")
+            print(f"     IP: {retry_bound['external_ip']} (서브넷: {get_subnet(retry_bound['external_ip'])}.*)")
+
+            # 재시도 검색
+            retry_result = search_product(
+                args.query,
+                args.product_id,
+                retry_cookies,
+                retry_fingerprint,
+                retry_proxy,
+                max_page=args.max_page,
+                verbose=True,
+                save_html=save_html
+            )
+
+            # 재시도 쿠키 통계 업데이트
+            retry_success = not retry_result['blocked']
+            update_cookie_stats(retry_cookie_record['id'], retry_success)
+
+            if retry_result.get('response_cookies_full'):
+                update_cookie_data(retry_cookie_record['id'], retry_result['response_cookies_full'])
+
+            # 재시도 결과가 더 좋으면 교체
+            if retry_result['found'] or (not retry_result['blocked'] and not result['found']):
+                result = retry_result
+                cookie_record = retry_cookie_record
+                cookies = retry_cookies
+                fingerprint = retry_fingerprint
+                proxy = retry_proxy
+                search_time += (datetime.now() - start_time).total_seconds() - search_time
+        else:
+            print(f"  ⚠️ 재시도용 프록시 없음 - 건너뜀")
 
     # 결과 출력
     print("\n" + "=" * 70)
@@ -280,7 +361,13 @@ def run_search(args):
     elif blocked:
         print(f"\n🚫 차단됨: {result['block_error']}")
     else:
-        print(f"\n❌ 상품 미발견 ({len(result['all_products'])}개 검색)")
+        # 페이지 에러가 있으면 표시
+        page_errors = result.get('page_errors', [])
+        if page_errors:
+            error_str = ', '.join([f"P{e['page']}:{e['error']}" for e in page_errors])
+            print(f"\n❌ 상품 미발견 ({len(result['all_products'])}개 검색) | 에러: {error_str}")
+        else:
+            print(f"\n❌ 상품 미발견 ({len(result['all_products'])}개 검색)")
 
         # 직접 접속으로 상품 정보 추출 (--no-click이 아니면 실행)
         if not args.no_click:
@@ -295,6 +382,40 @@ def run_search(args):
             # 직접 접속 응답 쿠키도 업데이트에 포함
             if direct_result.get('response_cookies_full'):
                 result['response_cookies_full'].extend(direct_result['response_cookies_full'])
+
+            # 직접 접속 실패 시 재시도 (새 쿠키/프록시로)
+            if not direct_result.get('success') and not args.cookie_id:
+                print(f"\n🔄 직접접속 차단 - 새 쿠키로 재시도...")
+
+                # 현재 서브넷 제외하고 새 쿠키 탐색
+                current_subnet = get_subnet(cookie_record['proxy_ip'])
+                retry_exclude = [current_subnet] if current_subnet else []
+                if hasattr(args, 'exclude_subnets') and args.exclude_subnets:
+                    retry_exclude.extend([s.strip() for s in args.exclude_subnets.split(',') if s.strip()])
+
+                retry_bound = get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=retry_exclude)
+                if retry_bound:
+                    retry_cookie_record = retry_bound['cookie_record']
+                    retry_cookies = retry_bound['cookies']
+                    retry_proxy = retry_bound['proxy']
+                    retry_fingerprint = get_random_fingerprint(verified_only=True)
+
+                    print(f"  ✅ 새 쿠키 ID: {retry_cookie_record['id']}")
+                    print(f"     IP: {retry_bound['external_ip']} (서브넷: {get_subnet(retry_bound['external_ip'])}.*)")
+
+                    direct_result = direct_access_product(
+                        args.product_id, item_id, vendor_item_id,
+                        retry_cookies, retry_fingerprint, retry_proxy
+                    )
+
+                    # 재시도 쿠키 통계 업데이트
+                    retry_success = direct_result.get('success', False)
+                    update_cookie_stats(retry_cookie_record['id'], retry_success)
+
+                    if direct_result.get('response_cookies_full'):
+                        update_cookie_data(retry_cookie_record['id'], direct_result['response_cookies_full'])
+                else:
+                    print(f"  ❌ 재시도용 쿠키 없음")
 
     # 통계 업데이트
     is_success = not blocked

@@ -71,43 +71,34 @@ def check_external_ip(proxy_url):
         return None
 
 
-def get_cookies_by_subnet(subnet, max_age_minutes=60, valid_only=True, max_fail_count=2):
-    """서브넷으로 쿠키 조회
+def get_cookies_by_subnet(subnet, max_age_minutes=60, max_fail_count=2, lock_timeout_minutes=5):
+    """서브넷으로 쿠키 조회 (잠금된 쿠키 제외)
 
     Args:
         subnet: /24 서브넷 (예: '192.168.1')
-        max_age_minutes: 최대 쿠키 나이 (분)
-        valid_only: True면 init_status='valid'만
+        max_age_minutes: 최대 쿠키 나이 (분) - last_success_at 기준, 없으면 created_at 기준
         max_fail_count: 최대 허용 실패 횟수 (기본: 2, 3회 이상 실패면 제외)
+        lock_timeout_minutes: 잠금 타임아웃 (분) - 이 시간이 지나면 잠금 무시
 
     Returns:
         list: 쿠키 레코드 리스트
     """
-    if valid_only:
-        cookies = execute_query("""
-            SELECT id, proxy_ip, proxy_url, chrome_version, cookie_data, init_status,
-                   fail_count, success_count,
-                   TIMESTAMPDIFF(MINUTE, created_at, NOW()) as age_minutes
-            FROM cookies
-            WHERE proxy_ip LIKE %s
-              AND created_at >= NOW() - INTERVAL %s MINUTE
-              AND init_status = 'valid'
-              AND fail_count <= %s
-            ORDER BY fail_count ASC, created_at DESC
-            LIMIT 5
-        """, (f"{subnet}.%", max_age_minutes, max_fail_count))
-    else:
-        cookies = execute_query("""
-            SELECT id, proxy_ip, proxy_url, chrome_version, cookie_data, init_status,
-                   fail_count, success_count,
-                   TIMESTAMPDIFF(MINUTE, created_at, NOW()) as age_minutes
-            FROM cookies
-            WHERE proxy_ip LIKE %s
-              AND created_at >= NOW() - INTERVAL %s MINUTE
-              AND fail_count <= %s
-            ORDER BY fail_count ASC, created_at DESC
-            LIMIT 5
-        """, (f"{subnet}.%", max_age_minutes, max_fail_count))
+    # last_success_at 기준 60분 이내 쿠키 조회 (없으면 created_at 기준, expired 제외)
+    cookies = execute_query("""
+        SELECT id, proxy_ip, proxy_url, chrome_version, cookie_data, init_status, source,
+               fail_count, success_count,
+               TIMESTAMPDIFF(MINUTE, COALESCE(last_success_at, created_at), NOW()) as age_minutes,
+               TIMESTAMPDIFF(SECOND, created_at, NOW()) as created_age_seconds,
+               TIMESTAMPDIFF(SECOND, last_success_at, NOW()) as last_success_age_seconds
+        FROM cookies
+        WHERE proxy_ip LIKE %s
+          AND COALESCE(last_success_at, created_at) >= NOW() - INTERVAL %s MINUTE
+          AND fail_count <= %s
+          AND (locked_at IS NULL OR locked_at < NOW() - INTERVAL %s MINUTE)
+          AND init_status != 'expired'
+        ORDER BY fail_count ASC, last_success_at DESC, created_at DESC
+        LIMIT 5
+    """, (f"{subnet}.%", max_age_minutes, max_fail_count, lock_timeout_minutes))
 
     return cookies if cookies else []
 
@@ -185,6 +176,9 @@ def get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=None):
         cookie_record = cookies[0]
         match_type = 'exact' if cookie_record['proxy_ip'] == external_ip else 'subnet'
 
+        # 쿠키 잠금 (작업 할당)
+        lock_cookie(cookie_record['id'])
+
         return {
             'proxy': f"socks5://{proxy_info['proxy']}",
             'proxy_host': proxy_info['proxy'],
@@ -197,8 +191,34 @@ def get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=None):
     return None
 
 
+def lock_cookie(cookie_id):
+    """쿠키 잠금 (작업 할당 시)
+
+    Args:
+        cookie_id: 쿠키 ID
+    """
+    execute_query("""
+        UPDATE cookies
+        SET locked_at = NOW()
+        WHERE id = %s
+    """, (cookie_id,))
+
+
+def unlock_cookie(cookie_id):
+    """쿠키 잠금 해제 (작업 완료 시)
+
+    Args:
+        cookie_id: 쿠키 ID
+    """
+    execute_query("""
+        UPDATE cookies
+        SET locked_at = NULL
+        WHERE id = %s
+    """, (cookie_id,))
+
+
 def update_cookie_stats(cookie_id, success):
-    """쿠키 사용 통계 업데이트
+    """쿠키 사용 통계 업데이트 및 잠금 해제
 
     Args:
         cookie_id: 쿠키 ID
@@ -209,7 +229,8 @@ def update_cookie_stats(cookie_id, success):
             UPDATE cookies
             SET use_count = use_count + 1,
                 success_count = success_count + 1,
-                last_success_at = NOW()
+                last_success_at = NOW(),
+                locked_at = NULL
             WHERE id = %s
         """, (cookie_id,))
     else:
@@ -217,7 +238,8 @@ def update_cookie_stats(cookie_id, success):
             UPDATE cookies
             SET use_count = use_count + 1,
                 fail_count = fail_count + 1,
-                last_fail_at = NOW()
+                last_fail_at = NOW(),
+                locked_at = NULL
             WHERE id = %s
         """, (cookie_id,))
 

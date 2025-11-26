@@ -133,6 +133,7 @@ def search_product(query, target_product_id, cookies, fingerprint, proxy,
     all_products = []
     blocked = False
     block_error = ''
+    page_errors = []  # 각 페이지별 에러 수집
     total_bytes = 0
     all_response_cookies = {}
     all_response_cookies_full = []
@@ -192,12 +193,21 @@ def search_product(query, target_product_id, cookies, fingerprint, proxy,
                         print(f"    Page {result['page']:2d}: {len(result['products'])}개")
                 else:
                     error = result.get('error', '')
+                    if error:
+                        page_errors.append({'page': result['page'], 'error': error})
                     if verbose:
                         print(f"    Page {result['page']:2d}: ❌ {error}")
 
-                    if error == 'BLOCKED_403' or error.startswith('CHALLENGE_'):
+                    # HTTP/2 스트림 에러도 차단으로 처리 (가장 흔한 차단 방식)
+                    if (error == 'BLOCKED_403' or
+                        error.startswith('CHALLENGE_') or
+                        'HTTP/2 stream' in error or
+                        'curl: (92)' in error):
                         blocked = True
-                        block_error = error
+                        if 'HTTP/2 stream' in error or 'curl: (92)' in error:
+                            block_error = 'HTTP2_PROTOCOL_ERROR'
+                        else:
+                            block_error = error
                         for f in futures:
                             f.cancel()
                         break
@@ -226,6 +236,7 @@ def search_product(query, target_product_id, cookies, fingerprint, proxy,
         'all_products': all_products,
         'blocked': blocked,
         'block_error': block_error,
+        'page_errors': page_errors,
         'total_bytes': total_bytes,
         'trace_id': trace_id,
         'response_cookies': all_response_cookies,

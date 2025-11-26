@@ -120,12 +120,14 @@ def create_route_handler():
     return handle_route
 
 
-def determine_status(is_access_denied, page_valid, abck_valid):
+def determine_status(is_access_denied, page_valid, abck_exists, abck_valid):
     """쿠키 상태 결정
 
     Returns:
-        str: 'valid', 'denied', 'blocked', 'invalid'
+        str: 'valid', 'denied', 'blocked', 'invalid', 'no_abck'
     """
+    if not abck_exists:
+        return 'no_abck'
     if is_access_denied:
         return 'denied'
     elif not page_valid:
@@ -258,6 +260,7 @@ def generate_cookies(version, proxy, loop_count=1):
             akamai_cookies = [c for c in cookies if c['name'] in akamai_names]
 
             abck = next((c for c in akamai_cookies if c['name'] == '_abck'), None)
+            abck_exists = abck is not None
             abck_value = abck['value'] if abck else None
             abck_valid = '~-1~' in abck_value if abck_value else False
 
@@ -274,7 +277,7 @@ def generate_cookies(version, proxy, loop_count=1):
                 """)
 
             # 상태 결정
-            init_status = determine_status(is_access_denied, page_valid, abck_valid)
+            init_status = determine_status(is_access_denied, page_valid, abck_exists, abck_valid)
 
             # DB 저장
             proxy_stripped = proxy.replace('socks5://', '') if proxy else None
@@ -293,7 +296,7 @@ def generate_cookies(version, proxy, loop_count=1):
 
             # 출력
             traffic_kb = total_bytes[0] / 1024
-            status_icons = {'valid': '✅', 'denied': '🚫', 'blocked': '⛔', 'invalid': '⚠️'}
+            status_icons = {'valid': '✅', 'denied': '🚫', 'blocked': '⛔', 'invalid': '⚠️', 'no_abck': '❌'}
             icon = status_icons.get(init_status, '❓')
             print(f"{icon} ID: {insert_id} | {init_status} | 트래픽: {traffic_kb:.0f}KB | 쿠키: {len(cookies)}개 | {load_time}ms")
 
@@ -324,7 +327,7 @@ def generate_cookies(version, proxy, loop_count=1):
         by_status[status].append(r['cookie_id'])
 
     print(f"총 저장: {len(results)}개")
-    status_icons = {'valid': '✅', 'denied': '🚫', 'blocked': '⛔', 'invalid': '⚠️'}
+    status_icons = {'valid': '✅', 'denied': '🚫', 'blocked': '⛔', 'invalid': '⚠️', 'no_abck': '❌'}
     for status, ids in by_status.items():
         icon = status_icons.get(status, '❓')
         print(f"  {icon} {status}: {len(ids)}개 - {', '.join(map(str, ids))}")

@@ -71,7 +71,7 @@ def main():
 
         # 쿠키 생성
         result = subprocess.run(
-            ['python3', 'coupang.py', 'cookie', '-t', '20', '-l', '5'],
+            ['python3', 'coupang.py', 'cookie', '-t', '20', '-l', '1'],
             cwd=str(Path(__file__).parent),
             timeout=600
         )

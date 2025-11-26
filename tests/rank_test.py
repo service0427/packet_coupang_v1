@@ -91,6 +91,41 @@ from common.db import insert_one, execute_query
 from common.proxy import get_proxy_list
 
 
+def cleanup_old_cookies(max_age_minutes=120):
+    """오래된 쿠키 만료 처리 (init_status='expired')
+
+    Args:
+        max_age_minutes: 만료 기준 시간 (분, 기본: 120분)
+
+    Returns:
+        int: 만료 처리된 쿠키 수
+    """
+    # 만료 대상 쿠키 수 조회
+    result = execute_query("""
+        SELECT COUNT(*) as cnt FROM cookies
+        WHERE created_at < NOW() - INTERVAL %s MINUTE
+          AND init_status != 'expired'
+    """, (max_age_minutes,))
+    count = result[0]['cnt'] if result else 0
+
+    if count > 0:
+        # init_status를 expired로 변경 (DELETE 권한 없음)
+        execute_query("""
+            UPDATE cookies
+            SET init_status = 'expired'
+            WHERE created_at < NOW() - INTERVAL %s MINUTE
+              AND init_status != 'expired'
+        """, (max_age_minutes,))
+
+    return count
+
+
+def get_cookie_count():
+    """사용 가능한 쿠키 수 조회 (expired 제외)"""
+    result = execute_query("SELECT COUNT(*) as cnt FROM cookies WHERE init_status != 'expired'")
+    return result[0]['cnt'] if result else 0
+
+
 def cleanup_old_logs(log_dir, max_count=30):
     """오래된 로그 파일 정리
 
@@ -145,6 +180,30 @@ def parse_result(output):
     if match:
         result['tls_version'] = int(match.group(1))
 
+    # init_status 파싱: "상태: valid | 소스: local | 쿠키버전: 131"
+    match = re.search(r'상태:\s*(\w+)', output)
+    if match:
+        result['init_status'] = match.group(1)
+
+    # source 파싱: "소스: local"
+    match = re.search(r'소스:\s*(\w+)', output)
+    if match:
+        result['source'] = match.group(1)
+
+    # 쿠키 chrome_version 파싱: "쿠키버전: 131"
+    match = re.search(r'쿠키버전:\s*(\S+)', output)
+    if match:
+        result['cookie_version'] = match.group(1)
+
+    # 경과 시간 파싱: "경과: 생성 1234초 | 최종성공 567초"
+    match = re.search(r'생성\s*(\d+)초', output)
+    if match:
+        result['created_age'] = int(match.group(1))
+
+    match = re.search(r'최종성공\s*(\d+)초', output)
+    if match:
+        result['last_success_age'] = int(match.group(1))
+
     # 직접 접속 상품 제목 파싱: "title: 상품명"
     match = re.search(r'^\s*title:\s*(.+)$', output, re.MULTILINE)
     if match:
@@ -157,8 +216,20 @@ def parse_result(output):
     # 상품 발견 여부
     result['found'] = '✅ 상품 발견' in output
 
-    # 차단 여부
-    result['blocked'] = '차단됨' in output or 'BLOCKED' in output or 'CHALLENGE' in output
+    # 차단 여부 (HTTP/2 에러 포함 - 가장 흔한 차단 방식)
+    result['blocked'] = ('차단됨' in output or 'BLOCKED' in output or
+                         'CHALLENGE' in output or 'HTTP/2 stream' in output or
+                         'HTTP2_PROTOCOL_ERROR' in output)
+
+    # 검색된 상품 수 파싱: "❌ 상품 미발견 (123개 검색)"
+    match = re.search(r'상품 미발견 \((\d+)개 검색\)', output)
+    if match:
+        result['search_count'] = int(match.group(1))
+
+    # 페이지 에러 파싱: "에러: P1:CHALLENGE_1234B, P2:STATUS_403"
+    match = re.search(r'에러:\s*(.+?)(?:\n|$)', output)
+    if match:
+        result['page_errors'] = match.group(1).strip()
 
     return result
 
@@ -349,7 +420,16 @@ def main():
     parser.add_argument('--min-remain', type=int, default=30, help='프록시 최소 남은 시간 (초, 기본: 30)')
     parser.add_argument('--no-save', action='store_true', help='DB 저장 안함')
     parser.add_argument('-v', '--verbose', action='store_true', help='상세 출력')
+    parser.add_argument('--no-cleanup', action='store_true', help='오래된 쿠키 정리 건너뛰기')
     args = parser.parse_args()
+
+    # 오래된 쿠키 만료 처리 (120분 이상)
+    if not args.no_cleanup:
+        expired_count = cleanup_old_cookies(max_age_minutes=120)
+        if expired_count > 0:
+            remaining = get_cookie_count()
+            print(f"🧹 오래된 쿠키 만료: {expired_count}개 (120분+ 경과)")
+            print(f"   사용 가능: {remaining}개")
 
     # 프록시 수 조회하여 workers 자동 계산
     proxies = get_proxy_list(min_remain=args.min_remain)
@@ -484,26 +564,56 @@ def main():
                 now = datetime.now().strftime('%H:%M:%S.%f')[:12]
                 keyword_padded = pad_to_width(keyword, 12)
                 cookie_id = parsed.get('cookie_id', '?')
+                pl_id = parsed.get('pl_id', '?')
                 tls_ver = parsed.get('tls_version', '?')
+                init_status = parsed.get('init_status', '?')
+                source = parsed.get('source', '?')
+                cookie_ver = parsed.get('cookie_version', '?')
 
-                # 미발견 시 직접접속으로 가져온 title 표시
+                # source 표시 (local→L, pg_sync→P)
+                source_map = {'local': 'L', 'pg_sync': 'P'}
+                source_short = source_map.get(source, '?')
+
+                # 쿠키버전 메이저만 추출 (131.0.6778.264 → 131)
+                cookie_major = cookie_ver.split('.')[0] if cookie_ver != '?' else '?'
+
+                # 미발견 시 검색된 상품 수 및 에러/직접접속 title 표시
                 title_info = ''
                 if not parsed['found'] and not parsed['blocked']:
-                    title = parsed.get('title', '')
-                    if title and title != 'null':
-                        # 제목 20자로 제한
-                        if get_display_width(title) > 20:
-                            cut_title = ''
-                            for char in title:
-                                if get_display_width(cut_title + char) > 17:
-                                    break
-                                cut_title += char
-                            title = cut_title + '...'
-                        title_info = f' | {title}'
-                    elif parsed.get('direct_blocked'):
-                        title_info = ' | (직접접속 차단)'
+                    # 검색된 상품 수 표시
+                    search_count = parsed.get('search_count', 0)
+                    title_info = f' | ({search_count}개)'
 
-                print(f"[{now}] [{task_id:3d}] {status} {rank_str} | {keyword_padded} | {cookie_id} | {tls_ver} | {subnet}{title_info}")
+                    # 페이지 에러가 있으면 우선 표시
+                    page_errors = parsed.get('page_errors', '')
+                    if page_errors:
+                        title_info += f' [{page_errors}]'
+                    else:
+                        title = parsed.get('title', '')
+                        if title and title != 'null':
+                            # 제목 20자로 제한
+                            if get_display_width(title) > 20:
+                                cut_title = ''
+                                for char in title:
+                                    if get_display_width(cut_title + char) > 17:
+                                        break
+                                    cut_title += char
+                                title = cut_title + '...'
+                            title_info += f' {title}'
+                        elif parsed.get('direct_blocked'):
+                            title_info += ' (직접접속 차단)'
+
+                # init_status 끝에 표시
+                init_info = f' ({init_status})' if init_status else ''
+
+                # 경과 시간 표시 (생성/최종성공)
+                created_age = parsed.get('created_age', 0)
+                last_success_age = parsed.get('last_success_age')
+                age_str = f"C{created_age//60}m"
+                if last_success_age is not None:
+                    age_str += f"/S{last_success_age//60}m"
+
+                print(f"[{now}] [{task_id:3d}] {status} {rank_str} | {keyword_padded} | PL#{pl_id:<5} | {cookie_id:>6} | [{source_short}] v{cookie_major:>3}/{tls_ver:<3} | {age_str:>10} | {subnet}{title_info}{init_info}")
 
                 # 상세 출력
                 if args.verbose:
