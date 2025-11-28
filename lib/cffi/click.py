@@ -14,7 +14,7 @@ from cffi.request import make_request, parse_response_cookies, timestamp
 from extractor.detail_extractor import extract_product_detail
 
 
-def click_product(product_info, search_url, cookies, fingerprint, proxy, verbose=True):
+def click_product(product_info, search_url, cookies, fingerprint, proxy, verbose=True, save_html=False):
     """상품 클릭 (상세 페이지 요청)
 
     Args:
@@ -24,6 +24,7 @@ def click_product(product_info, search_url, cookies, fingerprint, proxy, verbose
         fingerprint: 핑거프린트 레코드
         proxy: 프록시 URL
         verbose: 상세 출력
+        save_html: HTML 저장 여부
 
     Returns:
         dict: {
@@ -36,6 +37,7 @@ def click_product(product_info, search_url, cookies, fingerprint, proxy, verbose
         }
     """
     full_url = f'https://www.coupang.com{product_info["url"]}'
+    product_id = product_info.get('productId')
 
     try:
         resp = make_request(
@@ -43,8 +45,18 @@ def click_product(product_info, search_url, cookies, fingerprint, proxy, verbose
             referer=search_url
         )
         size = len(resp.content)
+        html_content = resp.text
 
         response_cookies, response_cookies_full = parse_response_cookies(resp)
+
+        # HTML 저장 (사이즈와 관계없이 항상 저장)
+        if save_html and product_id:
+            html_dir = Path(__file__).parent.parent.parent / 'html'
+            html_dir.mkdir(parents=True, exist_ok=True)
+            html_path = html_dir / f'{product_id}.html'
+            html_path.write_text(html_content, encoding='utf-8')
+            if verbose:
+                print(f"  📄 HTML 저장: {html_path}")
 
         # 상세 정보 출력
         if verbose:
@@ -68,17 +80,10 @@ def click_product(product_info, search_url, cookies, fingerprint, proxy, verbose
         # 결과 판정 (100KB 이상 = 성공)
         if size > 100000:
             # 상품 정보 추출
-            product_data = extract_product_detail(resp.text)
+            product_data = extract_product_detail(html_content)
 
             if verbose:
                 print(f"  ✅ 클릭 성공")
-                if product_data:
-                    print(f"\n{'─' * 60}")
-                    print("📦 상세 페이지 상품 정보")
-                    print(f"{'─' * 60}")
-                    for key, value in product_data.items():
-                        print(f"   {key}: {value}")
-                    print(f"{'─' * 60}")
 
             return {
                 'success': True,

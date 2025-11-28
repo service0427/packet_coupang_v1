@@ -57,3 +57,4 @@ screenshot/cache/
 screenshot/*.html
 screenshot/*.png
 screenshot/*.json
+html/

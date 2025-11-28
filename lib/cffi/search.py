@@ -40,7 +40,15 @@ def fetch_page(page_num, query, trace_id, cookies, fingerprint, proxy, save_html
         response_cookies, response_cookies_full = parse_response_cookies(resp)
 
         if resp.status_code == 200 and size > 5000:
-            result = ProductExtractor.extract_products_from_html(resp.text)
+            html_text = resp.text
+            result = ProductExtractor.extract_products_from_html(html_text)
+
+            # "검색결과 없음" 페이지 감지 (쿠팡 정상 응답이지만 상품 없음)
+            is_no_results_page = (
+                '에 대한 검색결과가 없습니다' in html_text or
+                '검색결과가 없습니다' in html_text
+            )
+
             return {
                 'page': page_num,
                 'success': True,
@@ -48,7 +56,8 @@ def fetch_page(page_num, query, trace_id, cookies, fingerprint, proxy, save_html
                 'size': size,
                 'response_cookies': response_cookies,
                 'response_cookies_full': response_cookies_full,
-                'html': resp.text if save_html else None
+                'html': html_text if save_html else None,
+                'is_no_results_page': is_no_results_page
             }
         elif resp.status_code == 403:
             return {
@@ -138,12 +147,13 @@ def search_product(query, target_product_id, cookies, fingerprint, proxy,
     all_response_cookies = {}
     all_response_cookies_full = []
 
-    # 배치 정의
+    # 배치 정의 (빈 배치 제외)
     batches = [
         [1],                    # Tier 1
         [2, 3],                 # Tier 2
         list(range(4, min(max_page + 1, 14)))  # Tier 3
     ]
+    batches = [b for b in batches if b]  # 빈 배치 제거
 
     cookies_ref = cookies.copy()  # 쿠키 업데이트용
 
@@ -212,11 +222,36 @@ def search_product(query, target_product_id, cookies, fingerprint, proxy,
                             f.cancel()
                         break
 
+                    # 1페이지 타임아웃 시 조기 종료 (프록시 문제)
+                    if (batch_idx == 0 and result['page'] == 1 and
+                        ('timed out' in error.lower() or 'curl: (28)' in error or
+                         'Could not connect' in error or 'curl: (7)' in error)):
+                        blocked = True
+                        block_error = 'PROXY_TIMEOUT'
+                        if verbose:
+                            print(f"  🛑 1페이지 타임아웃 → 조기 종료")
+                        for f in futures:
+                            f.cancel()
+                        break
+
         # Tier 1 완료 후 검색 결과가 0개면 조기 종료
+        # no_results는 쿠팡이 명시적으로 "검색결과 없음"을 반환한 경우에만 True
+        # 에러(타임아웃 등)로 인한 0개는 no_results = False
         if batch_idx == 0 and len(all_products) == 0 and not blocked:
-            no_results = True
-            if verbose:
-                print(f"  ⚠️ 검색 결과 없음 - 조기 종료")
+            # 에러 없이 성공한 요청 중 "검색결과 없음" 페이지가 있는지 확인
+            is_coupang_no_results = any(
+                f.result().get('is_no_results_page', False)
+                for f in futures if f.done() and not f.cancelled() and f.result().get('success')
+            )
+
+            if is_coupang_no_results:
+                no_results = True  # 쿠팡이 명시적으로 검색결과 없음 반환
+                if verbose:
+                    print(f"  ⚠️ 쿠팡 검색결과 없음 - 조기 종료")
+            else:
+                no_results = False  # 에러로 인한 0개 (타임아웃 등)
+                if verbose:
+                    print(f"  ⚠️ 검색 결과 없음 - 조기 종료")
 
     # 실제 순위 계산
     all_products.sort(key=lambda p: (p['_page'], p.get('rank') or 999))
@@ -241,7 +276,8 @@ def search_product(query, target_product_id, cookies, fingerprint, proxy,
         'trace_id': trace_id,
         'response_cookies': all_response_cookies,
         'response_cookies_full': all_response_cookies_full,
-        'found_html': found_html
+        'found_html': found_html,
+        'no_results': no_results  # 쿠팡이 "검색결과 없음" 응답 (정상적인 미발견)
     }
 
 

@@ -16,6 +16,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from common.fingerprint import build_extra_fp, build_headers
 
+# ============================================================================
+# 전역 설정
+# ============================================================================
+REQUEST_TIMEOUT = 10  # HTTP 요청 타임아웃 (초)
+
 
 def timestamp():
     """타임스탬프 (H:M:S.밀리초3자리)"""
@@ -41,7 +46,7 @@ def generate_trace_id():
     return ''.join(reversed(result))
 
 
-def make_request(url, cookies, fingerprint, proxy, referer=None, timeout=30):
+def make_request(url, cookies, fingerprint, proxy, referer=None, timeout=None):
     """HTTP GET 요청 (Custom TLS)
 
     Args:
@@ -55,6 +60,9 @@ def make_request(url, cookies, fingerprint, proxy, referer=None, timeout=30):
     Returns:
         Response 객체
     """
+    if timeout is None:
+        timeout = REQUEST_TIMEOUT
+
     headers = build_headers(fingerprint, referer)
 
     # Custom TLS 방식 (DB 프로파일 사용)

@@ -126,7 +126,7 @@ def parse_cookie_data(cookie_record):
     return cookies
 
 
-def get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=None):
+def get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=None, target_subnet=None):
     """IP 바인딩된 프록시 + 쿠키 조합 반환
 
     핵심 알고리즘:
@@ -137,6 +137,7 @@ def get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=None):
         min_remain: 프록시 최소 남은 시간 (초)
         max_age_minutes: 쿠키 최대 나이 (분)
         exclude_subnets: 제외할 서브넷 리스트 (예: ['110.70.14', '39.7.47'])
+        target_subnet: 특정 서브넷 지정 (API 할당용, 예: '175.223.14')
 
     Returns:
         dict: {
@@ -148,6 +149,22 @@ def get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=None):
             'match_type': 'exact' | 'subnet'
         } 또는 None
     """
+    # target_subnet이 지정된 경우 해당 서브넷 쿠키만 조회
+    if target_subnet:
+        cookies = get_cookies_by_subnet(target_subnet, max_age_minutes)
+        if cookies:
+            cookie_record = cookies[0]
+            lock_cookie(cookie_record['id'])
+            return {
+                'proxy': None,  # 외부에서 지정
+                'proxy_host': None,
+                'external_ip': None,
+                'cookie_record': cookie_record,
+                'cookies': parse_cookie_data(cookie_record),
+                'match_type': 'target'
+            }
+        return None
+
     proxies = get_proxy_list(min_remain)
     if not proxies:
         return None

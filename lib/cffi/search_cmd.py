@@ -33,21 +33,6 @@ DEFAULT_PRODUCT = {
 }
 
 
-def get_random_product(product_list_id=None):
-    """DB에서 상품 조회"""
-    if product_list_id:
-        result = execute_query("""
-            SELECT id, keyword, product_id, item_id, vendor_item_id
-            FROM product_list WHERE id = %s
-        """, (product_list_id,))
-    else:
-        result = execute_query("""
-            SELECT id, keyword, product_id, item_id, vendor_item_id
-            FROM product_list ORDER BY RAND() LIMIT 1
-        """)
-    return result[0] if result else None
-
-
 def direct_access_product(product_id, item_id, vendor_item_id, cookies, fingerprint, proxy):
     """상품 URL 직접 접속으로 정보 추출
 
@@ -123,20 +108,6 @@ def run_search(args):
     print("=" * 70)
     print("상품 검색")
     print("=" * 70)
-
-    # 상품 정보 (직접 접속용)
-    product_info = None
-
-    # --random: DB에서 키워드 선택
-    if args.random:
-        pl_id = args.pl_id
-        product_info = get_random_product(pl_id)
-        if not product_info:
-            print("❌ product_list 데이터 없음")
-            return None
-        args.query = product_info['keyword']
-        args.product_id = product_info['product_id']
-        print(f"🎲 랜덤 선택 [PL#{product_info['id']}]: {args.query}")
 
     # IP 바인딩 + 쿠키 선택
     if args.cookie_id:
@@ -454,7 +425,6 @@ if __name__ == '__main__':
     parser.add_argument('--query', default='호박 달빛식혜')
     parser.add_argument('--max-page', type=int, default=13)
     parser.add_argument('--no-click', action='store_true', help='클릭/직접접속 건너뛰기')
-    parser.add_argument('--random', action='store_true')
     parser.add_argument('--cookie-id', type=int)
     parser.add_argument('--proxy')
     parser.add_argument('--screenshot', action='store_true', help='상품 발견 시 스크린샷 저장')

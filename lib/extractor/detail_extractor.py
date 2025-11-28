@@ -8,6 +8,114 @@ import re
 import json
 
 
+def _extract_jsonld_product(html_content):
+    """HTML에서 JSON-LD (schema.org Product) 추출
+
+    <script type="application/ld+json">에서 @type: Product 데이터 추출
+    """
+    # Product JSON-LD 찾기
+    pattern = r'<script[^>]*type="application/ld\+json"[^>]*>\s*(\{[^<]*"@type"\s*:\s*"Product"[^<]*\})\s*</script>'
+    match = re.search(pattern, html_content, re.DOTALL)
+
+    if not match:
+        return None
+
+    try:
+        jsonld = json.loads(match.group(1))
+    except json.JSONDecodeError:
+        return None
+
+    result = {}
+
+    # 기본 정보
+    result['title'] = jsonld.get('name')
+
+    # 이미지 (첫 번째)
+    images = jsonld.get('image', [])
+    if images:
+        result['thumbnail'] = images[0] if isinstance(images, list) else images
+
+    # 가격 정보
+    offers = jsonld.get('offers', {})
+    if offers:
+        # 현재가
+        price_str = offers.get('price')
+        if price_str:
+            try:
+                result['price'] = int(price_str)
+            except (ValueError, TypeError):
+                pass
+
+        # 원가 (StrikethroughPrice)
+        price_spec = offers.get('priceSpecification', {})
+        if price_spec:
+            original_str = price_spec.get('price')
+            if original_str:
+                try:
+                    result['original_price'] = int(original_str)
+                except (ValueError, TypeError):
+                    pass
+
+        # 품절 여부
+        availability = offers.get('availability', '')
+        result['sold_out'] = 'OutOfStock' in availability
+
+    # 평점/리뷰
+    rating = jsonld.get('aggregateRating', {})
+    if rating:
+        result['rating'] = rating.get('ratingValue')
+        review_count = rating.get('ratingCount')
+        if review_count:
+            try:
+                result['review_count'] = int(review_count)
+            except (ValueError, TypeError):
+                pass
+
+    return result
+
+
+def _extract_breadcrumb_categories(html_content):
+    """HTML에서 BreadcrumbList JSON-LD로 카테고리 추출"""
+    categories = []
+
+    pattern = r'<script[^>]*type="application/ld\+json"[^>]*>\s*(\{[^<]*"@type"\s*:\s*"BreadcrumbList"[^<]*\})\s*</script>'
+    match = re.search(pattern, html_content, re.DOTALL)
+
+    if not match:
+        return categories
+
+    try:
+        breadcrumb_data = json.loads(match.group(1))
+        items = breadcrumb_data.get('itemListElement', [])
+
+        for item in items:
+            # 중첩 리스트 처리 (쿠팡 특이 구조)
+            if isinstance(item, list):
+                for sub_item in item:
+                    if isinstance(sub_item, dict) and sub_item.get('@type') == 'ListItem':
+                        name = sub_item.get('name', '')
+                        url = sub_item.get('item', '')
+                        if name and name != '쿠팡 홈' and '/np/categories/' in url:
+                            cat_id = re.search(r'/categories/(\d+)', url)
+                            categories.append({
+                                'id': cat_id.group(1) if cat_id else None,
+                                'name': name
+                            })
+            elif isinstance(item, dict) and item.get('@type') == 'ListItem':
+                name = item.get('name', '')
+                url = item.get('item', '')
+                if name and name != '쿠팡 홈' and '/np/categories/' in url:
+                    cat_id = re.search(r'/categories/(\d+)', url)
+                    categories.append({
+                        'id': cat_id.group(1) if cat_id else None,
+                        'name': name
+                    })
+    except (json.JSONDecodeError, KeyError):
+        pass
+
+    return categories
+
+
 def extract_product_detail(html_content):
     """HTML에서 상품 상세 데이터 추출
 
@@ -22,27 +130,24 @@ def extract_product_detail(html_content):
     if not html_content:
         return data
 
-    # __NEXT_DATA__에서 추출 시도
-    next_data_match = re.search(r'<script id="__NEXT_DATA__"[^>]*>(.+?)</script>', html_content, re.DOTALL)
-    if next_data_match:
-        try:
-            next_data = json.loads(next_data_match.group(1))
-            props = next_data.get('props', {}).get('pageProps', {})
-
-            # productId, itemId, vendorItemId
-            if 'productId' in props:
-                data['productId'] = str(props['productId'])
-            if 'itemId' in props:
-                data['itemId'] = str(props['itemId'])
-            if 'vendorItemId' in props:
-                data['vendorItemId'] = str(props['vendorItemId'])
-
-            # 가격 정보
-            if 'price' in props:
-                data['price'] = props['price']
-
-        except json.JSONDecodeError:
-            pass
+    # === JSON-LD (schema.org) 에서 추출 (가장 신뢰도 높음) ===
+    jsonld_data = _extract_jsonld_product(html_content)
+    if jsonld_data:
+        # 가격, 평점, 리뷰 등 JSON-LD에서 우선 추출
+        if jsonld_data.get('price'):
+            data['price'] = jsonld_data['price']
+        if jsonld_data.get('original_price'):
+            data['original_price'] = jsonld_data['original_price']
+        if jsonld_data.get('rating'):
+            data['rating'] = jsonld_data['rating']
+        if jsonld_data.get('review_count'):
+            data['review_count'] = jsonld_data['review_count']
+        if jsonld_data.get('sold_out') is not None:
+            data['sold_out'] = jsonld_data['sold_out']
+        if jsonld_data.get('thumbnail'):
+            data['thumbnail'] = jsonld_data['thumbnail']
+        if jsonld_data.get('title'):
+            data['title'] = jsonld_data['title']
 
     # === 제목 ===
     # 우선순위: h1.product-title span > h1.prod-buy-header__title > og:title (쿠팡 제거)
@@ -84,7 +189,7 @@ def extract_product_detail(html_content):
             except:
                 pass
 
-    # === 원가 (할인 전 가격) ===
+    # === 원가 (할인 전 가격, 취소선) ===
     # class="price-amount original-price-amount" 패턴
     original_price_match = re.search(r'class="[^"]*original-price-amount[^"]*"[^>]*>([^<]+)', html_content)
     if original_price_match:
@@ -98,6 +203,38 @@ def extract_product_detail(html_content):
         match = re.search(orig_pattern, html_content)
         if match:
             data['original_price'] = int(match.group(1).replace(',', ''))
+
+    # === 쿠팡판매가 (type: "SALES") ===
+    # JSON에서 "priceAmount":"금액"..."title":"쿠팡판매가","type":"SALES" 패턴 추출
+    # HTML 내 JSON은 이스케이프 형태일 수 있음: \"priceAmount\":\"96,700\"
+    # 이스케이프된 형태 먼저 시도
+    sales_pattern_escaped = r'\\"priceAmount\\":\\"([\d,]+)\\".*?\\"title\\":\\"쿠팡판매가\\",\\"type\\":\\"SALES\\"'
+    sales_match = re.search(sales_pattern_escaped, html_content)
+    if sales_match:
+        data['sales_price'] = int(sales_match.group(1).replace(',', ''))
+    else:
+        # 일반 형태 시도
+        sales_pattern_normal = r'"priceAmount":"([\d,]+)".*?"title":"쿠팡판매가","type":"SALES"'
+        sales_match2 = re.search(sales_pattern_normal, html_content)
+        if sales_match2:
+            data['sales_price'] = int(sales_match2.group(1).replace(',', ''))
+
+    # === salePrice, couponPrice (next_f.push에서) ===
+    # salePrice: 판매가 (쿠폰 적용 전)
+    sale_match = re.search(r'salePrice\\?":\\?"([0-9,]+)\\?"', html_content)
+    if sale_match:
+        try:
+            data['sale_price'] = int(sale_match.group(1).replace(',', ''))
+        except ValueError:
+            pass
+
+    # couponPrice: 쿠폰 적용가 (최종가)
+    coupon_match = re.search(r'couponPrice\\?":\\?"([0-9,]+)\\?"', html_content)
+    if coupon_match:
+        try:
+            data['coupon_price'] = int(coupon_match.group(1).replace(',', ''))
+        except ValueError:
+            pass
 
     # === 할인율 ===
     # class='discount-rate' 패턴 (JSON 내 유니코드 이스케이프 처리)
@@ -114,16 +251,30 @@ def extract_product_detail(html_content):
             data['discount_rate'] = int(match.group(1))
 
     # === 배송 타입 ===
-    # 로켓배송, 로켓프레시, 로켓직구, 판매자배송 등
-    if 'rocket_icon' in html_content or 'RocketDelivery' in html_content:
+    # 우선순위 1: next_f.push의 deliveryType 필드 (가장 정확)
+    delivery_match = re.search(r'deliveryType\\?":\\?"([A-Z_]+)\\?"', html_content)
+    if delivery_match:
+        data['delivery_type_json'] = delivery_match.group(1)  # 원본 저장 (참고용)
+        # ROCKET_MERCHANT, ROCKET, ROCKET_FRESH, COUPANG_GLOBAL 등
+        dtype = delivery_match.group(1)
+        if dtype == 'ROCKET_FRESH':
+            data['delivery_type'] = '로켓프레시'
+        elif dtype == 'COUPANG_GLOBAL':
+            data['delivery_type'] = '로켓직구'
+        elif dtype in ('ROCKET_MERCHANT', 'ROCKET'):
+            data['delivery_type'] = '로켓배송'
+        else:
+            data['delivery_type'] = '판매자배송'
+    else:
+        # 우선순위 2: 이미지 패턴 기반 추론 (fallback)
         if 'rocket-fresh' in html_content.lower() or 'rocketfresh' in html_content.lower():
             data['delivery_type'] = '로켓프레시'
         elif 'rocket-global' in html_content.lower() or 'rocketglobal' in html_content.lower():
             data['delivery_type'] = '로켓직구'
-        else:
+        elif 'rocket_icon' in html_content or 'RocketDelivery' in html_content or 'rocket_merchant' in html_content.lower():
             data['delivery_type'] = '로켓배송'
-    else:
-        data['delivery_type'] = '판매자배송'
+        else:
+            data['delivery_type'] = '판매자배송'
 
     # === 평점 ===
     # JSON에서 ratingValue 추출 (실제 패턴)
@@ -189,33 +340,64 @@ def extract_product_detail(html_content):
         data['sold_out'] = False
 
     # === 카테고리 ===
-    categories = []
-    breadcrumb_matches = re.findall(r'<a[^>]*class="[^"]*breadcrumb[^"]*"[^>]*>([^<]+)</a>', html_content)
-    if breadcrumb_matches:
-        categories = [c.strip() for c in breadcrumb_matches if c.strip()]
+    # 우선순위 1: JSON-LD BreadcrumbList (가장 정확)
+    categories = _extract_breadcrumb_categories(html_content)
+
+    # 우선순위 2: HTML ul.breadcrumb 패턴 (fallback)
+    if not categories:
+        def extract_category_id(href):
+            """URL에서 카테고리 ID 추출: /np/categories/416130?... → 416130"""
+            match = re.search(r'/categories/(\d+)', href)
+            return match.group(1) if match else None
+
+        breadcrumb_ul = re.search(r'<ul[^>]*class="[^"]*breadcrumb[^"]*"[^>]*>(.*?)</ul>', html_content, re.DOTALL)
+        if breadcrumb_ul:
+            ul_content = breadcrumb_ul.group(1)
+            link_pattern = r'<a[^>]*href="([^"]*)"[^>]*>([^<]+)</a>'
+            link_matches = re.findall(link_pattern, ul_content)
+            for href, name in link_matches:
+                name = name.strip()
+                cat_id = extract_category_id(href)
+                if name and cat_id:
+                    categories.append({'id': cat_id, 'name': name})
+
+    if categories:
         data['categories'] = categories
 
-    # === 썸네일 이미지 ===
-    # prod-image__items 영역의 이미지들
-    thumbnail_matches = re.findall(r'<img[^>]*class="[^"]*prod-image__item[^"]*"[^>]*src="([^"]+)"', html_content)
-    if thumbnail_matches:
-        data['thumbnail_images'] = thumbnail_matches
+    # === 썸네일 이미지 (첫 번째만) ===
+    # prod-image__items 영역의 첫 번째 이미지
+    thumbnail_match = re.search(r'<img[^>]*class="[^"]*prod-image__item[^"]*"[^>]*src="([^"]+)"', html_content)
+    if thumbnail_match:
+        thumbnail = thumbnail_match.group(1)
+        # //로 시작하면 https: 추가
+        if thumbnail.startswith('//'):
+            thumbnail = 'https:' + thumbnail
+        data['thumbnail'] = thumbnail
     else:
         # 대안: og:image
         og_image = re.search(r'<meta property="og:image" content="([^"]+)"', html_content)
         if og_image:
-            data['thumbnail_images'] = [og_image.group(1)]
+            thumbnail = og_image.group(1)
+            if thumbnail.startswith('//'):
+                thumbnail = 'https:' + thumbnail
+            data['thumbnail'] = thumbnail
 
     # === 배송 뱃지 URL ===
     # 로켓배송 아이콘 이미지
     badge_match = re.search(r'<img[^>]*class="[^"]*delivery-badge[^"]*"[^>]*src="([^"]+)"', html_content)
     if badge_match:
-        data['delivery_badge_url'] = badge_match.group(1)
+        badge_url = badge_match.group(1)
+        if badge_url.startswith('//'):
+            badge_url = 'https:' + badge_url
+        data['delivery_badge_url'] = badge_url
     else:
         # 대안: rocket-icon 클래스 이미지
         rocket_badge = re.search(r'<img[^>]*class="[^"]*rocket[^"]*"[^>]*src="([^"]+)"', html_content)
         if rocket_badge:
-            data['delivery_badge_url'] = rocket_badge.group(1)
+            badge_url = rocket_badge.group(1)
+            if badge_url.startswith('//'):
+                badge_url = 'https:' + badge_url
+            data['delivery_badge_url'] = badge_url
 
     return data
 
@@ -270,7 +452,7 @@ def convert_to_agent_format(product_data, product_info):
         'soldOut': product_data.get('sold_out', False),
         'soldOutType': sold_out_type,
         'categories': product_data.get('categories', []),
-        'thumbnailImages': product_data.get('thumbnail_images', []),
+        'thumbnail': product_data.get('thumbnail'),
         # ID 추출 우선순위:
         # 1. product_info (URL에서 파싱된 값) - rank_cmd에서 전달
         # 2. product_data (HTML __NEXT_DATA__에서 추출)
@@ -278,4 +460,71 @@ def convert_to_agent_format(product_data, product_info):
         'productId': product_info.get('productId') or product_data.get('productId'),
         'itemId': product_info.get('itemId') or product_data.get('itemId'),
         'vendorItemId': product_info.get('vendorItemId') or product_data.get('vendorItemId'),
+    }
+
+
+def to_api_response(product_data):
+    """추출된 데이터를 API 응답 형식으로 변환
+
+    Args:
+        product_data: extract_product_detail()에서 추출된 데이터
+
+    Returns:
+        dict: API 응답용 상품 정보
+        {
+            "price": 87900,
+            "title": "상품명",
+            "soldOut": false,
+            "categories": [{"href": "...", "name": "..."}],
+            "soldOutText": null,
+            "soldOutType": "available",
+            "deliveryType": "ROCKET_SELLER",
+            "discountRate": 20,
+            "originalPrice": 109900,
+            "thumbnail": "https://...",
+            "productNotFound": false,
+            "deliveryBadgeUrl": "https://..."
+        }
+    """
+    if not product_data:
+        return {'productNotFound': True}
+
+    # 배송 타입 매핑
+    delivery_type_map = {
+        '로켓배송': 'ROCKET_DELIVERY',
+        '로켓프레시': 'ROCKET_FRESH',
+        '로켓직구': 'ROCKET_DIRECT',
+        '판매자배송': 'ROCKET_SELLER'  # API에서는 ROCKET_SELLER로 표시
+    }
+
+    # 품절 상태
+    sold_out = product_data.get('sold_out', False)
+    if sold_out:
+        sold_out_type = 'sold_out' if product_data.get('sold_out_type') == '품절' else 'temporary_out'
+        sold_out_text = product_data.get('sold_out_type', '품절')
+    else:
+        sold_out_type = 'available'
+        sold_out_text = None
+
+    return {
+        'price': product_data.get('price'),
+        'title': product_data.get('title'),
+        'soldOut': sold_out,
+        'categories': product_data.get('categories', []),
+        'soldOutText': sold_out_text,
+        'soldOutType': sold_out_type,
+        'deliveryType': delivery_type_map.get(
+            product_data.get('delivery_type', '판매자배송'),
+            'ROCKET_SELLER'
+        ),
+        'discountRate': product_data.get('discount_rate'),
+        'originalPrice': product_data.get('original_price'),
+        'salesPrice': product_data.get('sales_price'),  # 쿠팡판매가 (type: SALES)
+        'salePrice': product_data.get('sale_price'),  # 판매가 (쿠폰 적용 전)
+        'couponPrice': product_data.get('coupon_price'),  # 쿠폰 적용가 (최종가)
+        'thumbnail': product_data.get('thumbnail'),
+        'productNotFound': False,
+        'deliveryBadgeUrl': product_data.get('delivery_badge_url'),
+        'rating': product_data.get('rating'),
+        'reviewCount': product_data.get('review_count')
     }
