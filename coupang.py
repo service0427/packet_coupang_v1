@@ -72,6 +72,7 @@ def main():
     work_parser = subparsers.add_parser('work', help='작업 할당 API 기반 검색')
     work_parser.add_argument('-t', '--type', choices=['rank', 'click', 'filter'], default='rank', help='작업 타입 (기본: rank)')
     work_parser.add_argument('--id', type=int, help='특정 작업 ID 조회 (1회 실행)')
+    work_parser.add_argument('-s', '--single', action='store_true', help='단일 실행 (상세 로그)')
     work_parser.add_argument('--max-page', type=int, default=13, help='최대 검색 페이지')
     work_parser.add_argument('--no-click', action='store_true', help='클릭 건너뛰기')
     work_parser.add_argument('-n', '--count', type=int, default=0, help='실행 횟수 (0=무한, 기본: 무한)')
@@ -91,8 +92,8 @@ def main():
         from cffi.work_cmd import run_work, run_work_loop, run_filter
         if args.type == 'filter':
             run_filter(args)
-        elif args.id:
-            # 특정 ID는 1회만 실행
+        elif args.id or args.single:
+            # 특정 ID 또는 단일 실행 (상세 로그)
             run_work(args)
         else:
             # 기본: 병렬 루프 (n=0이면 무한, n>0이면 횟수 제한)
