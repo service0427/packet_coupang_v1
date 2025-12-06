@@ -3,11 +3,129 @@ Product Extractor (Python)
 - Coupang search result page product extraction
 - Ranking products vs ads separation
 - 3-part unique key (product_id + item_id + vendor_item_id)
+- LJC 이벤트용 메타 정보 추출 (searchId, buildId 등)
 """
 
 import re
+import json
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse, parse_qs
+
+
+# ============================================================================
+# LJC 이벤트용 추출 함수
+# ============================================================================
+
+def extract_search_meta(html):
+    """검색 HTML에서 메타 정보 추출
+
+    모바일(m.coupang.com)과 PC(www.coupang.com) HTML 구조가 다름:
+    - 모바일: URL 파라미터에서 searchId 추출, __NEXT_DATA__ 없음
+    - PC: JSON 형식으로 searchId, __NEXT_DATA__에서 buildId 추출
+
+    Args:
+        html: 검색 페이지 HTML
+
+    Returns:
+        dict: {searchId, totalProductCount, buildId, listSize}
+    """
+    result = {
+        'searchId': '',
+        'totalProductCount': 0,
+        'buildId': '',
+        'listSize': 36
+    }
+
+    # searchId 추출 (URL 파라미터 형식 우선 - 모바일)
+    match = re.search(r'searchId=([^&"\s<>]+)', html)
+    if match:
+        result['searchId'] = match.group(1)
+    else:
+        # PC 형식 (JSON)
+        match = re.search(r'"searchId"\s*:\s*"([^"]+)"', html)
+        if match:
+            result['searchId'] = match.group(1)
+
+    # itemsCount 추출 (listSize 용도)
+    match = re.search(r'itemsCount[":=]+(\d+)', html)
+    if match:
+        result['listSize'] = int(match.group(1))
+
+    # totalProductCount 추출 (PC)
+    match = re.search(r'"totalProductCount"\s*:\s*(\d+)', html)
+    if match:
+        result['totalProductCount'] = int(match.group(1))
+    else:
+        # 모바일: totalProductCount 없음 - 상품 링크 개수로 추정
+        product_links = re.findall(r'/vp/products/\d+', html)
+        if product_links:
+            unique_products = len(set(product_links))
+            result['totalProductCount'] = unique_products
+
+    # __NEXT_DATA__에서 buildId 추출 (PC)
+    match = re.search(r'<script id="__NEXT_DATA__"[^>]*>([^<]+)</script>', html)
+    if match:
+        try:
+            next_data = json.loads(match.group(1))
+            result['buildId'] = next_data.get('buildId', '')
+
+            props = next_data.get('props', {})
+            page_props = props.get('pageProps', {})
+            if 'listSize' in page_props:
+                result['listSize'] = page_props['listSize']
+        except (json.JSONDecodeError, KeyError):
+            pass
+
+    return result
+
+
+def extract_products_from_html(html):
+    """HTML에서 상품 목록 추출 (ProductExtractor.extract_products_from_html과 동일)
+
+    Args:
+        html: 검색 페이지 HTML
+
+    Returns:
+        dict: {ranking: [...], ads: [...], total: int}
+    """
+    return ProductExtractor.extract_products_from_html(html)
+
+
+def find_product_by_id(products, target_product_id):
+    """상품 목록에서 타겟 상품 찾기
+
+    Args:
+        products: 상품 목록 (ranking 리스트)
+        target_product_id: 찾을 상품 ID
+
+    Returns:
+        dict or None: 찾은 상품 정보
+    """
+    target_id = str(target_product_id)
+
+    for product in products:
+        if str(product['productId']) == target_id:
+            return product
+
+    return None
+
+
+def extract_filter_key(url):
+    """URL에서 filterKey 추출
+
+    Args:
+        url: 검색 URL
+
+    Returns:
+        str: 쿼리스트링 (filterKey)
+    """
+    parsed = urlparse(url)
+    return parsed.query
+
+
+# ============================================================================
+# 기존 ProductExtractor 클래스
+# ============================================================================
 
 
 class ProductExtractor:
@@ -82,6 +200,8 @@ class ProductExtractor:
             # Extract name and price
             name_el = None
             price_el = None
+            rating = None
+            review_count = None
 
             if product_card:
                 name_el = (product_card.select_one('.name') or
@@ -89,6 +209,23 @@ class ProductExtractor:
                           link)
                 price_el = (product_card.select_one('.price-value') or
                            product_card.select_one('[class*="price"]'))
+
+                # Extract rating (평점)
+                rating_el = product_card.select_one('.rating, [class*="rating"]')
+                if rating_el:
+                    rating_text = rating_el.get_text(strip=True)
+                    rating_match = re.search(r'(\d+\.?\d*)', rating_text)
+                    if rating_match:
+                        rating = float(rating_match.group(1))
+
+                # Extract review count (리뷰 수)
+                review_el = product_card.select_one('.rating-total-count, [class*="count"]')
+                if review_el:
+                    review_text = review_el.get_text(strip=True)
+                    # (1,234) 또는 1234 형식
+                    review_match = re.search(r'\(?([\d,]+)\)?', review_text)
+                    if review_match:
+                        review_count = int(review_match.group(1).replace(',', ''))
 
             product_data = {
                 'productId': product_id,
@@ -98,7 +235,9 @@ class ProductExtractor:
                 'name': name_el.get_text(strip=True) if name_el else '',
                 'price': price_el.get_text(strip=True) if price_el else '',
                 'url': href,
-                'rank': rank
+                'rank': rank,
+                'rating': rating,
+                'review_count': review_count
             }
 
             # Pure ranking products (has rank, no ad mark)

@@ -1,0 +1,34 @@
+{
+  "_comment": "LJC 이벤트 스키마 설정 - HAR 분석 기준으로 업데이트",
+  "_updated": "2025-12-02",
+  "_source": "q10_1.har, q10_2.har, q10_3.har",
+
+  "srp_view_impression": {
+    "schemaId": 15704,
+    "schemaVersion": 1
+  },
+  "srp_product_unit_impression": {
+    "schemaId": 14741,
+    "schemaVersion": 32
+  },
+  "click_search_product": {
+    "schemaId": 124,
+    "schemaVersion": 47
+  },
+  "sdp_product_page_view": {
+    "schemaId": 7,
+    "schemaVersion": 79
+  },
+  "add_to_cart": {
+    "schemaId": 10,
+    "schemaVersion": 76
+  },
+  "sdp_atf": {
+    "schemaId": 248,
+    "schemaVersion": 44
+  },
+  "impression_ranking": {
+    "schemaId": 152,
+    "schemaVersion": 2
+  }
+}

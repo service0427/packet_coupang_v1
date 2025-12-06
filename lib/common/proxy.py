@@ -1,17 +1,22 @@
 """
-프록시 및 쿠키 바인딩 모듈
-- 프록시 API 조회
-- /24 서브넷 기반 쿠키 매칭
-- IP 바인딩 검증
+프록시 관리 모듈
+- 프록시 API 조회 (3001)
+- 쿠키 API 조회 (5151)
+- IP 바인딩된 프록시 + 쿠키 조합
 """
 
 import json
 import random
-from curl_cffi import requests
-from .db import execute_query
+import time
+import urllib.request
+from .cookie import get_subnet, parse_cookie_data
 
-# 프록시 API 설정
+# API 설정
 PROXY_API_URL = 'http://mkt.techb.kr:3001/api/proxy/status'
+COOKIE_API_URL = 'http://mkt.techb.kr:5151/api/cookies'
+
+# API 타임아웃 설정
+API_TIMEOUT = 15  # 타임아웃 15초
 
 
 def get_proxy_list(min_remain=30):
@@ -24,29 +29,39 @@ def get_proxy_list(min_remain=30):
         list: [{'proxy': 'host:port', 'external_ip': '...', 'remaining_work_seconds': '...'}, ...]
     """
     try:
-        resp = requests.get(f'{PROXY_API_URL}?remain={min_remain}', timeout=10)
-        data = resp.json()
+        # urllib 사용 (curl_cffi는 TLS 핑거프린트로 인해 API 서버 거부)
+        req = urllib.request.urlopen(PROXY_API_URL, timeout=5)
+        data = json.loads(req.read())
         if data.get('success'):
-            return data.get('proxies', [])
+            proxies = data.get('proxies', [])
+            # 클라이언트에서 min_remain 필터링
+            return [
+                p for p in proxies
+                if int(p.get('remaining_work_seconds', 0)) >= min_remain
+            ]
     except Exception as e:
         print(f"프록시 API 오류: {e}")
     return []
 
 
-def get_subnet(ip):
-    """IP에서 /24 서브넷 추출
+def get_proxy_external_ip(proxy_host):
+    """프록시 호스트의 현재 외부 IP 조회
 
     Args:
-        ip: IP 주소 (예: '192.168.1.100')
+        proxy_host: 'host:port' 형식 (socks5:// 제외)
 
     Returns:
-        str: 서브넷 (예: '192.168.1') 또는 None
+        str: 외부 IP 또는 None
     """
-    if not ip:
-        return None
-    parts = ip.split('.')
-    if len(parts) == 4:
-        return '.'.join(parts[:3])
+    try:
+        req = urllib.request.urlopen(PROXY_API_URL, timeout=5)
+        data = json.loads(req.read())
+        if data.get('success'):
+            for p in data.get('proxies', []):
+                if p.get('proxy') == proxy_host:
+                    return p.get('external_ip')
+    except Exception as e:
+        pass
     return None
 
 
@@ -63,7 +78,7 @@ def check_external_ip(proxy_url):
         resp = requests.get(
             'https://api.ipify.org?format=json',
             proxy=proxy_url,
-            timeout=10,
+            timeout=5,
             verify=False
         )
         return resp.json().get('ip')
@@ -71,73 +86,98 @@ def check_external_ip(proxy_url):
         return None
 
 
-def get_cookies_by_subnet(subnet, max_age_minutes=60, max_fail_count=2, lock_timeout_minutes=5):
-    """서브넷으로 쿠키 조회 (잠금된 쿠키 제외)
+def allocate_cookie(minutes=60, platform_type='mobile', max_fail=5, max_success=10,
+                    exclude_product=None, retries=3):
+    """쿠키 API에서 쿠키+프록시 할당 (30초 락)
 
     Args:
-        subnet: /24 서브넷 (예: '192.168.1')
-        max_age_minutes: 최대 쿠키 나이 (분) - last_success_at 기준, 없으면 created_at 기준
-        max_fail_count: 최대 허용 실패 횟수 (기본: 2, 3회 이상 실패면 제외)
-        lock_timeout_minutes: 잠금 타임아웃 (분) - 이 시간이 지나면 잠금 무시
+        minutes: created_at 기준 N분 이내
+        platform_type: 'pc' (exact/subnet만) 또는 'mobile' (random 폴백 가능)
+        max_fail: fail_count 최대값
+        max_success: success_count 최대값
+        exclude_product: 제외할 product_id (해당 상품을 클릭한 쿠키 제외)
+        retries: 최대 재시도 횟수
 
     Returns:
-        list: 쿠키 레코드 리스트
+        dict: 쿠키+프록시 레코드 또는 None
+        {
+            'id': 쿠키 ID,
+            'cookies': [...],
+            'proxy': {
+                'ip': '프록시 IP',
+                'port': 포트,
+                'external_ip': '외부 IP',
+                'match_type': 'exact' | 'subnet' | 'random',
+                'original_ip': '쿠키 원본 IP'
+            },
+            ...
+        }
     """
-    # last_success_at 기준 60분 이내 쿠키 조회 (없으면 created_at 기준, expired 제외)
-    cookies = execute_query("""
-        SELECT id, proxy_ip, proxy_url, chrome_version, cookie_data, init_status, source,
-               fail_count, success_count,
-               TIMESTAMPDIFF(MINUTE, COALESCE(last_success_at, created_at), NOW()) as age_minutes,
-               TIMESTAMPDIFF(SECOND, created_at, NOW()) as created_age_seconds,
-               TIMESTAMPDIFF(SECOND, last_success_at, NOW()) as last_success_age_seconds
-        FROM cookies
-        WHERE proxy_ip LIKE %s
-          AND COALESCE(last_success_at, created_at) >= NOW() - INTERVAL %s MINUTE
-          AND fail_count <= %s
-          AND (locked_at IS NULL OR locked_at < NOW() - INTERVAL %s MINUTE)
-          AND init_status != 'expired'
-        ORDER BY fail_count ASC, last_success_at DESC, created_at DESC
-        LIMIT 5
-    """, (f"{subnet}.%", max_age_minutes, max_fail_count, lock_timeout_minutes))
+    url = f"{COOKIE_API_URL}/allocate?minutes={minutes}&type={platform_type}&max_fail={max_fail}&max_success={max_success}"
+    if exclude_product:
+        url += f"&exclude_product={exclude_product}"
 
-    return cookies if cookies else []
+    for attempt in range(retries):
+        try:
+            req = urllib.request.urlopen(url, timeout=API_TIMEOUT)
+            resp = json.loads(req.read())
+            if resp.get('success'):
+                cookie = resp.get('data')
+                if cookie:
+                    # 기존 코드 호환: proxy_ip 필드 추가
+                    proxy_info = cookie.get('proxy', {})
+                    cookie['proxy_ip'] = proxy_info.get('original_ip')
+                    # age_minutes 계산 (created_at 기준)
+                    if cookie.get('created_at'):
+                        from datetime import datetime
+                        try:
+                            created = datetime.fromisoformat(cookie['created_at'].replace('Z', '+00:00'))
+                            now = datetime.now(created.tzinfo) if created.tzinfo else datetime.utcnow()
+                            cookie['age_minutes'] = int((now - created).total_seconds() / 60)
+                        except:
+                            cookie['age_minutes'] = 0
+                    return cookie
+            return None  # success=false, 재시도 없이 종료
+        except Exception as e:
+            if attempt < retries - 1:
+                time.sleep(0.5 * (attempt + 1))  # 백오프: 0.5, 1, 1.5초
+                continue
+            # 최종 실패 - 조용히 처리
+            return None
+    return None
 
 
-def get_cookie_by_id(cookie_id):
-    """쿠키 ID로 쿠키 레코드 조회"""
-    cookies = execute_query("SELECT * FROM cookies WHERE id = %s", (cookie_id,))
-    return cookies[0] if cookies else None
-
-
-def parse_cookie_data(cookie_record):
-    """쿠키 레코드에서 쿠키 딕셔너리 추출
+def report_cookie_result(cookie_id, success, retries=2):
+    """쿠키 사용 결과 보고
 
     Args:
-        cookie_record: DB 쿠키 레코드
-
-    Returns:
-        dict: {name: value} 형식 쿠키
+        cookie_id: 쿠키 ID
+        success: 성공 여부
+        retries: 최대 재시도 횟수
     """
-    cookie_data = json.loads(cookie_record['cookie_data'])
-    cookies = {}
-    for c in cookie_data:
-        if c.get('domain', '').endswith('coupang.com'):
-            cookies[c['name']] = c['value']
-    return cookies
+    url = f"{COOKIE_API_URL}/result"
+    payload = json.dumps({'id': cookie_id, 'success': success}).encode('utf-8')
+
+    for attempt in range(retries):
+        try:
+            req = urllib.request.Request(url, data=payload, headers={'Content-Type': 'application/json'})
+            urllib.request.urlopen(req, timeout=API_TIMEOUT)
+            return  # 성공
+        except Exception as e:
+            if attempt < retries - 1:
+                time.sleep(0.3)
+                continue
+            # 최종 실패 - 조용히 처리
 
 
-def get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=None, target_subnet=None):
-    """IP 바인딩된 프록시 + 쿠키 조합 반환
-
-    핵심 알고리즘:
-    1. 사용 가능한 프록시 랜덤 선택
-    2. /24 서브넷으로 매칭되는 쿠키 랜덤 선택
+def get_bound_cookie(max_age_minutes=60, platform_type='mobile', exclude_product=None, verbose=True):
+    """쿠키+프록시 조합 반환 (Cookie API가 프록시 매칭까지 처리)
 
     Args:
-        min_remain: 프록시 최소 남은 시간 (초)
         max_age_minutes: 쿠키 최대 나이 (분)
-        exclude_subnets: 제외할 서브넷 리스트 (예: ['110.70.14', '39.7.47'])
-        target_subnet: 특정 서브넷 지정 (API 할당용, 예: '175.223.14')
+        platform_type: 'pc' (exact/subnet만) 또는 'mobile' (random 폴백 가능)
+        exclude_product: 제외할 product_id (해당 상품을 클릭한 쿠키 제외)
+        verbose: 디버그 정보 출력
 
     Returns:
         dict: {
@@ -146,206 +186,66 @@ def get_bound_cookie(min_remain=30, max_age_minutes=60, exclude_subnets=None, ta
             'external_ip': '...',
             'cookie_record': {...},
             'cookies': {name: value},
-            'match_type': 'exact' | 'subnet'
+            'match_type': 'exact' | 'subnet' | 'random'
         } 또는 None
     """
-    # target_subnet이 지정된 경우 해당 서브넷 쿠키만 조회
-    if target_subnet:
-        cookies = get_cookies_by_subnet(target_subnet, max_age_minutes)
-        if cookies:
-            cookie_record = cookies[0]
-            lock_cookie(cookie_record['id'])
-            return {
-                'proxy': None,  # 외부에서 지정
-                'proxy_host': None,
-                'external_ip': None,
-                'cookie_record': cookie_record,
-                'cookies': parse_cookie_data(cookie_record),
-                'match_type': 'target'
-            }
-        return None
-
-    proxies = get_proxy_list(min_remain)
-    if not proxies:
-        return None
-
-    exclude_subnets = exclude_subnets or []
-
-    # 프록시 목록 섞기
-    random.shuffle(proxies)
-
-    for proxy_info in proxies:
-        external_ip = proxy_info.get('external_ip')
-        subnet = get_subnet(external_ip)
-
-        if not subnet:
-            continue
-
-        # 차단된 서브넷 제외
-        if subnet in exclude_subnets:
-            continue
-
-        cookies = get_cookies_by_subnet(subnet, max_age_minutes)
-        if not cookies:
-            continue
-
-        # 첫 번째 쿠키 선택 (이미 랜덤 정렬됨)
-        cookie_record = cookies[0]
-        match_type = 'exact' if cookie_record['proxy_ip'] == external_ip else 'subnet'
-
-        # 쿠키 잠금 (작업 할당)
-        lock_cookie(cookie_record['id'])
-
-        return {
-            'proxy': f"socks5://{proxy_info['proxy']}",
-            'proxy_host': proxy_info['proxy'],
-            'external_ip': external_ip,
-            'cookie_record': cookie_record,
-            'cookies': parse_cookie_data(cookie_record),
-            'match_type': match_type
-        }
-
-    return None
-
-
-def lock_cookie(cookie_id):
-    """쿠키 잠금 (작업 할당 시)
-
-    Args:
-        cookie_id: 쿠키 ID
-    """
-    execute_query("""
-        UPDATE cookies
-        SET locked_at = NOW()
-        WHERE id = %s
-    """, (cookie_id,))
-
-
-def unlock_cookie(cookie_id):
-    """쿠키 잠금 해제 (작업 완료 시)
-
-    Args:
-        cookie_id: 쿠키 ID
-    """
-    execute_query("""
-        UPDATE cookies
-        SET locked_at = NULL
-        WHERE id = %s
-    """, (cookie_id,))
-
-
-def update_cookie_stats(cookie_id, success):
-    """쿠키 사용 통계 업데이트 및 잠금 해제
-
-    Args:
-        cookie_id: 쿠키 ID
-        success: 성공 여부
-    """
-    if success:
-        execute_query("""
-            UPDATE cookies
-            SET use_count = use_count + 1,
-                success_count = success_count + 1,
-                last_success_at = NOW(),
-                locked_at = NULL
-            WHERE id = %s
-        """, (cookie_id,))
-    else:
-        execute_query("""
-            UPDATE cookies
-            SET use_count = use_count + 1,
-                fail_count = fail_count + 1,
-                last_fail_at = NOW(),
-                locked_at = NULL
-            WHERE id = %s
-        """, (cookie_id,))
-
-
-def update_cookie_data(cookie_id, response_cookies_full):
-    """쿠키 데이터 업데이트 (응답 쿠키 반영)
-
-    Args:
-        cookie_id: 쿠키 ID
-        response_cookies_full: 응답에서 받은 쿠키 리스트 [{name, value, domain, path, expires, ...}]
-
-    Returns:
-        int: 업데이트된 쿠키 개수
-    """
-    if not response_cookies_full:
-        return 0
-
-    cookie_record = get_cookie_by_id(cookie_id)
+    # Cookie API에서 쿠키+프록시 할당 (매칭까지 API가 처리)
+    cookie_record = allocate_cookie(minutes=max_age_minutes, platform_type=platform_type,
+                                    exclude_product=exclude_product)
     if not cookie_record:
-        return 0
+        if verbose:
+            print(f"  ⚠️ 쿠키 할당 실패 (max_age: {max_age_minutes}분, type: {platform_type})")
+        return None
 
-    cookie_data = json.loads(cookie_record['cookie_data'])
-    updated_count = 0
+    proxy_info = cookie_record.get('proxy', {})
+    if not proxy_info:
+        if verbose:
+            print(f"  ⚠️ 프록시 매칭 실패 (쿠키 ID: {cookie_record.get('id')})")
+        return None
 
-    # 응답 쿠키를 name으로 인덱싱
-    response_by_name = {c.get('name'): c for c in response_cookies_full if c.get('name')}
+    cookie_ip = cookie_record.get('proxy_ip')
+    cookie_subnet = get_subnet(cookie_ip)
 
-    # 기존 쿠키 업데이트
-    for cookie in cookie_data:
-        name = cookie.get('name')
-        if name in response_by_name:
-            resp_cookie = response_by_name[name]
+    # 프록시 정보 추출
+    proxy_host = f"{proxy_info['ip']}:{proxy_info['port']}"
+    external_ip = proxy_info.get('external_ip')
+    match_type = proxy_info.get('match_type', 'unknown')
 
-            if cookie.get('value', '') != resp_cookie.get('value', ''):
-                cookie['value'] = resp_cookie['value']
-                updated_count += 1
+    # 쿠키+프록시 정보 출력
+    if verbose:
+        match_label = {'exact': '✅ 완전', 'subnet': '🔸 서브넷', 'random': '⚠️ 랜덤'}.get(match_type, match_type)
+        print(f"  🍪 쿠키+프록시 할당됨 ({match_label} 매칭):")
+        print(f"     쿠키 ID: {cookie_record.get('id')} (age: {cookie_record.get('age_minutes', '?')}분)")
+        print(f"     쿠키 IP: {cookie_ip} (subnet: {cookie_subnet})")
+        print(f"     프록시: {proxy_host} → 외부IP: {external_ip}")
+        print(f"     success/fail: {cookie_record.get('success_count', 0)}/{cookie_record.get('fail_count', 0)}")
 
-            if 'expires' in resp_cookie:
-                cookie['expires'] = resp_cookie['expires']
-
-            if resp_cookie.get('domain'):
-                cookie['domain'] = resp_cookie['domain']
-            if resp_cookie.get('path'):
-                cookie['path'] = resp_cookie['path']
-
-    # 새 쿠키 추가
-    existing_names = {c.get('name') for c in cookie_data}
-    for name, resp_cookie in response_by_name.items():
-        if name not in existing_names:
-            new_cookie = {
-                'name': name,
-                'value': resp_cookie.get('value', ''),
-                'domain': resp_cookie.get('domain', '.coupang.com'),
-                'path': resp_cookie.get('path', '/')
-            }
-            if 'expires' in resp_cookie:
-                new_cookie['expires'] = resp_cookie['expires']
-            cookie_data.append(new_cookie)
-            updated_count += 1
-
-    # DB 업데이트
-    if updated_count > 0:
-        execute_query("""
-            UPDATE cookies
-            SET cookie_data = %s, last_success_at = NOW()
-            WHERE id = %s
-        """, (json.dumps(cookie_data), cookie_id))
-
-    return updated_count
+    return {
+        'proxy': f"socks5://{proxy_host}",
+        'proxy_host': proxy_host,
+        'external_ip': external_ip,
+        'cookie_record': cookie_record,
+        'cookies': parse_cookie_data(cookie_record),
+        'match_type': match_type
+    }
 
 
 if __name__ == '__main__':
-    print("프록시/쿠키 바인딩 모듈 테스트")
+    print("프록시+쿠키 모듈 테스트 (API 5151)")
     print("=" * 60)
 
-    # 프록시 목록
-    proxies = get_proxy_list(min_remain=30)
-    print(f"\n사용 가능한 프록시: {len(proxies)}개")
-    for p in proxies[:3]:
-        print(f"  {p['proxy']} → {p['external_ip']}")
-
-    # IP 바인딩 테스트
-    print(f"\nIP 바인딩 쿠키 조회...")
-    bound = get_bound_cookie(min_remain=30, max_age_minutes=60)
+    # PC 모드 테스트
+    print(f"\n🔗 PC 모드 테스트 (exact/subnet 매칭만)...")
+    bound = get_bound_cookie(max_age_minutes=60, platform_type='pc')
     if bound:
-        print(f"  ✅ 매칭 성공 ({bound['match_type']})")
-        print(f"     프록시: {bound['proxy_host']}")
-        print(f"     외부 IP: {bound['external_ip']}")
-        print(f"     쿠키 ID: {bound['cookie_record']['id']}")
-        print(f"     쿠키 IP: {bound['cookie_record']['proxy_ip']}")
+        print(f"  ✅ 매칭 성공")
+    else:
+        print("  ❌ 매칭 실패")
+
+    # Mobile 모드 테스트
+    print(f"\n🔗 Mobile 모드 테스트 (random 폴백 가능)...")
+    bound = get_bound_cookie(max_age_minutes=120, platform_type='mobile')
+    if bound:
+        print(f"  ✅ 매칭 성공")
     else:
         print("  ❌ 매칭 실패")

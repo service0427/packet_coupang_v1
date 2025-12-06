@@ -8,10 +8,6 @@ Coupang Akamai Bypass System - curl-cffi 기반 TLS 핑거프린트 매칭
 # sudo
 Tech1324!
 
-# PostgreSQL (Bash에서 ! 이스케이프 필요)
-PGPASSWORD=Tech1324\! psql -h mkt.techb.kr -U techb_pp -d v1_coupang
-```
-
 ## 주요 명령어
 
 ```bash
@@ -59,8 +55,53 @@ lib/
 └── screenshot/      # 스크린샷
 ```
 
+## Docker 분산 워커
+
+> curl-cffi는 C 라이브러리 특성상 p=50 이상에서 코어 덤프 발생. Docker 컨테이너 격리로 해결.
+
+### 기본 명령어
+
+```bash
+# 이미지 빌드
+sg docker -c "docker build -t coupang-worker ."
+
+# 워커 실행 (N개 컨테이너, 각 p=20)
+sg docker -c "docker-compose up -d --scale worker=5"   # 5개 = 총 p=100
+sg docker -c "docker-compose up -d --scale worker=10"  # 10개 = 총 p=200
+
+# 상태 확인
+sg docker -c "docker-compose ps"
+sg docker -c "docker stats"
+
+# 로그 확인
+sg docker -c "docker-compose logs -f"
+sg docker -c "docker-compose logs --tail=100"
+
+# 중지
+sg docker -c "docker-compose down"
+```
+
+### 병렬 수 변경
+
+Dockerfile CMD에서 `-p` 값 수정:
+
+```dockerfile
+CMD ["python3", "coupang.py", "work", "-t", "rank", "-n", "0", "-p", "20"]
+```
+
+### 성능 참고
+
+| 방식 | 워커 | 처리량 | 안정성 |
+|------|:----:|:-----:|:-----:|
+| 단일 프로세스 p=20 | 1 | 2/초 | ✅ |
+| Docker 5개 × p=20 | 5 | 10/초 | ✅ |
+| Docker 10개 × p=20 | 10 | 20/초 | ✅ |
+
+> 상세: [docs/docker-worker-setup.md](docs/docker-worker-setup.md)
+
 ## 상세 문서 (docs/)
 
 - [docs/database-schema.md](docs/database-schema.md) - DB 테이블 스키마
 - [docs/tls-profile.md](docs/tls-profile.md) - TLS 프로파일 설정
 - [docs/kt-proxy-ip.md](docs/kt-proxy-ip.md) - KT 모바일 IP 대역
+- [docs/docker-worker-setup.md](docs/docker-worker-setup.md) - Docker 분산 워커 설정

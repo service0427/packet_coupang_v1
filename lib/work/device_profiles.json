@@ -1,0 +1,198 @@
+{
+  "_meta": {
+    "version": "1.0",
+    "description": "Device TLS/HTTP fingerprint profiles for Coupang bypass",
+    "last_updated": "2025-12-03",
+    "source": "browserleaks.com TLS fingerprint capture"
+  },
+  "devices": {
+    "s23_chrome_142": {
+      "name": "Samsung Galaxy S23 - Chrome 142",
+      "platform": "android",
+      "browser": "chrome",
+      "browser_version": 142,
+      "enabled": true,
+      "tls": {
+        "ja3_text": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,10-18-35-43-5-0-16-17613-23-45-65281-13-65037-51-11-27,4588-29-23-24,0",
+        "signature_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "rsa_pss_rsae_sha256",
+          "rsa_pkcs1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "rsa_pss_rsae_sha384",
+          "rsa_pkcs1_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha512"
+        ],
+        "cert_compression": "brotli",
+        "grease": true
+      },
+      "http2": {
+        "akamai_text": "1:65536;2:0;4:6291456;6:262144|15663105|0|m,a,s,p",
+        "stream_weight": 256,
+        "stream_exclusive": 1
+      },
+      "headers": {
+        "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36",
+        "sec_ch_ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+        "sec_ch_ua_mobile": "?1",
+        "sec_ch_ua_platform": "\"Android\"",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "accept_encoding": "gzip, deflate, br, zstd",
+        "accept_language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
+      }
+    },
+    "a166l_chrome_141": {
+      "name": "Samsung Galaxy A16 - Chrome 141",
+      "platform": "android",
+      "browser": "chrome",
+      "browser_version": 141,
+      "enabled": true,
+      "tls": {
+        "ja3_text": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,5-23-0-35-45-10-65037-51-43-16-11-17613-65281-13-27-18,4588-29-23-24,0",
+        "signature_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "rsa_pss_rsae_sha256",
+          "rsa_pkcs1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "rsa_pss_rsae_sha384",
+          "rsa_pkcs1_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha512"
+        ],
+        "cert_compression": "brotli",
+        "grease": true
+      },
+      "http2": {
+        "akamai_text": "1:65536;2:0;4:6291456;6:262144|15663105|0|m,a,s,p",
+        "stream_weight": 256,
+        "stream_exclusive": 1
+      },
+      "headers": {
+        "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36",
+        "sec_ch_ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "sec_ch_ua_mobile": "?1",
+        "sec_ch_ua_platform": "\"Android\"",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "accept_encoding": "gzip, deflate, br, zstd",
+        "accept_language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
+      }
+    },
+    "n935l_chrome_138": {
+      "name": "Samsung - Chrome 138",
+      "platform": "android",
+      "browser": "chrome",
+      "browser_version": 138,
+      "enabled": true,
+      "tls": {
+        "ja3_text": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,16-45-27-0-43-51-65037-17613-10-65281-11-5-35-18-23-13,4588-29-23-24,0",
+        "signature_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "rsa_pss_rsae_sha256",
+          "rsa_pkcs1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "rsa_pss_rsae_sha384",
+          "rsa_pkcs1_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha512"
+        ],
+        "cert_compression": "brotli",
+        "grease": true
+      },
+      "http2": {
+        "akamai_text": "1:65536;2:0;4:6291456;6:262144|15663105|0|m,a,s,p",
+        "stream_weight": 256,
+        "stream_exclusive": 1
+      },
+      "headers": {
+        "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Mobile Safari/537.36",
+        "sec_ch_ua": "\"Not)A;Brand\";v=\"8\", \"Chromium\";v=\"138\", \"Google Chrome\";v=\"138\"",
+        "sec_ch_ua_mobile": "?1",
+        "sec_ch_ua_platform": "\"Android\"",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "accept_encoding": "gzip, deflate, br, zstd",
+        "accept_language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
+      }
+    },
+    "a165n_chrome_141": {
+      "name": "Samsung - Chrome 141",
+      "platform": "android",
+      "browser": "chrome",
+      "browser_version": 141,
+      "enabled": true,
+      "tls": {
+        "ja3_text": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,23-10-16-65037-51-43-17613-11-0-18-45-27-5-65281-35-13,4588-29-23-24,0",
+        "signature_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "rsa_pss_rsae_sha256",
+          "rsa_pkcs1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "rsa_pss_rsae_sha384",
+          "rsa_pkcs1_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha512"
+        ],
+        "cert_compression": "brotli",
+        "grease": true
+      },
+      "http2": {
+        "akamai_text": "1:65536;2:0;4:6291456;6:262144|15663105|0|m,a,s,p",
+        "stream_weight": 256,
+        "stream_exclusive": 1
+      },
+      "headers": {
+        "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Mobile Safari/537.36",
+        "sec_ch_ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
+        "sec_ch_ua_mobile": "?1",
+        "sec_ch_ua_platform": "\"Android\"",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "accept_encoding": "gzip, deflate, br, zstd",
+        "accept_language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
+      }
+    },
+    "a165n_chrome_142": {
+      "name": "Samsung - Chrome 142",
+      "platform": "android",
+      "browser": "chrome",
+      "browser_version": 142,
+      "enabled": true,
+      "tls": {
+        "ja3_text": "771,4865-4866-4867-49195-49199-49196-49200-52393-52392-49171-49172-156-157-47-53,5-45-23-35-65037-10-11-51-17613-0-27-13-18-16-65281-43,4588-29-23-24,0",
+        "signature_algorithms": [
+          "ecdsa_secp256r1_sha256",
+          "rsa_pss_rsae_sha256",
+          "rsa_pkcs1_sha256",
+          "ecdsa_secp384r1_sha384",
+          "rsa_pss_rsae_sha384",
+          "rsa_pkcs1_sha384",
+          "rsa_pss_rsae_sha512",
+          "rsa_pkcs1_sha512"
+        ],
+        "cert_compression": "brotli",
+        "grease": true
+      },
+      "http2": {
+        "akamai_text": "1:65536;2:0;4:6291456;6:262144|15663105|0|m,a,s,p",
+        "stream_weight": 256,
+        "stream_exclusive": 1
+      },
+      "headers": {
+        "user_agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Mobile Safari/537.36",
+        "sec_ch_ua": "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+        "sec_ch_ua_mobile": "?1",
+        "sec_ch_ua_platform": "\"Android\"",
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+        "accept_encoding": "gzip, deflate, br, zstd",
+        "accept_language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7"
+      }
+    }
+  },
+  "default_device": "s23_chrome_142",
+  "aliases": {
+    "s23": "s23_chrome_142",
+    "a16": "a166l_chrome_141",
+    "n935l": "n935l_chrome_138",
+    "a165n": "a165n_chrome_141",
+    "a165n2": "a165n_chrome_142"
+  }
+}
