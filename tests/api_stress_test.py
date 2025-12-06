@@ -36,6 +36,8 @@ def run_test(url, total, workers, mode='single'):
             match_type = meta.get('match_type')
             tries_count = meta.get('tries_count')
             tries_total = meta.get('tries_total')
+            round_num = meta.get('round')
+            round_detail = meta.get('round_detail')
 
             with lock:
                 results.append({
@@ -46,6 +48,8 @@ def run_test(url, total, workers, mode='single'):
                     'match_type': match_type,
                     'tries_count': tries_count,
                     'tries_total': tries_total,
+                    'round': round_num,
+                    'round_detail': round_detail,
                     'elapsed': elapsed
                 })
 
@@ -71,7 +75,7 @@ def run_test(url, total, workers, mode='single'):
                 })
             return False
 
-    mode_label = '멀티-트라이 (5회 동시)' if mode == 'multi' else '단일'
+    mode_label = 'Progressive Retry (1→2→3→4)' if mode == 'multi' else '단일'
     print(f'🚀 테스트 시작: {total}회, {workers} 스레드, {mode_label}')
     print(f'   URL: {url}')
     print('=' * 60)
@@ -113,13 +117,23 @@ def run_test(url, total, workers, mode='single'):
         for mt, cnt in match_types.most_common():
             print(f'   {mt}: {cnt}')
 
-    # 멀티-트라이 시도 횟수 분석
+    # Progressive Retry 라운드 분석
     if mode == 'multi':
-        tries_list = [r['tries_count'] for r in results if r['tries_count'] is not None]
+        # 라운드별 분포
+        round_dist = Counter(r.get('round') for r in results if r.get('round') is not None)
+        if round_dist:
+            print(f'\n🎯 라운드별 성공 분포:')
+            for rnd, cnt in sorted(round_dist.items()):
+                pct = cnt / len(results) * 100
+                label = {1: 'R1(1회)', 2: 'R2(2회)', 3: 'R3(3회)', 4: 'R4(4회)'}.get(rnd, f'R{rnd}')
+                print(f'   {label}: {cnt} ({pct:.1f}%)')
+
+        # 시도 횟수 분석
+        tries_list = [r.get('tries_count') for r in results if r.get('tries_count') is not None]
         if tries_list:
             avg_tries = sum(tries_list) / len(tries_list)
             print(f'\n🔄 시도 횟수:')
-            print(f'   평균: {avg_tries:.1f}회')
+            print(f'   평균: {avg_tries:.1f}회 (최대 10회)')
             tries_dist = Counter(tries_list)
             for t, cnt in sorted(tries_dist.items()):
                 print(f'   {t}회: {cnt}')

@@ -20,7 +20,7 @@ from api.schemas import (
 )
 from api.worker_pool import get_worker_pool, init_worker_pool
 from api.rank_checker import check_rank
-from api.multi_checker import check_rank_multi_async
+from api.multi_checker import check_rank_progressive_async
 from common import db
 
 
@@ -304,20 +304,22 @@ async def check_sample_rank():
 
 @app.post("/api/rank/check-multi", response_model=RankCheckResponse)
 async def check_product_rank_multi(request: RankCheckRequest):
-    """상품 순위 체크 (멀티-트라이)
+    """상품 순위 체크 (Progressive Retry)
 
-    5개 동시 시도 → 첫 번째 성공 결과 반환
-    모두 실패 시에만 에러 반환
+    Round 1: 1개 시도
+    Round 2: 2개 동시 시도 (실패 시)
+    Round 3: 3개 동시 시도 (실패 시)
+    Round 4: 4개 동시 시도 (실패 시)
+    최대 10회 시도, 첫 성공 결과 반환
     """
     try:
-        result = await check_rank_multi_async(
+        result = await check_rank_progressive_async(
             keyword=request.keyword,
             product_id=request.product_id,
             item_id=request.item_id,
             vendor_item_id=request.vendor_item_id,
             max_page=request.max_page,
-            max_tries=5,
-            timeout=30.0
+            timeout_per_round=15.0
         )
     except Exception as e:
         return RankCheckResponse(
@@ -357,7 +359,9 @@ async def check_product_rank_multi(request: RankCheckRequest):
                 proxy_host=result.get('proxy_host'),
                 match_type=result.get('match_type'),
                 tries_count=result.get('tries_count'),
-                tries_total=result.get('tries_total')
+                tries_total=result.get('tries_total'),
+                round=result.get('round'),
+                round_detail=result.get('round_detail')
             )
         )
 
@@ -394,7 +398,9 @@ async def check_product_rank_multi(request: RankCheckRequest):
             proxy_host=result.get('proxy_host'),
             match_type=result.get('match_type'),
             tries_count=result.get('tries_count'),
-            tries_total=result.get('tries_total')
+            tries_total=result.get('tries_total'),
+            round=result.get('round'),
+            round_detail=result.get('round_detail')
         )
     )
 
@@ -437,9 +443,9 @@ async def root():
         "version": "1.0.0",
         "endpoints": {
             "POST /api/rank/check": "순위 체크 (단일)",
-            "POST /api/rank/check-multi": "순위 체크 (5회 동시 시도)",
+            "POST /api/rank/check-multi": "순위 체크 (Progressive: 1→2→3→4)",
             "GET /api/rank/sample": "랜덤 샘플 (단일)",
-            "GET /api/rank/sample-multi": "랜덤 샘플 (멀티)",
+            "GET /api/rank/sample-multi": "랜덤 샘플 (Progressive)",
             "GET /api/status": "서버 상태"
         }
     }

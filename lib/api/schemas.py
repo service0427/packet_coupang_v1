@@ -49,9 +49,11 @@ class MetaData(BaseModel):
     proxy_host: Optional[str] = None
     # 매칭 정보
     match_type: Optional[str] = None
-    # 멀티-트라이 정보
+    # Progressive Retry 정보
     tries_count: Optional[int] = None  # 실제 시도 횟수
-    tries_total: Optional[int] = None  # 전체 시도 설정
+    tries_total: Optional[int] = None  # 전체 시도 설정 (최대 10)
+    round: Optional[int] = None  # 성공한 라운드 (1, 2, 3, 4)
+    round_detail: Optional[str] = None  # 라운드 상세 (예: "R1(1)", "R2(2)", "R3(3)", "R4(4)")
 
 
 class ErrorInfo(BaseModel):
