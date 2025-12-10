@@ -38,6 +38,67 @@ python3 coupang.py search --screenshot          # 스크린샷 저장
 - Response size > 50,000 bytes = SUCCESS
 - Response size ≤ 50,000 bytes = BLOCKED (Challenge 페이지)
 
+## Rank Check API (localhost:8088)
+
+순위 체크 API 서버. Progressive Retry 전략으로 최대 10회 시도.
+
+### 엔드포인트 비교
+
+| 엔드포인트 | 쓰레드 | 특징 | 쿠키 소모 |
+|-----------|:-----:|------|:--------:|
+| `/api/rank/check` | 1 | 빠른 실패 처리, 쿠키 불량시 즉시 중단 | 낮음 |
+| `/api/rank/check-multi` | 5 | Race 방식, 성공 확률↑ | 높음 |
+
+### Progressive Retry 전략
+
+둘 다 동일한 재시도 로직 사용:
+- Round 1: 1개 시도
+- Round 2: 2개 동시 시도 (실패 시)
+- Round 3: 3개 동시 시도 (실패 시)
+- Round 4: 4개 동시 시도 (실패 시)
+- **최대 10회 시도**, 첫 성공 결과 반환
+
+### 페이지 검색 티어
+
+1. **Tier 1**: 페이지 1 (가장 많이 발견)
+2. **Tier 2**: 페이지 2-5 (차선책)
+3. **Tier 3**: 페이지 6-13 (마지막)
+
+### 테스트 명령어
+
+```bash
+# 샘플 테스트 (DB에서 랜덤 선택)
+curl -s http://localhost:8088/api/rank/sample | jq
+curl -s http://localhost:8088/api/rank/sample-multi | jq
+
+# 직접 호출
+curl -X POST http://localhost:8088/api/rank/check \
+  -H "Content-Type: application/json" \
+  -d '{"keyword":"검색어","product_id":"12345678","max_page":13}'
+```
+
+## Work API (mkt.techb.kr:3302)
+
+작업 할당 및 결과 보고 API.
+
+```bash
+# 작업 할당
+curl "http://mkt.techb.kr:3302/api/work/allocate?work_type=rank"
+
+# 결과 보고
+curl -X POST http://mkt.techb.kr:3302/api/work/result \
+  -H "Content-Type: application/json" \
+  -d '{"allocation_key":"xxx","success":true,"actual_ip":"1.2.3.4","rank_data":{...}}'
+```
+
+### 독립 실행기 (work.py)
+
+```bash
+python3 work.py rank              # 단일 실행
+python3 work.py rank --loop       # 무한 반복
+python3 work.py rank -p 5         # 5개 병렬 실행
+```
+
 ## 프록시 API
 
 ```bash

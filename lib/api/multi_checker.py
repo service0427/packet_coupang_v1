@@ -13,12 +13,9 @@ Progressive Retry 순위 체크
 - 최대 10회(1+2+3+4), 평균적으로 훨씬 적은 쿠키 소모
 """
 
-import asyncio
 import time
-import uuid
 from concurrent.futures import ThreadPoolExecutor, FIRST_COMPLETED, wait
-from typing import Optional, List, Tuple
-import threading
+from typing import Tuple
 
 from api.rank_checker import check_rank
 
@@ -79,7 +76,8 @@ def _run_concurrent_checks(keyword: str, product_id: str,
 def check_rank_progressive(keyword: str, product_id: str,
                             item_id: str = None, vendor_item_id: str = None,
                             max_page: int = 13,
-                            timeout_per_round: float = 15.0) -> dict:
+                            timeout_per_round: float = 25.0,
+                            total_timeout: float = 30.0) -> dict:
     """Progressive Retry 순위 체크
 
     Round 1: 1개 시도
@@ -93,6 +91,7 @@ def check_rank_progressive(keyword: str, product_id: str,
         vendor_item_id: 벤더 아이템 ID (선택)
         max_page: 최대 검색 페이지
         timeout_per_round: 라운드별 타임아웃 (초)
+        total_timeout: 전체 타임아웃 (초, 기본 30초)
 
     Returns:
         dict: 성공 결과 또는 마지막 실패 결과
@@ -106,6 +105,18 @@ def check_rank_progressive(keyword: str, product_id: str,
     rounds = [1, 2, 3, 4]  # 각 라운드별 동시 시도 수 (총 10회)
 
     for round_num, concurrent_count in enumerate(rounds, 1):
+        # 전체 타임아웃 체크
+        elapsed = time.time() - total_start
+        if elapsed >= total_timeout:
+            return {
+                'error_code': 'TOTAL_TIMEOUT',
+                'error_message': f'Total timeout after {int(elapsed)}s',
+                'tries_count': total_tries,
+                'tries_total': sum(rounds),
+                'round': round_num - 1,
+                'elapsed_ms': int(elapsed * 1000)
+            }
+
         round_start = time.time()
 
         result = _run_concurrent_checks(
@@ -156,14 +167,15 @@ def check_rank_progressive(keyword: str, product_id: str,
 async def check_rank_progressive_async(keyword: str, product_id: str,
                                          item_id: str = None, vendor_item_id: str = None,
                                          max_page: int = 13,
-                                         timeout_per_round: float = 15.0) -> dict:
+                                         timeout_per_round: float = 25.0,
+                                         total_timeout: float = 30.0) -> dict:
     """비동기 Progressive Retry 순위 체크"""
     loop = asyncio.get_event_loop()
     return await loop.run_in_executor(
         None,
         lambda: check_rank_progressive(
             keyword, product_id, item_id, vendor_item_id,
-            max_page, timeout_per_round
+            max_page, timeout_per_round, total_timeout
         )
     )
 

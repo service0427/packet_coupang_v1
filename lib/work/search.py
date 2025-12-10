@@ -31,14 +31,20 @@ def fetch_page(page_num, query, trace_id, cookies, tls_profile, proxy, save_html
 
     url = f'https://www.coupang.com/np/search?q={quote(query)}&traceId={trace_id}&channel=user&listSize=72&page={page_num}'
 
-    # 재시도 대상 에러 패턴 (TLS 핸드셰이크 관련만)
-    # 타임아웃/연결실패는 프록시 문제이므로 재시도 무의미
+    # 재시도 대상 에러 패턴
+    # 동일 프록시로 다른 페이지가 성공하면 일시적 네트워크 문제일 수 있음
     RETRYABLE_ERRORS = [
         'curl: (35)',           # TLS connect error
         'TLS connect error',
         'TLSV1_ALERT',
         'SSL routines',
-        'curl: (56)',           # Recv failure (TLS 관련)
+        'curl: (56)',           # Recv failure
+        'curl: (28)',           # Timeout
+        'timed out',
+        'curl: (7)',            # Connection refused
+        'Could not connect',
+        'curl: (92)',           # HTTP/2 stream error
+        'HTTP/2 stream',
     ]
 
     last_error = None
@@ -197,13 +203,14 @@ def _match_product(product, target_product_id, target_item_id=None, target_vendo
 
 def search_product(query, target_product_id, cookies, tls_profile, proxy,
                    target_item_id=None, target_vendor_item_id=None,
-                   max_page=13, verbose=True, save_html=False):
+                   max_page=13, verbose=True, save_html=False,
+                   total_timeout=20):
     """상품 검색 (점진적 배치)
 
     배치 전략:
     - Tier 1: 1페이지만 (대부분 여기서 발견)
-    - Tier 2: 2-3페이지 (미발견 시)
-    - Tier 3: 4-13페이지 (미발견 시)
+    - Tier 2: 2-5페이지 동시 (미발견 시)
+    - Tier 3: 6-13페이지 동시 (미발견 시)
 
     매칭 우선순위:
     1. product_id + item_id + vendor_item_id (완전 매칭)
@@ -224,6 +231,7 @@ def search_product(query, target_product_id, cookies, tls_profile, proxy,
         max_page: 최대 페이지
         verbose: 상세 출력
         save_html: HTML 저장 여부 (스크린샷용)
+        total_timeout: 전체 타임아웃 (초, 기본 20초)
 
     Returns:
         dict: {
@@ -238,6 +246,9 @@ def search_product(query, target_product_id, cookies, tls_profile, proxy,
             found_html: 상품 발견 페이지 HTML (save_html=True인 경우)
         }
     """
+    import time
+    start_time = time.time()
+
     trace_id = generate_trace_id()
     if verbose:
         print(f"\n[{timestamp()}] 검색 중... (traceId: {trace_id})")
@@ -257,9 +268,9 @@ def search_product(query, target_product_id, cookies, tls_profile, proxy,
 
     # 배치 정의 (빈 배치 제외)
     batches = [
-        [1],                    # Tier 1
-        [2, 3],                 # Tier 2
-        list(range(4, min(max_page + 1, 14)))  # Tier 3
+        [1],                    # Tier 1: 1페이지 단독
+        [2, 3, 4, 5],           # Tier 2: 2-5페이지 동시
+        list(range(6, min(max_page + 1, 14)))  # Tier 3: 6-13페이지 동시
     ]
     batches = [b for b in batches if b]  # 빈 배치 제거
 
@@ -272,8 +283,17 @@ def search_product(query, target_product_id, cookies, tls_profile, proxy,
         if found or blocked or no_results:
             break
 
+        # 전체 타임아웃 체크
+        elapsed = time.time() - start_time
+        if elapsed >= total_timeout:
+            blocked = True
+            block_error = f'TOTAL_TIMEOUT_{int(elapsed)}s'
+            if verbose:
+                print(f"  🛑 전체 타임아웃 ({int(elapsed)}초) → 조기 종료")
+            break
+
         if verbose:
-            tier_name = ['1페이지', '2-3페이지', f'4-{max_page}페이지'][batch_idx]
+            tier_name = ['1페이지', '2-5페이지', f'6-{max_page}페이지'][batch_idx]
             print(f"  Tier {batch_idx + 1}: {tier_name}")
 
         with ThreadPoolExecutor(max_workers=len(pages)) as executor:
@@ -316,8 +336,16 @@ def search_product(query, target_product_id, cookies, tls_profile, proxy,
                                     found_html = result['html']
                                 if verbose:
                                     print(f"  [{timestamp()}] ✅ 발견! Page {result['page']}, Rank {product['rank']} ({match_type})")
+                                # 상품 발견 시 현재 배치의 나머지 요청 취소 및 루프 종료
+                                for f in futures:
+                                    f.cancel()
+                                break  # for product 루프 종료
 
-                    if verbose and not found:
+                    # 상품 발견 시 for future 루프 종료
+                    if found:
+                        break
+
+                    if verbose:
                         retry_info = f" (retry:{result['retried']})" if result.get('retried', 0) > 0 else ""
                         print(f"    Page {result['page']:2d}: {len(result['products'])}개{retry_info}")
                 else:
@@ -356,6 +384,72 @@ def search_product(query, target_product_id, cookies, tls_profile, proxy,
                             f.cancel()
                         break
 
+        # 배치 완료 후 실패한 페이지 재시도 (found/blocked가 아닌 경우만)
+        if not found and not blocked:
+            # 타임아웃 체크
+            elapsed = time.time() - start_time
+            if elapsed >= total_timeout:
+                blocked = True
+                block_error = f'TOTAL_TIMEOUT_{int(elapsed)}s'
+                if verbose:
+                    print(f"  🛑 전체 타임아웃 ({int(elapsed)}초) → 재시도 생략")
+            else:
+                # 현재 배치에서 실패한 페이지 찾기 (page_counts에서 -1인 페이지)
+                failed_pages = [p for p in pages if page_counts.get(p, (0, 0))[0] == -1]
+
+                if failed_pages and verbose:
+                    print(f"  🔄 실패 페이지 재시도: {failed_pages}")
+
+                # 실패 페이지 순차적으로 재시도 (1번씩)
+                for retry_page in failed_pages:
+                    # 재시도 전 타임아웃 체크
+                    elapsed = time.time() - start_time
+                    if found or blocked or elapsed >= total_timeout:
+                        if elapsed >= total_timeout:
+                            blocked = True
+                            block_error = f'TOTAL_TIMEOUT_{int(elapsed)}s'
+                        break
+
+                    result = fetch_page(retry_page, query, trace_id, cookies_ref, tls_profile, proxy, save_html, max_retries=1)
+
+                    # 응답 쿠키 수집
+                    all_response_cookies.update(result['response_cookies'])
+                    cookies_ref.update(result['response_cookies'])
+                    all_response_cookies_full.extend(result['response_cookies_full'])
+                    total_bytes += result.get('size', 0)
+
+                    if result['success']:
+                        pages_searched = max(pages_searched, result['page'])
+                        retried = result.get('retried', 0) + page_counts.get(retry_page, (0, 0))[1] + 1  # 기존 재시도 + 배치 재시도
+                        page_counts[result['page']] = (len(result['products']), retried)
+
+                        for product in result['products']:
+                            product['_page'] = result['page']
+                            all_products.append(product)
+
+                            if not found:
+                                matched, match_type = _match_product(
+                                    product, target_product_id, target_item_id, target_vendor_item_id
+                                )
+                                if matched:
+                                    found = product
+                                    found['page'] = result['page']
+                                    id_match_type = match_type
+                                    if save_html and result.get('html'):
+                                        found_html = result['html']
+                                    if verbose:
+                                        print(f"  [{timestamp()}] ✅ 발견! Page {result['page']}, Rank {product['rank']} ({match_type}) [재시도]")
+                                    break
+
+                        if verbose and not found:
+                            print(f"    Page {result['page']:2d}: {len(result['products'])}개 (재시도 성공)")
+                    else:
+                        # 재시도도 실패 - 기존 에러 유지, 재시도 횟수만 업데이트
+                        prev_retried = page_counts.get(retry_page, (0, 0))[1]
+                        page_counts[retry_page] = (-1, prev_retried + 1)
+                        if verbose:
+                            print(f"    Page {retry_page:2d}: ❌ 재시도 실패")
+
         # Tier 1 완료 후 검색 결과가 0개면 조기 종료
         # no_results는 쿠팡이 명시적으로 "검색결과 없음"을 반환한 경우에만 True
         # 에러(타임아웃 등)로 인한 0개는 no_results = False
@@ -392,15 +486,16 @@ def search_product(query, target_product_id, cookies, tls_profile, proxy,
     # 페이지별 상품 수 정렬 (1페이지부터)
     sorted_page_counts = dict(sorted(page_counts.items()))
 
-    # 에러 페이지(-1)가 과반수 이상이면 blocked 처리 (상품 미발견 시에만)
+    # 에러 페이지(-1)가 1개라도 있으면 blocked 처리 (상품 미발견 시에만)
+    # 완성도를 맞추지 못하면 실패 - 에러 페이지에 상품이 있었을 수 있음
     # page_counts 값은 (count, retried) 튜플
     # count: 0 = 정상 응답이지만 상품 없음, -1 = 에러
     if not found and not blocked and page_counts:
         error_pages = sum(1 for v in page_counts.values() if v[0] == -1)
-        success_pages = sum(1 for v in page_counts.values() if v[0] >= 0)
-        if error_pages > 0 and error_pages > success_pages:
+        total_pages = len(page_counts)
+        if error_pages > 0:
             blocked = True
-            block_error = f'PAGE_ERR_{error_pages}/{error_pages + success_pages}'
+            block_error = f'INCOMPLETE_{error_pages}/{total_pages}'
 
     # 튜플을 문자열로 변환: (63, 0) -> "63", (63, 2) -> "63(r2)", (-1, 1) -> "-1(r1)"
     page_counts_str = {}

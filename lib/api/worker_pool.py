@@ -57,17 +57,22 @@ class WorkerPool:
 
         return self.executor.submit(wrapper)
 
-    async def submit_async(self, fn: Callable, *args, **kwargs) -> Any:
+    async def submit_async(self, fn: Callable, *args, timeout: float = 25.0, **kwargs) -> Any:
         """비동기 작업 제출
 
         FastAPI와 함께 사용하기 위한 async wrapper
 
         Args:
             fn: 실행할 함수
-            *args, **kwargs: 함수 인자
+            *args: 함수 위치 인자
+            timeout: 타임아웃 (초, 기본 25초)
+            **kwargs: 함수 키워드 인자
 
         Returns:
             Any: 함수 실행 결과
+
+        Raises:
+            asyncio.TimeoutError: 타임아웃 초과 시
         """
         loop = asyncio.get_event_loop()
 
@@ -76,7 +81,10 @@ class WorkerPool:
             self._queue_size += 1
 
         try:
-            result = await loop.run_in_executor(self.executor, lambda: fn(*args, **kwargs))
+            result = await asyncio.wait_for(
+                loop.run_in_executor(self.executor, lambda: fn(*args, **kwargs)),
+                timeout=timeout
+            )
             return result
         finally:
             with self._lock:

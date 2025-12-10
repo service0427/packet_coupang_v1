@@ -18,7 +18,7 @@ if str(lib_path) not in sys.path:
 import argparse
 import uvicorn
 
-from lib.api import app
+from api import app
 
 
 def main():
