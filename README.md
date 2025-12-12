@@ -19,10 +19,7 @@ mkdir -p logs/work
 ## 실행
 
 ```bash
-# 1. 8088 API 서버 시작
-python3 server.py &
-
-# 2. 워커 실행
+# 워커 실행 (별도 서버 불필요!)
 python3 work.py rank -p 3 2>&1 | tee -a logs/work/$(date +%Y%m%d).log
 ```
 
@@ -33,7 +30,7 @@ work.py (워커)
     │
     ├── GET  mkt.techb.kr:3302/api/work/allocate   # 작업 할당
     │
-    ├── POST localhost:8088/api/rank/check         # 순위 체크
+    ├── lib/api/rank_checker.py (직접 호출)        # 순위 체크
     │         │
     │         └── GET mkt.techb.kr:5151/api/cookies/allocate  # 쿠키+프록시
     │
@@ -44,48 +41,28 @@ work.py (워커)
 
 ```
 packet_coupang_v1/
-├── server.py              # 8088 API 서버 진입점
-├── work.py                # 워커 실행기
+├── work.py                # 워커 실행기 (진입점)
 ├── requirements.txt       # Python 의존성
 ├── CLAUDE.md              # 상세 가이드
 └── lib/
-    ├── api/               # FastAPI 서버
-    │   ├── app.py
-    │   ├── rank_checker.py
-    │   └── worker_pool.py
-    ├── common/            # 공통 유틸리티
-    │   ├── fingerprint.py # TLS 프로필 (JSON)
-    │   ├── proxy.py       # 프록시/쿠키 API
+    ├── api/
+    │   └── rank_checker.py    # 순위 체크 핵심 로직
+    ├── common/                # 공통 유틸리티
+    │   ├── fingerprint.py     # TLS 프로필 (JSON)
+    │   ├── proxy.py           # 프록시/쿠키 API
     │   └── cookie.py
     ├── work/
-    │   ├── search.py
-    │   ├── request.py
+    │   ├── search.py          # 검색 모듈
+    │   ├── request.py         # HTTP 요청
     │   └── tls_profiles.json  # 38개 TLS 프로필
     └── extractor/
         └── search_extractor.py
-```
-
-## API 엔드포인트
-
-### 순위 체크 (8088)
-
-```bash
-curl -X POST http://localhost:8088/api/rank/check \
-  -H "Content-Type: application/json" \
-  -d '{"keyword":"검색어","product_id":"12345678","max_page":13}'
-```
-
-### 서버 상태
-
-```bash
-curl http://localhost:8088/api/status
 ```
 
 ## 외부 API 의존성
 
 | API | 포트 | 용도 |
 |-----|------|------|
-| mkt.techb.kr | 3001 | 프록시 상태 |
 | mkt.techb.kr | 3302 | 작업 할당/결과 보고 |
 | mkt.techb.kr | 5151 | 쿠키+프록시 할당 |
 

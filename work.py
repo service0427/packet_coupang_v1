@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """
-작업 실행 - API 기반 (3302 + localhost:8088)
+작업 실행 - 직접 모듈 호출 (3302 API + 로컬 모듈)
 
 Flow:
 1. 할당: GET http://mkt.techb.kr:3302/api/work/allocate?work_type=rank
-2. 체크: POST http://localhost:8088/api/rank/check-multi
+2. 체크: lib/api/rank_checker.check_rank() 직접 호출
 3. 결과: POST http://mkt.techb.kr:3302/api/work/result
 
 사용법:
@@ -35,6 +35,12 @@ POST /api/work/result
 import warnings
 warnings.filterwarnings('ignore')
 
+import sys
+import os
+
+# lib 폴더를 path에 추가 (모듈 import용)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'lib'))
+
 import time
 import argparse
 import requests
@@ -42,9 +48,11 @@ import threading
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-# API 설정
+# 직접 모듈 import (8088 HTTP API 대신)
+from api.rank_checker import check_rank as _check_rank
+
+# API 설정 (3302만 사용, 8088 제거)
 WORK_API = 'http://mkt.techb.kr:3302'
-RANK_API = 'http://localhost:8088'
 
 # 쓰레드별 세션 (ThreadLocal)
 _thread_local = threading.local()
@@ -83,20 +91,79 @@ def allocate_work(work_type='rank', task_id=None, user_folder=None, verbose=True
 
 
 def check_rank(keyword, product_id, item_id=None, vendor_item_id=None, max_page=13, verbose=True):
-    """순위 체크 (localhost:8088)"""
+    """순위 체크 (직접 모듈 호출)
+
+    기존 HTTP API 응답 형식과 호환되도록 변환
+    """
     try:
-        url = f"{RANK_API}/api/rank/check"
-        payload = {"keyword": keyword, "product_id": str(product_id), "max_page": max_page}
-        if item_id:
-            payload["item_id"] = str(item_id)
-        if vendor_item_id:
-            payload["vendor_item_id"] = str(vendor_item_id)
-        if verbose:
-            print(f"POST {url}")
-        resp = get_session().post(url, json=payload, timeout=60)
-        return resp.json()
+        # 직접 모듈 호출
+        result = _check_rank(
+            keyword=keyword,
+            product_id=str(product_id),
+            item_id=str(item_id) if item_id else None,
+            vendor_item_id=str(vendor_item_id) if vendor_item_id else None,
+            max_page=max_page
+        )
+
+        # HTTP API 응답 형식으로 변환
+        if result.get('error_code'):
+            # 에러 응답
+            return {
+                'success': False,
+                'error': {
+                    'code': result['error_code'],
+                    'message': result.get('error_message', ''),
+                    'detail': result.get('error_detail')
+                },
+                'meta': {
+                    'pages_searched': result.get('pages_searched', 0),
+                    'elapsed_ms': result.get('elapsed_ms', 0),
+                    'profile': result.get('profile_id'),
+                    'cookie_id': result.get('cookie_id'),
+                    'cookie_ip': result.get('cookie_ip'),
+                    'cookie_age_seconds': result.get('cookie_age_seconds'),
+                    'cookie_success': result.get('cookie_success'),
+                    'cookie_fail': result.get('cookie_fail'),
+                    'cookie_chrome': result.get('cookie_chrome'),
+                    'proxy_ip': result.get('proxy_ip'),
+                    'proxy_host': result.get('proxy_host'),
+                    'match_type': result.get('match_type')
+                }
+            }
+
+        # 성공 응답
+        return {
+            'success': True,
+            'data': {
+                'keyword': keyword,
+                'product_id': product_id,
+                'item_id': item_id,
+                'vendor_item_id': vendor_item_id,
+                'found': result['found'],
+                'rank': result.get('rank'),
+                'page': result.get('page'),
+                'rating': result.get('rating'),
+                'review_count': result.get('review_count'),
+                'id_match_type': result.get('id_match_type')
+            },
+            'meta': {
+                'pages_searched': result.get('pages_searched', 0),
+                'elapsed_ms': result.get('elapsed_ms', 0),
+                'profile': result.get('profile_id'),
+                'cookie_id': result.get('cookie_id'),
+                'cookie_ip': result.get('cookie_ip'),
+                'cookie_age_seconds': result.get('cookie_age_seconds'),
+                'cookie_success': result.get('cookie_success'),
+                'cookie_fail': result.get('cookie_fail'),
+                'cookie_chrome': result.get('cookie_chrome'),
+                'proxy_ip': result.get('proxy_ip'),
+                'proxy_host': result.get('proxy_host'),
+                'match_type': result.get('match_type')
+            }
+        }
+
     except Exception as e:
-        return {"success": False, "error": {"code": "API_ERROR", "message": str(e)[:100]}}
+        return {"success": False, "error": {"code": "MODULE_ERROR", "message": str(e)[:100]}}
 
 
 def report_result(allocation_key, success, actual_ip, rank_data, chrome_version=None,
@@ -216,15 +283,15 @@ def run_work(args):
     item_id = alloc.get('item_id')
     vendor_item_id = alloc.get('vendor_item_id')
 
-    # 2. 순위 체크
+    # 2. 순위 체크 (직접 모듈 호출)
     if verbose:
-        print(f"\n🔍 순위 체크 (localhost:8088)...")
+        print(f"\n🔍 순위 체크 (직접 모듈 호출)...")
 
     result = check_rank(keyword, product_id, item_id, vendor_item_id, args.max_page, verbose)
 
     # result가 None이면 빈 dict로 처리
     if result is None:
-        result = {"success": False, "error": {"code": "NULL_RESPONSE", "message": "API returned null"}}
+        result = {"success": False, "error": {"code": "NULL_RESPONSE", "message": "Module returned null"}}
 
     # 디버그: API 응답 전체 출력
     if debug:
@@ -463,7 +530,7 @@ def run_parallel(args):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='Work Executor (3302 + localhost:8088)')
+    parser = argparse.ArgumentParser(description='Work Executor (3302 + Direct Module)')
     parser.add_argument('work_type', choices=['rank', 'dev_rank'], help='작업 타입')
     parser.add_argument('--loop', '-l', action='store_true', help='무한 반복')
     parser.add_argument('--parallel', '-p', type=int, help='병렬 수')
