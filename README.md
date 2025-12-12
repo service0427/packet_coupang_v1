@@ -1,147 +1,115 @@
-# Coupang Rank Check API
+# Coupang Rank Check System
 
-쿠팡 상품 순위 체크 API - Akamai TLS 핑거프린트 매칭
+쿠팡 상품 순위 체크 시스템 - Akamai TLS 핑거프린트 매칭
 
-## 시스템 구성
-
-```
-외부 쿠키 생성 → Cookie Daemon (5151) → Rank API (8088)
-                  쿠키+프록시 관리         순위 체크
-```
-
-## 서버 실행
+## 설치
 
 ```bash
-cd /home/tech/packet_coupang_v1/rank_api
-python3 server.py                    # 기본 (포트 8088)
-python3 server.py --port 8888        # 포트 변경
-python3 server.py --workers 30       # 워커 수 변경
+# 1. 클론
+git clone https://github.com/service0427/packet_coupang_v1.git
+cd packet_coupang_v1
+
+# 2. Python 의존성 설치
+pip3 install -r requirements.txt
+
+# 3. logs 폴더 생성
+mkdir -p logs/work
 ```
 
-## API 사용법
-
-### 순위 체크
+## 실행
 
 ```bash
-# 한 줄 (복사용)
-curl -sX POST http://localhost:8088/api/rank/check -H "Content-Type: application/json" -d '{"keyword":"탄소매트","product_id":"9112018393"}' | jq
+# 1. 8088 API 서버 시작
+python3 server.py &
 
-# 전체 파라미터
-curl -sX POST http://localhost:8088/api/rank/check -H "Content-Type: application/json" -d '{"keyword":"탄소매트","product_id":"9112018393","item_id":"12345","vendor_item_id":"67890"}' | jq
+# 2. 워커 실행
+python3 work.py rank -p 3 2>&1 | tee -a logs/work/$(date +%Y%m%d).log
 ```
 
-> `-H "Content-Type: application/json"` 필수 (curl 기본값이 form-urlencoded)
+## 시스템 구조
 
-#### 요청 파라미터
-
-| 필드 | 필수 | 타입 | 설명 |
-|------|:----:|------|------|
-| keyword | O | string | 검색어 |
-| product_id | O | string | 상품 ID |
-| item_id | X | string | 아이템 ID |
-| vendor_item_id | X | string | 벤더 아이템 ID |
-| max_page | X | int | 최대 검색 페이지 (1-20, 기본: 13) |
-
-#### 응답 예시 (성공)
-
-```json
-{
-  "success": true,
-  "data": {
-    "keyword": "탄소매트",
-    "product_id": "9112018393",
-    "found": true,
-    "rank": 15,
-    "page": 1,
-    "rating": 4.8,
-    "review_count": 1234,
-    "checked_at": "2025-01-15T12:30:45+00:00"
-  },
-  "meta": {
-    "pages_searched": 1,
-    "elapsed_ms": 2340,
-    "profile": "chrome_131_win",
-    "proxy_ip": "123.45.67.89",
-    "match_type": "exact",
-    "id_match_type": "product_only"
-  },
-  "error": null
-}
+```
+work.py (워커)
+    │
+    ├── GET  mkt.techb.kr:3302/api/work/allocate   # 작업 할당
+    │
+    ├── POST localhost:8088/api/rank/check         # 순위 체크
+    │         │
+    │         └── GET mkt.techb.kr:5151/api/cookies/allocate  # 쿠키+프록시
+    │
+    └── POST mkt.techb.kr:3302/api/work/result     # 결과 보고
 ```
 
-#### 응답 예시 (실패)
+## 디렉토리 구조
 
-```json
-{
-  "success": false,
-  "data": null,
-  "meta": {
-    "pages_searched": 0,
-    "elapsed_ms": 5086,
-    "profile": "n935l_138",
-    "proxy_ip": "175.223.39.50",
-    "match_type": "new_exact",
-    "id_match_type": null
-  },
-  "error": {
-    "code": "BLOCKED",
-    "message": "Request blocked",
-    "detail": "PAGE_ERR_1"
-  }
-}
+```
+packet_coupang_v1/
+├── server.py              # 8088 API 서버 진입점
+├── work.py                # 워커 실행기
+├── requirements.txt       # Python 의존성
+├── CLAUDE.md              # 상세 가이드
+└── lib/
+    ├── api/               # FastAPI 서버
+    │   ├── app.py
+    │   ├── rank_checker.py
+    │   └── worker_pool.py
+    ├── common/            # 공통 유틸리티
+    │   ├── fingerprint.py # TLS 프로필 (JSON)
+    │   ├── proxy.py       # 프록시/쿠키 API
+    │   └── cookie.py
+    ├── work/
+    │   ├── search.py
+    │   ├── request.py
+    │   └── tls_profiles.json  # 38개 TLS 프로필
+    └── extractor/
+        └── search_extractor.py
 ```
 
-#### ID 매칭 타입 (id_match_type)
+## API 엔드포인트
 
-상품 검색 시 ID 매칭 우선순위:
+### 순위 체크 (8088)
 
-| 순위 | 타입 | 매칭 조건 |
-|:----:|------|----------|
-| 1 | full_match | product_id + item_id + vendor_item_id |
-| 2 | product_vendor | product_id + vendor_item_id |
-| 3 | product_item | product_id + item_id |
-| 4 | product_only | product_id만 |
-| 5 | vendor_only | vendor_item_id만 |
-| 6 | item_only | item_id만 |
+```bash
+curl -X POST http://localhost:8088/api/rank/check \
+  -H "Content-Type: application/json" \
+  -d '{"keyword":"검색어","product_id":"12345678","max_page":13}'
+```
 
 ### 서버 상태
 
 ```bash
-curl -s http://localhost:8088/api/status | jq
+curl http://localhost:8088/api/status
 ```
 
-```json
-{
-  "status": "running",
-  "workers": 20,
-  "active": 5,
-  "queue_size": 0,
-  "uptime_seconds": 3600
-}
-```
+## 외부 API 의존성
 
-## 에러 코드
-
-| 코드 | 설명 |
-|------|------|
-| INVALID_INPUT | 필수 파라미터 누락 |
-| NO_COOKIE | 사용 가능한 쿠키 없음 |
-| NO_TLS | TLS 프로필 없음 |
-| BLOCKED | 요청 차단됨 |
-| INTERNAL_ERROR | 내부 오류 |
+| API | 포트 | 용도 |
+|-----|------|------|
+| mkt.techb.kr | 3001 | 프록시 상태 |
+| mkt.techb.kr | 3302 | 작업 할당/결과 보고 |
+| mkt.techb.kr | 5151 | 쿠키+프록시 할당 |
 
 ## Akamai 우회 조건
 
-| 요소 | 필수 | 설명 |
-|------|:----:|------|
-| Chrome 131+ JA3 | O | 구버전 블랙리스트 (127-130 차단) |
-| Akamai 핑거프린트 | O | HTTP/2 SETTINGS 매칭 |
-| extra_fp | O | signature_algorithms, tls_grease |
-| sec-ch-ua 헤더 | O | Client Hints 필수 |
-| 신선한 쿠키 | O | `_abck`에 `~-1~` 포함 |
-| IP 바인딩 | O | 쿠키 생성 IP = 요청 IP (/24 서브넷) |
+| 요소 | 설명 |
+|------|------|
+| Chrome 131+ | 구버전 블랙리스트 (127-130 차단) |
+| JA3/Akamai FP | TLS/HTTP2 핑거프린트 매칭 |
+| sec-ch-ua | Client Hints 헤더 필수 |
+| IP 바인딩 | 쿠키 생성 IP = 요청 IP (/24) |
 
-## Success Criteria
+## 출력 로그 형식
 
-- Response size > 50,000 bytes = SUCCESS
-- Response size <= 50,000 bytes = BLOCKED
+```
+[HH:MM:SS.ms][WID] ✅ P 1 # 13 | 175.223.14.91 | 2.08s | C:7140630 NE 0s [FULL] R:OK | P:9101923326 I:26757401692 V:93728393953 | 키워드
+```
+
+| 필드 | 설명 |
+|------|------|
+| WID | 워커 ID |
+| P/# | 페이지/순위 |
+| IP | 프록시 IP |
+| C: | 쿠키 ID |
+| NE/NS | 쿠키 매칭 (Exact/Subnet) |
+| FULL | ID 매칭 타입 |
+| R:OK | 결과 보고 상태 |
