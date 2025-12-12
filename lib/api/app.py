@@ -1,14 +1,14 @@
 """
 FastAPI 앱 및 라우터
+- DB 의존성 없음
+- 순위 체크 API만 제공
 """
 
 import time
-import json
-import threading
+import random
+import asyncio
 from datetime import datetime, timezone
-from fastapi import FastAPI, Request
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
+from fastapi import FastAPI
 
 from api.schemas import (
     RankCheckRequest,
@@ -20,135 +20,14 @@ from api.schemas import (
 )
 from api.worker_pool import get_worker_pool, init_worker_pool
 from api.rank_checker import check_rank
-from api.multi_checker import check_rank_progressive_async
-from common import db
-
-
-def _save_api_log(log_data: dict):
-    """API 로그를 DB에 저장 (별도 스레드)"""
-    try:
-        conn = db.get_connection()
-        with conn.cursor() as cur:
-            cur.execute('''
-                INSERT INTO api_logs (
-                    request_time, response_time, elapsed_ms, client_ip,
-                    method, path, status_code, success, error_code,
-                    keyword, product_id, found, `rank`, cookie_id, match_type
-                ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-                )
-            ''', (
-                log_data['request_time'],
-                log_data['response_time'],
-                log_data['elapsed_ms'],
-                log_data['client_ip'],
-                log_data['method'],
-                log_data['path'],
-                log_data['status_code'],
-                log_data['success'],
-                log_data.get('error_code'),
-                log_data.get('keyword'),
-                log_data.get('product_id'),
-                log_data.get('found'),
-                log_data.get('rank'),
-                log_data.get('cookie_id'),
-                log_data.get('match_type')
-            ))
-            conn.commit()
-    except Exception as e:
-        pass  # 로그 저장 실패해도 API는 정상 동작
-    finally:
-        try:
-            conn.close()
-        except:
-            pass
-
-
-class APILogMiddleware(BaseHTTPMiddleware):
-    """API 호출 로그 미들웨어"""
-
-    async def dispatch(self, request: Request, call_next):
-        # /api/rank/ 경로만 로깅
-        if not request.url.path.startswith('/api/rank/'):
-            return await call_next(request)
-
-        request_time = datetime.now(timezone.utc)
-        start_time = time.time()
-
-        # 요청 처리
-        response = await call_next(request)
-
-        response_time = datetime.now(timezone.utc)
-        elapsed_ms = int((time.time() - start_time) * 1000)
-
-        # 클라이언트 IP (프록시 헤더 우선)
-        client_ip = request.headers.get('x-forwarded-for', '').split(',')[0].strip()
-        if not client_ip:
-            client_ip = request.headers.get('x-real-ip', '')
-        if not client_ip and request.client:
-            client_ip = request.client.host
-
-        # 응답 본문 읽기 (로그용)
-        response_body = b''
-        async for chunk in response.body_iterator:
-            response_body += chunk
-
-        # 응답 데이터 파싱
-        log_data = {
-            'request_time': request_time,
-            'response_time': response_time,
-            'elapsed_ms': elapsed_ms,
-            'client_ip': client_ip,
-            'method': request.method,
-            'path': request.url.path,
-            'status_code': response.status_code,
-            'success': None,
-            'error_code': None,
-            'keyword': None,
-            'product_id': None,
-            'found': None,
-            'rank': None,
-            'cookie_id': None,
-            'match_type': None
-        }
-
-        try:
-            resp_json = json.loads(response_body)
-            log_data['success'] = resp_json.get('success')
-            if resp_json.get('error'):
-                log_data['error_code'] = resp_json['error'].get('code')
-            if resp_json.get('data'):
-                log_data['keyword'] = resp_json['data'].get('keyword')
-                log_data['product_id'] = resp_json['data'].get('product_id')
-                log_data['found'] = resp_json['data'].get('found')
-                log_data['rank'] = resp_json['data'].get('rank')
-            if resp_json.get('meta'):
-                log_data['cookie_id'] = resp_json['meta'].get('cookie_id')
-                log_data['match_type'] = resp_json['meta'].get('match_type')
-        except:
-            pass
-
-        # 비동기로 DB 저장 (응답 지연 방지)
-        threading.Thread(target=_save_api_log, args=(log_data,), daemon=True).start()
-
-        # 새 응답 반환 (본문 재사용)
-        return Response(
-            content=response_body,
-            status_code=response.status_code,
-            headers=dict(response.headers),
-            media_type=response.media_type
-        )
 
 
 # FastAPI 앱 생성
 app = FastAPI(
     title="Rank Check API",
     description="쿠팡 상품 순위 체크 API",
-    version="1.0.0"
+    version="2.0.0"
 )
-
-# 로그 미들웨어 등록
-app.add_middleware(APILogMiddleware)
 
 
 @app.on_event("startup")
@@ -204,7 +83,7 @@ async def check_product_rank(request: RankCheckRequest):
             )
         )
 
-    # page_counts 키를 문자열로 변환 (JSON 호환) - 값은 이미 문자열
+    # page_counts 키를 문자열로 변환 (JSON 호환)
     page_counts = result.get('page_counts', {})
     page_counts_str = {str(k): v for k, v in page_counts.items()} if page_counts else None
 
@@ -270,71 +149,34 @@ async def check_product_rank(request: RankCheckRequest):
     )
 
 
-@app.get("/api/rank/sample", response_model=RankCheckResponse)
-async def check_sample_rank():
-    """랜덤 샘플로 순위 체크 (테스트용)"""
-    # DB에서 랜덤 상품 가져오기
-    conn = db.get_connection()
-    try:
-        with conn.cursor() as cur:
-            cur.execute('''
-                SELECT keyword, product_id, item_id, vendor_item_id
-                FROM product_list ORDER BY RAND() LIMIT 1
-            ''')
-            row = cur.fetchone()
-    finally:
-        conn.close()
-
-    if not row:
-        return RankCheckResponse(
-            success=False,
-            error=ErrorInfo(code="NO_SAMPLE", message="No sample data in DB")
-        )
-
-    # 실제 체크 실행
-    request = RankCheckRequest(
-        keyword=row['keyword'],
-        product_id=row['product_id'],
-        item_id=row.get('item_id'),
-        vendor_item_id=row.get('vendor_item_id'),
-        max_page=13
-    )
-    return await check_product_rank(request)
-
-
 @app.post("/api/rank/check-multi", response_model=RankCheckResponse)
 async def check_product_rank_multi(request: RankCheckRequest):
     """상품 순위 체크 (Exponential Backoff + Jitter)
 
-    업계 표준 재시도 패턴 (AWS, Google Cloud 권장):
+    업계 표준 재시도 패턴:
     - 최대 3회 시도
     - 실패 시 지수 백오프: 1초 → 2초 (+ 랜덤 jitter)
     - 30초 총 타임아웃
     - 성공하면 즉시 반환
     """
-    import time as _time
-    import random
-    import asyncio
-
     product_id = request.product_id
     item_id = request.item_id
     vendor_item_id = request.vendor_item_id
 
     pool = get_worker_pool()
-    total_start = _time.time()
+    total_start = time.time()
     total_timeout = 30.0
     max_tries = 3
-    base_delay = 1.0  # 기본 대기 시간 (초)
+    base_delay = 1.0
     last_result = None
 
     for try_num in range(1, max_tries + 1):
         # 타임아웃 체크
-        elapsed = _time.time() - total_start
+        elapsed = time.time() - total_start
         if elapsed >= total_timeout:
             break
 
         try:
-            # 개별 시도당 25초 타임아웃
             result = await pool.submit_async(
                 check_rank,
                 keyword=request.keyword,
@@ -357,23 +199,19 @@ async def check_product_rank_multi(request: RankCheckRequest):
 
         last_result = result
 
-        # 성공 체크 (error_code가 없으면 성공)
+        # 성공 체크
         if not result.get('error_code'):
-            # 성공 - tries 정보 추가
             result['tries_count'] = try_num
             result['tries_total'] = max_tries
             break
 
-        # 실패 시 Exponential Backoff + Jitter (마지막 시도 후에는 대기 안 함)
+        # 실패 시 Exponential Backoff + Jitter
         if try_num < max_tries:
-            # 지수 백오프: 2^(try_num-1) = 1초, 2초, ...
             backoff = base_delay * (2 ** (try_num - 1))
-            # Jitter: 0~0.5초 랜덤 추가 (thundering herd 방지)
             jitter = random.uniform(0, 0.5)
-            delay = min(backoff + jitter, 5.0)  # 최대 5초
+            delay = min(backoff + jitter, 5.0)
 
-            # 남은 시간 체크
-            remaining = total_timeout - (_time.time() - total_start)
+            remaining = total_timeout - (time.time() - total_start)
             if delay < remaining:
                 await asyncio.sleep(delay)
 
@@ -387,14 +225,12 @@ async def check_product_rank_multi(request: RankCheckRequest):
             )
         )
 
-    total_elapsed_ms = int((_time.time() - total_start) * 1000)
+    total_elapsed_ms = int((time.time() - total_start) * 1000)
     tries_count = last_result.get('tries_count', max_tries)
 
-    # page_counts 변환
     page_counts = last_result.get('page_counts', {})
     page_counts_str = {str(k): v for k, v in page_counts.items()} if page_counts else None
 
-    # 에러인 경우
     if last_result.get('error_code'):
         return RankCheckResponse(
             success=False,
@@ -460,47 +296,15 @@ async def check_product_rank_multi(request: RankCheckRequest):
     )
 
 
-@app.get("/api/rank/sample-multi", response_model=RankCheckResponse)
-async def check_sample_rank_multi():
-    """랜덤 샘플로 순위 체크 - 멀티 트라이 (테스트용)"""
-    conn = db.get_connection()
-    try:
-        with conn.cursor() as cur:
-            cur.execute('''
-                SELECT keyword, product_id, item_id, vendor_item_id
-                FROM product_list ORDER BY RAND() LIMIT 1
-            ''')
-            row = cur.fetchone()
-    finally:
-        conn.close()
-
-    if not row:
-        return RankCheckResponse(
-            success=False,
-            error=ErrorInfo(code="NO_SAMPLE", message="No sample data in DB")
-        )
-
-    request = RankCheckRequest(
-        keyword=row['keyword'],
-        product_id=row['product_id'],
-        item_id=row.get('item_id'),
-        vendor_item_id=row.get('vendor_item_id'),
-        max_page=13
-    )
-    return await check_product_rank_multi(request)
-
-
 @app.get("/")
 async def root():
     """루트 경로"""
     return {
         "service": "Rank Check API",
-        "version": "1.0.0",
+        "version": "2.0.0",
         "endpoints": {
             "POST /api/rank/check": "순위 체크 (단일)",
-            "POST /api/rank/check-multi": "순위 체크 (Progressive: 1→2→3→4)",
-            "GET /api/rank/sample": "랜덤 샘플 (단일)",
-            "GET /api/rank/sample-multi": "랜덤 샘플 (Progressive)",
+            "POST /api/rank/check-multi": "순위 체크 (재시도)",
             "GET /api/status": "서버 상태"
         }
     }

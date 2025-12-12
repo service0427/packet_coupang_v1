@@ -437,13 +437,13 @@ def run_parallel(args):
 
                 if not r['success']:
                     stats['failed'] += 1
-                    print(f"[{ts}][{wid:2d}] 🚫 P 0 #  0 | {ip:15s} | {elapsed:5.2f}s | C:{cid:<6} {cookie_short} {cookie_age:4d}s [    ] {rs} | P:{pid:>10s} I:{iid:>11s} V:{vid:>11s} | {kw}\n", flush=True)
+                    print(f"[{ts}][{wid:2d}] 🚫 P 0 #  0 | {ip:15s} | {elapsed:5.2f}s | C:{cid:<6} {cookie_short} {cookie_age:4d}s [    ] {rs} | P:{pid:>10s} I:{iid:>11s} V:{vid:>11s} | {kw}", flush=True)
                 elif r['found']:
                     stats['found'] += 1
-                    print(f"[{ts}][{wid:2d}] ✅ P{r['page']:2d} #{r['rank']:3d} | {ip:15s} | {elapsed:5.2f}s | C:{cid:<6} {cookie_short} {cookie_age:4d}s [{id_short}] {rs} | P:{pid:>10s} I:{iid:>11s} V:{vid:>11s} | {kw}\n", flush=True)
+                    print(f"[{ts}][{wid:2d}] ✅ P{r['page']:2d} #{r['rank']:3d} | {ip:15s} | {elapsed:5.2f}s | C:{cid:<6} {cookie_short} {cookie_age:4d}s [{id_short}] {rs} | P:{pid:>10s} I:{iid:>11s} V:{vid:>11s} | {kw}", flush=True)
                 else:
                     stats['not_found'] += 1
-                    print(f"[{ts}][{wid:2d}] ❌ P 0 #  0 | {ip:15s} | {elapsed:5.2f}s | C:{cid:<6} {cookie_short} {cookie_age:4d}s [    ] {rs} | P:{pid:>10s} I:{iid:>11s} V:{vid:>11s} | {kw}\n", flush=True)
+                    print(f"[{ts}][{wid:2d}] ❌ P 0 #  0 | {ip:15s} | {elapsed:5.2f}s | C:{cid:<6} {cookie_short} {cookie_age:4d}s [    ] {rs} | P:{pid:>10s} I:{iid:>11s} V:{vid:>11s} | {kw}", flush=True)
 
     # 워커 쓰레드 시작 (0.5초 간격으로 순차 시작 - 초기 동시 요청 방지)
     threads = []
