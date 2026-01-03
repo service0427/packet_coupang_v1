@@ -38,7 +38,7 @@ BASE_URL = "https://cmapi.coupang.com"
 CHROME_VERSION = "143.0.0.0"
 
 # 검증 기준
-MIN_PRODUCTS_PER_PAGE = 20  # 페이지당 최소 상품 수 (정상: 36~72)
+MIN_PRODUCTS_PER_PAGE = 15  # 페이지당 최소 상품 수 (cmapi는 ~20개 반환)
 MIN_PAGES_FOR_NOT_FOUND = 6  # 미발견 인정 최소 페이지 수
 
 
