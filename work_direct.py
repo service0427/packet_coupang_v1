@@ -426,7 +426,7 @@ def main():
     parser.add_argument('--loop', '-l', action='store_true', help='무한 반복')
     parser.add_argument('--parallel', '-p', type=int, help='병렬 수')
     parser.add_argument('--count', '-n', type=int, help='실행 횟수')
-    parser.add_argument('--max-page', type=int, default=13, help='최대 페이지')
+    parser.add_argument('--max-page', type=int, default=50, help='최대 페이지')
     parser.add_argument('--task-id', type=int, help='특정 task ID')
     parser.add_argument('--verbose', '-v', action='store_true', default=True)
     parser.add_argument('--debug', '-d', action='store_true', help='디버그 모드')
