@@ -37,6 +37,10 @@ HEADERS = {
 BASE_URL = "https://cmapi.coupang.com"
 CHROME_VERSION = "143.0.0.0"
 
+# 검증 기준
+MIN_PRODUCTS_PER_PAGE = 20  # 페이지당 최소 상품 수 (정상: 36~72)
+MIN_PAGES_FOR_NOT_FOUND = 6  # 미발견 인정 최소 페이지 수
+
 
 def _request(url):
     """커스텀 TLS로 요청"""
@@ -119,7 +123,7 @@ def _match_product(product, target_product_id, target_item_id=None, target_vendo
     return (False, None)
 
 
-def _error_result(start_time, code, message, detail=None, pages_searched=0):
+def _error_result(start_time, code, message, detail=None, pages_searched=0, page_counts=None):
     """에러 결과"""
     return {
         'success': False,
@@ -127,6 +131,7 @@ def _error_result(start_time, code, message, detail=None, pages_searched=0):
         'rank': None,
         'page': None,
         'pages_searched': pages_searched,
+        'page_counts': page_counts or {},
         'elapsed_ms': int((time.time() - start_time) * 1000),
         'chrome_version': CHROME_VERSION,
         'error_code': code,
@@ -136,7 +141,7 @@ def _error_result(start_time, code, message, detail=None, pages_searched=0):
 
 
 def _success_result(start_time, found, rank, page, pages_searched,
-                    rating=None, review_count=None, id_match_type=None):
+                    rating=None, review_count=None, id_match_type=None, page_counts=None):
     """성공 결과"""
     return {
         'success': True,
@@ -147,6 +152,7 @@ def _success_result(start_time, found, rank, page, pages_searched,
         'review_count': review_count,
         'id_match_type': id_match_type,
         'pages_searched': pages_searched,
+        'page_counts': page_counts or {},
         'elapsed_ms': int((time.time() - start_time) * 1000),
         'chrome_version': CHROME_VERSION,
         'error_code': None,
@@ -179,6 +185,9 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
     keyword = str(keyword).strip()
     product_id = str(product_id).strip()
 
+    page_counts = {}  # 페이지별 상품 수 {1: 36, 2: 36, ...}
+    page_errors = []  # 에러 페이지 목록
+
     try:
         # 검색 실행
         params = f"filter=KEYWORD:{quote(keyword)}|CCID:ALL|EXTRAS:channel/user|GET_FILTER:NONE|SINGLE_ENTITY:TRUE@SEARCH&preventingRedirection=false&resultType=default&ccidActivated=false"
@@ -193,12 +202,16 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
             return _error_result(start_time, 'API_ERROR', data.get('rCode'))
 
         rdata = data.get('rData', {})
+        total_count = rdata.get('totalCount', 0)
         all_products = {}
         found_product = None
         id_match_type = None
 
         # 첫 페이지
-        for p in _extract_products(rdata):
+        first_page_products = _extract_products(rdata)
+        page_counts[1] = len(first_page_products)
+
+        for p in first_page_products:
             key = f"{p['productId']}_{p['itemId']}"
             if key not in all_products:
                 p['rank'] = len(all_products) + 1
@@ -214,6 +227,14 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
         next_params = rdata.get('nextPageParams', '')
         pages = 1
 
+        # 첫 페이지 검증: 상품이 너무 적으면 차단 의심
+        if page_counts[1] < MIN_PRODUCTS_PER_PAGE and total_count > 100:
+            return _error_result(
+                start_time, 'BLOCKED', 'Insufficient products on page 1',
+                detail=f'p1:{page_counts[1]}/total:{total_count}',
+                pages_searched=1, page_counts=page_counts
+            )
+
         # 다음 페이지들
         while next_key and pages < max_page and not found_product:
             pages += 1
@@ -221,17 +242,34 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
 
             try:
                 resp = _request(url)
+                if resp.status_code != 200:
+                    page_counts[pages] = -1
+                    page_errors.append({'page': pages, 'error': f'STATUS_{resp.status_code}'})
+                    break
+
                 data = resp.json()
-            except Exception:
+            except Exception as e:
+                page_counts[pages] = -1
+                page_errors.append({'page': pages, 'error': str(e)[:50]})
                 break
 
             if data.get('rCode') != 'RET0000':
+                page_counts[pages] = -1
+                page_errors.append({'page': pages, 'error': data.get('rCode', 'UNKNOWN')})
                 break
 
             rdata = data.get('rData', {})
+            page_products = _extract_products(rdata)
+            page_counts[pages] = len(page_products)
+
+            # 페이지 상품 수 검증
+            if len(page_products) < MIN_PRODUCTS_PER_PAGE and pages <= 5:
+                # 초반 페이지에서 상품이 너무 적으면 차단 의심
+                page_errors.append({'page': pages, 'error': f'LOW_COUNT_{len(page_products)}'})
+
             before_count = len(all_products)
 
-            for p in _extract_products(rdata):
+            for p in page_products:
                 key = f"{p['productId']}_{p['itemId']}"
                 if key not in all_products:
                     p['rank'] = len(all_products) + 1
@@ -244,13 +282,32 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
                             id_match_type = match_type
                             break
 
+            # 새 상품이 없으면 종료 (정상적인 끝 또는 문제)
             if len(all_products) == before_count:
-                break
+                if len(page_products) == 0:
+                    # 빈 페이지 = 정상 종료
+                    break
+                # 상품은 있지만 모두 중복 = 계속 진행
 
             next_key = rdata.get('nextPageKey')
             next_params = rdata.get('nextPageParams', '')
 
-        # 결과 반환
+            if not next_key:
+                break
+
+        # 결과 검증
+        total_products = len(all_products)
+
+        # 에러 페이지가 있으면 실패 처리
+        if page_errors and not found_product:
+            err_summary = ','.join([f"p{e['page']}:{e['error']}" for e in page_errors[:3]])
+            return _error_result(
+                start_time, 'INCOMPLETE', f'Page errors: {len(page_errors)}',
+                detail=err_summary,
+                pages_searched=pages, page_counts=page_counts
+            )
+
+        # 발견 시
         if found_product:
             rank = found_product['rank']
             page = (rank - 1) // 72 + 1
@@ -275,13 +332,39 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
 
             return _success_result(
                 start_time, True, rank, page, pages,
-                rating=rating, review_count=review_count, id_match_type=id_match_type
+                rating=rating, review_count=review_count,
+                id_match_type=id_match_type, page_counts=page_counts
             )
-        else:
-            return _success_result(start_time, False, None, None, pages)
+
+        # 미발견 검증
+        # 1. 충분한 페이지를 검색했는지
+        if pages < MIN_PAGES_FOR_NOT_FOUND:
+            return _error_result(
+                start_time, 'INCOMPLETE', f'Only {pages} pages searched',
+                detail=f'min_required:{MIN_PAGES_FOR_NOT_FOUND}',
+                pages_searched=pages, page_counts=page_counts
+            )
+
+        # 2. 총 상품 수가 합리적인지 (페이지당 평균 30개 이상)
+        expected_min_products = pages * 20
+        if total_products < expected_min_products and total_count > expected_min_products:
+            return _error_result(
+                start_time, 'BLOCKED', f'Too few products: {total_products}',
+                detail=f'expected:{expected_min_products}/total_count:{total_count}',
+                pages_searched=pages, page_counts=page_counts
+            )
+
+        # 정상적인 미발견
+        return _success_result(
+            start_time, False, None, None, pages,
+            page_counts=page_counts
+        )
 
     except Exception as e:
-        return _error_result(start_time, 'INTERNAL_ERROR', 'Unexpected error', str(e)[:100])
+        return _error_result(
+            start_time, 'INTERNAL_ERROR', 'Unexpected error',
+            str(e)[:100], pages_searched=0, page_counts=page_counts
+        )
 
 
 def get_public_ip():

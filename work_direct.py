@@ -298,6 +298,8 @@ def run_work(args):
         'keyword': keyword, 'product_id': product_id,
         'item_id': item_id, 'vendor_item_id': vendor_item_id,
         'id_match_type': id_match_type,
+        'pages_searched': pages_searched,
+        'error_code': error_code,
         'elapsed_ms': elapsed_ms,
         'report_success': report_success,
         'report_msg': report_msg
@@ -390,13 +392,16 @@ def run_parallel(args):
                     should_sleep = True
                 elif not r['success']:
                     stats['failed'] += 1
-                    print(f"[{ts}][D{wid:02d}] 🚫 실패 | {r['keyword'][:20]}", flush=True)
+                    err = r.get('error_code', 'UNKNOWN')[:15]
+                    pages = r.get('pages_searched', 0)
+                    print(f"[{ts}][D{wid:02d}] 🚫 {err} P{pages} | {r['elapsed_ms']/1000:.1f}s | {r['keyword'][:25]}", flush=True)
                 elif r['found']:
                     stats['found'] += 1
                     print(f"[{ts}][D{wid:02d}] ✅ P{r['page']:2d} #{r['rank']:3d} | {r['elapsed_ms']/1000:.1f}s | {r['keyword'][:30]}", flush=True)
                 else:
                     stats['not_found'] += 1
-                    print(f"[{ts}][D{wid:02d}] ❌ 미발견 | {r['elapsed_ms']/1000:.1f}s | {r['keyword'][:30]}", flush=True)
+                    pages = r.get('pages_searched', 0)
+                    print(f"[{ts}][D{wid:02d}] ❌ 미발견 P{pages:2d} | {r['elapsed_ms']/1000:.1f}s | {r['keyword'][:30]}", flush=True)
 
             if should_sleep:
                 time.sleep(30)
