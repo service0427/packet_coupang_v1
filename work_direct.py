@@ -321,8 +321,8 @@ def run_loop(args):
             result = run_work(args)
 
             if result is None:
-                print("   작업 없음 - 5초 대기...")
-                time.sleep(5)
+                print("   작업 없음 - 10초 대기...")
+                time.sleep(10)
             elif not result['success']:
                 stats['failed'] += 1
             elif result['found']:
@@ -404,7 +404,7 @@ def run_parallel(args):
                     print(f"[{ts}][D{wid:02d}] ❌ 미발견 P{pages:2d} | {r['elapsed_ms']/1000:.1f}s | {r['keyword'][:30]}", flush=True)
 
             if should_sleep:
-                time.sleep(30)
+                time.sleep(10)
 
     threads = []
     try:
