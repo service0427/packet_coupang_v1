@@ -337,20 +337,21 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
             )
 
         # 미발견 검증
-        # 1. 충분한 페이지를 검색했는지
-        if pages < MIN_PAGES_FOR_NOT_FOUND:
+        # 1. 충분한 페이지를 검색했는지 (단, 검색 결과가 원래 적으면 예외)
+        if pages < MIN_PAGES_FOR_NOT_FOUND and total_count > pages * 72:
+            # total_count가 충분한데 페이지가 적으면 문제
             return _error_result(
                 start_time, 'INCOMPLETE', f'Only {pages} pages searched',
-                detail=f'min_required:{MIN_PAGES_FOR_NOT_FOUND}',
+                detail=f'min:{MIN_PAGES_FOR_NOT_FOUND}/total:{total_count}',
                 pages_searched=pages, page_counts=page_counts
             )
 
-        # 2. 총 상품 수가 합리적인지 (페이지당 평균 30개 이상)
-        expected_min_products = pages * 20
-        if total_products < expected_min_products and total_count > expected_min_products:
+        # 2. 총 상품 수가 합리적인지
+        # - total_count가 1000개 이상인데 추출이 200개 미만이면 문제
+        if total_count > 1000 and total_products < 200:
             return _error_result(
                 start_time, 'BLOCKED', f'Too few products: {total_products}',
-                detail=f'expected:{expected_min_products}/total_count:{total_count}',
+                detail=f'total_count:{total_count}',
                 pages_searched=pages, page_counts=page_counts
             )
 
