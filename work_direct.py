@@ -62,9 +62,9 @@ def get_session():
 
 
 def allocate_work(work_type='rank', task_id=None, user_folder=None, verbose=True, debug=False):
-    """작업 할당 (3302)"""
+    """작업 할당 (3302) - 프록시 미사용"""
     try:
-        url = f"{WORK_API}/api/work/allocate?work_type={work_type}"
+        url = f"{WORK_API}/api/work/allocate?work_type={work_type}&proxy=false"
         if task_id:
             url += f"&task_id={task_id}"
         if user_folder:

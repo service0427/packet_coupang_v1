@@ -70,7 +70,7 @@ def test_from_api():
     print("\n작업 할당 요청...")
     try:
         resp = requests.get(
-            'http://mkt.techb.kr:3302/api/work/allocate?work_type=rank&user_folder=test_d',
+            'http://mkt.techb.kr:3302/api/work/allocate?work_type=rank&proxy=false&user_folder=test_d',
             timeout=15
         )
         data = resp.json()
