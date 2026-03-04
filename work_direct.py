@@ -132,6 +132,9 @@ def check_rank(keyword, product_id, item_id=None, vendor_item_id=None, max_page=
         }
 
     except Exception as e:
+        import traceback
+        print(f"\n[ERROR] check_rank 내부 치명적 에러 발생: {e}")
+        traceback.print_exc()
         return {"success": False, "error": {"code": "MODULE_ERROR", "message": str(e)[:100]}}
 
 
@@ -405,6 +408,9 @@ def run_parallel(args):
 
             if should_sleep:
                 time.sleep(10)
+            elif not r['success'] and r.get('error_code') in ('INTERNAL_ERROR', 'MODULE_ERROR'):
+                print(f"[{ts}][D{wid:02d}] ⏳ 60초 휴식 (INTERNAL_ERROR 방지)", flush=True)
+                time.sleep(60)
 
     threads = []
     try:
@@ -426,7 +432,7 @@ def main():
     parser.add_argument('--loop', '-l', action='store_true', help='무한 반복')
     parser.add_argument('--parallel', '-p', type=int, help='병렬 수')
     parser.add_argument('--count', '-n', type=int, help='실행 횟수')
-    parser.add_argument('--max-page', type=int, default=50, help='최대 페이지')
+    parser.add_argument('--max-page', type=int, default=15, help='최대 페이지 (기본: 15, 약 300등)')
     parser.add_argument('--task-id', type=int, help='특정 task ID')
     parser.add_argument('--verbose', '-v', action='store_true', default=True)
     parser.add_argument('--debug', '-d', action='store_true', help='디버그 모드')
