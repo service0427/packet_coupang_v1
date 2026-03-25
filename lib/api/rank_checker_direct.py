@@ -444,8 +444,10 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
 
         # 미발견 검증
         # 1. 충분한 페이지를 검색했는지 (단, 검색 결과가 원래 적으면 예외)
-        if pages < MIN_PAGES_FOR_NOT_FOUND and total_count > pages * 20:
-            # total_count가 충분한데 페이지가 적으면 문제
+        #    next_key가 없으면 = API가 모든 결과를 반환한 것 = 정상 종료
+        has_more_pages = bool(next_key)
+        if pages < MIN_PAGES_FOR_NOT_FOUND and total_count > pages * 20 and has_more_pages:
+            # total_count가 충분하고 아직 더 있는데 페이지가 적으면 문제
             return _error_result(
                 start_time, 'INCOMPLETE', f'Only {pages} pages searched',
                 detail=f'min:{MIN_PAGES_FOR_NOT_FOUND}/total:{total_count}',
