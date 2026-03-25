@@ -6,6 +6,9 @@
 
 import time
 import random
+import string
+import hashlib
+import uuid
 from urllib.parse import quote
 from curl_cffi import requests
 
@@ -29,24 +32,124 @@ TLS_CONFIG = {
     }
 }
 
-HEADERS = {
-    'coupang-app': 'COUPANG|Android|15|9.1.0',
-    'User-Agent': 'Dalvik/2.1.0 (Linux; U; Android 15; SM-A165N Build/AP3A.240905.015.A2)',
+# ─── 디바이스 프로필 (고정 하드웨어 정보) ───
+DEVICE_HW = {
+    "model": "SM-A165N",
+    "os_ver": "15",
+    "app_ver": "9.1.4",
+    "dpi": "XXHDPI",
 }
 
+
+def _generate_device_identity():
+    """세션당 고유 디바이스 식별자 생성"""
+    dev_uuid = str(uuid.uuid4())                          # UUID v4
+    dev_uuid_raw = dev_uuid.replace('-', '')               # 대시 제거
+    ad_track_id = str(uuid.uuid4())                        # 광고 추적 ID
+    sid_raw = str(uuid.uuid4())                            # SID 원본
+    sid_hash = hashlib.sha1(sid_raw.encode()).hexdigest()   # SHA-1 해시 (40자)
+    return {
+        "uuid": dev_uuid,
+        "uuid_raw": dev_uuid_raw,
+        "ad_track_id": ad_track_id,
+        "sid_hash": sid_hash,
+    }
+
 BASE_URL = "https://cmapi.coupang.com"
-CHROME_VERSION = "143.0.0.0"
+CHROME_VERSION = "146.0.0.0"
 
 # 검증 기준
 MIN_PRODUCTS_PER_PAGE = 15  # 페이지당 최소 상품 수 (cmapi는 ~20개 반환)
 MIN_PAGES_FOR_NOT_FOUND = 6  # 미발견 인정 최소 페이지 수
 
 
+def _generate_push_token():
+    """랜덤 FCM Push Token 생성 (152자)"""
+    # FCM 토큰 형태: 랜덤문자열:APA91b + 랜덤문자열
+    part1 = ''.join(random.choices(string.ascii_letters + string.digits + '_', k=22))
+    part2 = ''.join(random.choices(string.ascii_letters + string.digits + '_-', k=120))
+    return f"{part1}:APA91b{part2}"
+
+
+def _generate_pcid():
+    """PCID 생성: 현재 타임스탬프(ms) + 랜덤 10자리 = 총 23자리"""
+    ts = str(int(time.time() * 1000))
+    rand_suffix = ''.join([str(random.randint(0, 9)) for _ in range(10)])
+    return ts + rand_suffix
+
+
+def _generate_signature(timestamp_ms, pcid):
+    """x-signature 생성: SHA256(timestamp + PCID 끝 N자리)"""
+    n = int(pcid[-1])
+    suffix = pcid[-n:] if n > 0 else ""
+    raw = str(timestamp_ms) + suffix
+    return hashlib.sha256(raw.encode()).hexdigest()
+
+
+def _build_coupang_app_header(push_token, pcid, identity):
+    """coupang-app 헤더 조립 (28필드 파이프 구분)"""
+    hw = DEVICE_HW
+    fields = [
+        "COUPANG",           # 0: 고정
+        "Android",           # 1: OS
+        hw["os_ver"],        # 2: OS 버전
+        hw["app_ver"],       # 3: 앱 버전
+        "",                  # 4: 빈값
+        push_token,          # 5: FCM Push Token (동적)
+        identity["uuid"],    # 6: UUID (동적)
+        "Y",                 # 7: 고정
+        hw["model"],         # 8: 기기명
+        identity["uuid_raw"],    # 9: Raw UUID (동적)
+        identity["ad_track_id"], # 10: adTrackId (동적)
+        hw["dpi"],           # 11: DPI
+        pcid,                # 12: PCID (동적)
+        "",                  # 13: 빈값
+        "0",                 # 14: 고정
+        "",                  # 15: memberSrl 빈값
+        "4g",                # 16: 네트워크
+        "-1",                # 17: 고정
+        "",                  # 18: 빈값
+        "",                  # 19: 빈값
+        "Asia/Seoul",        # 20: 타임존
+        identity["sid_hash"],    # 21: SID 해시 (동적)
+        "",                  # 22: 빈값
+        "1080",              # 23: 화면 너비
+        "450",               # 24: 화면 높이
+        "4",                 # 25: 고정
+        "1.0",               # 26: 폰트 스케일
+        "true",              # 27: 앱 요청 플래그
+    ]
+    return "|".join(fields)
+
+
+def _build_headers(push_token, pcid, identity):
+    """매 요청마다 동적 헤더 생성"""
+    now_ms = int(time.time() * 1000)
+    signature = _generate_signature(now_ms, pcid)
+    hw = DEVICE_HW
+
+    return {
+        "coupang-app": _build_coupang_app_header(push_token, pcid, identity),
+        "x-coupang-app-request": "true",
+        "x-signature": signature,
+        "x-coupang-accept-language": "ko-KR",
+        "user-agent": f"Dalvik/2.1.0 (Linux; U; Android {hw['os_ver']}; {hw['model']} Build/AP3A.240905.015.A2)",
+        "accept-encoding": "gzip",
+    }
+
+
+# ─── 세션당 1회 생성되는 동적 값 ───
+_session_push_token = _generate_push_token()
+_session_pcid = _generate_pcid()
+_session_identity = _generate_device_identity()
+
+
 def _request(url, session):
-    """커스텀 TLS로 요청"""
+    """커스텀 TLS로 요청 (매 요청마다 x-signature 갱신)"""
+    headers = _build_headers(_session_push_token, _session_pcid, _session_identity)
     return session.get(
         url,
-        headers=HEADERS,
+        headers=headers,
         ja3=TLS_CONFIG["ja3"],
         akamai=TLS_CONFIG["akamai"],
         extra_fp=TLS_CONFIG["extra_fp"],
