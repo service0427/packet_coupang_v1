@@ -9,8 +9,11 @@ import random
 import string
 import hashlib
 import uuid
+import struct
 from urllib.parse import quote
 from curl_cffi import requests
+
+from api.cp_signature import generate_x_cp_s
 
 # Chrome 143 Mobile TLS 핑거프린트
 TLS_CONFIG = {
@@ -54,6 +57,39 @@ def _generate_device_identity():
         "ad_track_id": ad_track_id,
         "sid_hash": sid_hash,
     }
+
+
+def _generate_trace_ix_id():
+    """x-trace-ix-id 생성 (UUID v4 형태, 첫 세그먼트에 카운터/타임스탬프 기반 값)
+    
+    캡처 패턴 분석:
+      0000143d-c2f1-7d83-0bae-0c3eb68d0a07
+      00009b1f-1364-43a1-866a-d4983209aa91
+    첫 8자리가 작은 hex 값 (leading zeros) → 카운터/timestamp 파생
+    나머지는 랜덤 UUID 스타일
+    """
+    # 첫 세그먼트: 현재 타임스탬프를 축소하여 카운터로 사용
+    ts_counter = int(time.time()) & 0xFFFF  # 하위 16비트
+    seg1 = f"{ts_counter:08x}"
+    # 나머지: 랜덤 UUID 세그먼트
+    rand_bytes = random.getrandbits(80)  # 10바이트
+    seg2 = f"{(rand_bytes >> 64) & 0xFFFF:04x}"
+    seg3 = f"{(rand_bytes >> 48) & 0xFFFF:04x}"
+    seg4 = f"{(rand_bytes >> 32) & 0xFFFF:04x}"
+    seg5 = f"{rand_bytes & 0xFFFFFFFFFFFF:012x}"
+    return f"{seg1}-{seg2}-{seg3}-{seg4}-{seg5}"
+
+
+def _generate_cmg_dco():
+    """x-cmg-dco 생성: 최근 설정 다운로드 시점 타임스탬프 (ms)
+    
+    캡처에서 관찰된 값: 1774420234000 (현재 시점 기준 과거)
+    → 세션 시작 전 1~48시간 이내의 과거 시점으로 생성
+    """
+    now_ms = int(time.time() * 1000)
+    offset_ms = random.randint(3600_000, 172800_000)  # 1시간 ~ 48시간 전
+    return str(now_ms - offset_ms)
+
 
 BASE_URL = "https://cmapi.coupang.com"
 CHROME_VERSION = "146.0.0.0"
@@ -115,26 +151,49 @@ def _build_coupang_app_header(push_token, pcid, identity):
         "",                  # 22: 빈값
         "1080",              # 23: 화면 너비
         "450",               # 24: 화면 높이
-        "4",                 # 25: 고정
+        "3",                 # 25: 고정 (v9.1.4 캡처 기준)
         "1.0",               # 26: 폰트 스케일
         "true",              # 27: 앱 요청 플래그
     ]
     return "|".join(fields)
 
 
-def _build_headers(push_token, pcid, identity):
-    """매 요청마다 동적 헤더 생성"""
+def _build_headers(push_token, pcid, identity, cmg_dco, query_params=""):
+    """매 요청마다 동적 헤더 생성 (v9.1.4 캡처 기준 전체 헤더셋)"""
     now_ms = int(time.time() * 1000)
     signature = _generate_signature(now_ms, pcid)
     hw = DEVICE_HW
+    coupang_app = _build_coupang_app_header(push_token, pcid, identity)
+
+    # x-cp-s 서명 생성
+    x_cp_s = generate_x_cp_s(
+        headers_payload=coupang_app,
+        query_params=query_params,
+        timestamp_ms=now_ms,
+        app_version=hw["app_ver"],
+        uuid_raw=identity["uuid_raw"]
+    )
 
     return {
-        "coupang-app": _build_coupang_app_header(push_token, pcid, identity),
+        "x-timestamp": str(now_ms),
+        "coupang-app": coupang_app,
+        "x-coupang-font-scale": "1.0",
+        "run-mode": "production",
         "x-coupang-app-request": "true",
+        "baggage": "enable-upstream-tti-info=true",
+        "x-cp-app-req-time": str(now_ms + random.randint(500, 1500)),
+        "x-view-name": "/search",
+        "x-coupang-target-market": "KR",
+        "x-coupang-app-name": "coupang",
+        "x-cp-app-id": "com.coupang.mobile",
+        "x-cmg-dco": cmg_dco,
+        "x-coupang-origin-region": "KR",
         "x-signature": signature,
         "x-coupang-accept-language": "ko-KR",
+        "x-trace-ix-id": _generate_trace_ix_id(),
         "user-agent": f"Dalvik/2.1.0 (Linux; U; Android {hw['os_ver']}; {hw['model']} Build/AP3A.240905.015.A2)",
         "accept-encoding": "gzip",
+        "x-cp-s": x_cp_s,
     }
 
 
@@ -142,11 +201,16 @@ def _build_headers(push_token, pcid, identity):
 _session_push_token = _generate_push_token()
 _session_pcid = _generate_pcid()
 _session_identity = _generate_device_identity()
+_session_cmg_dco = _generate_cmg_dco()
 
 
 def _request(url, session):
-    """커스텀 TLS로 요청 (매 요청마다 x-signature 갱신)"""
-    headers = _build_headers(_session_push_token, _session_pcid, _session_identity)
+    """커스텀 TLS로 요청 (매 요청마다 동적 헤더 갱신)"""
+    # URL에서 쿼리 파라미터 추출
+    query_params = ""
+    if '?' in url:
+        query_params = url.split('?', 1)[1]
+    headers = _build_headers(_session_push_token, _session_pcid, _session_identity, _session_cmg_dco, query_params)
     return session.get(
         url,
         headers=headers,
