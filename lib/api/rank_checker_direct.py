@@ -406,6 +406,8 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
             )
 
         # 다음 페이지들
+        end_of_results = False  # 검색 결과 끝 도달 플래그
+
         while next_key and pages < max_page and not found_product:
             pages += 1
             url = f"{BASE_URL}/v3/products?{params}&nextPageKey={quote(next_key)}&nextPageParams={quote(next_params)}&resultType=search"
@@ -413,17 +415,31 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
             try:
                 resp = _request(url, session)
                 if resp.status_code != 200:
+                    # 403 등 HTTP 에러: 충분히 검색했으면 "결과 끝"으로 간주
+                    if pages > MIN_PAGES_FOR_NOT_FOUND:
+                        end_of_results = True
+                        pages -= 1  # 실패한 페이지는 검색 완료에서 제외
+                        break
                     page_counts[pages] = -1
                     page_errors.append({'page': pages, 'error': f'STATUS_{resp.status_code}'})
                     break
 
                 data = resp.json()
             except Exception as e:
+                if pages > MIN_PAGES_FOR_NOT_FOUND:
+                    end_of_results = True
+                    pages -= 1
+                    break
                 page_counts[pages] = -1
                 page_errors.append({'page': pages, 'error': str(e)[:50]})
                 break
 
             if data.get('rCode') != 'RET0000':
+                # RET9999 등 에러: 충분히 검색했으면 "결과 끝"으로 간주
+                if pages > MIN_PAGES_FOR_NOT_FOUND:
+                    end_of_results = True
+                    pages -= 1
+                    break
                 page_counts[pages] = -1
                 page_errors.append({'page': pages, 'error': data.get('rCode', 'UNKNOWN')})
                 break
@@ -456,6 +472,7 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
             if len(all_products) == before_count:
                 if len(page_products) == 0:
                     # 빈 페이지 = 정상 종료
+                    end_of_results = True
                     break
                 # 상품은 있지만 모두 중복 = 계속 진행
 
@@ -463,13 +480,14 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
             next_params = rdata.get('nextPageParams', '')
 
             if not next_key:
+                end_of_results = True
                 break
 
         # 결과 검증
         total_products = len(all_products)
 
-        # 에러 페이지가 있으면 실패 처리
-        if page_errors and not found_product:
+        # 에러 페이지가 있으면 실패 처리 (단, 결과 끝 도달 시 무시)
+        if page_errors and not found_product and not end_of_results:
             err_summary = ','.join([f"p{e['page']}:{e['error']}" for e in page_errors[:3]])
             return _error_result(
                 start_time, 'INCOMPLETE', f'Page errors: {len(page_errors)}',
@@ -507,11 +525,9 @@ def check_rank(keyword: str, product_id: str, item_id: str = None,
             )
 
         # 미발견 검증
-        # 1. 충분한 페이지를 검색했는지 (단, 검색 결과가 원래 적으면 예외)
-        #    next_key가 없으면 = API가 모든 결과를 반환한 것 = 정상 종료
-        has_more_pages = bool(next_key)
-        if pages < MIN_PAGES_FOR_NOT_FOUND and total_count > pages * 20 and has_more_pages:
-            # total_count가 충분하고 아직 더 있는데 페이지가 적으면 문제
+        # 1. 충분한 페이지를 검색했는지 (단, 결과 끝 도달 시 정상 종료)
+        if not end_of_results and pages < MIN_PAGES_FOR_NOT_FOUND and total_count > pages * 20:
+            # 결과 끝에 도달하지 않았고, 페이지가 부족하면 문제
             return _error_result(
                 start_time, 'INCOMPLETE', f'Only {pages} pages searched',
                 detail=f'min:{MIN_PAGES_FOR_NOT_FOUND}/total:{total_count}',
