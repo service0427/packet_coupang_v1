@@ -14,16 +14,12 @@ import hashlib
 import base64
 
 
-# ─── 고정 상수 (APK에서 추출) ───
-# EC Public Key (DER SubjectPublicKeyInfo, 앱 서명 검증용 고정값)
-EC_PUBLIC_KEY = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEmFGgA0ylC3vBkiPyOkBISbPRBVcaD7slTQcDbzkX2M3wSZzwn13XVv+lJuSt3ZdQIxXARJScnkXtgWP/iAcZvg=="
+# ─── 고정 상수 (APK 9.1.5 추출 및 캡처 데이터 기반) ───
+# c7: Local Public Key (EC)
+EC_PUBLIC_KEY = "MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEPCYdFvaRjSOfUnnBvlz+wudIHuR5rakAlzLDpGTTFWDz8sU55hQdmxZhntewjb9+IM5aODBPmnnlSoxTItlI1g=="
 
-# maxSlidingWindow 루프 키 (10회 반복)
-MSW_KEY = "43210"
-# nextGreaterElements 루프 키 (5회 반복)
-NGE_KEY = "01234"
-# 역순 키
-REVERSE_KEY = "9876543210"
+# c4: Encrypted Device Info (캡처된 유효값 재사용)
+ENCRYPTED_DEVICE_INFO = "qp73nBeUQUygoEAi4yQGK9jRkGkoX4KIDzNMDhR2BEPId0tzmLDGDmx/tHz3saJxVVkhspEO+4Euszd1uXHWYIDxJmhE2WwUBuWGn3WLWqzfsZPzE48wXnr2ij6j7FwfBa0DLlASPlFY2dgLG896MaO1UafVL/gxqvUbpzNQ33a0c6N6RRx1F2jmlE81A9BlzOZ/szKfSBrqQvTxsxrF6d41MQJa+XE="
 
 SDK_VERSION = "1.0.0"
 PACKAGE_NAME = "com.coupang.mobile"
@@ -32,216 +28,80 @@ PACKAGE_NAME = "com.coupang.mobile"
 # ─── 기본 변환 함수 (Native 함수 1:1 매핑) ───
 
 def cp_xor_with_char(data: bytes, key_byte: int) -> bytes:
-    """cp_xor_with_char: 각 바이트를 key_byte로 XOR
-    
-    규칙: byte == key_byte → 0으로 치환 후 XOR (결과 = key_byte)
-           byte != key_byte → byte XOR key_byte
-    """
+    """cp_xor_with_char (H1, Q1)"""
     result = bytearray(len(data))
     for i, b in enumerate(data):
-        if b == key_byte:
-            result[i] = key_byte  # 0 XOR key = key
-        else:
-            result[i] = b ^ key_byte
+        result[i] = b ^ key_byte
     return bytes(result)
 
 
 def cp_reverse_based_on_timestamp(data: bytes, timestamp: int) -> bytes:
-    """cp_reverse_based_on_timestamp: 타임스탬프가 홀수이면 문자열 역전"""
-    if timestamp & 1:  # 홀수
+    """cp_reverse_based_on_timestamp (H2, Q2)"""
+    if timestamp & 1:
         return bytes(reversed(data))
     return data
 
 
 def cp_xor_with_seed(data: bytes, seed: bytes) -> bytes:
-    """cp_xor_with_seed: seed 배열과 순환 XOR
-    
-    seed[i % len(seed)] 와 data[i]를 XOR
-    규칙: data[i] == seed[i%len] → 0으로 치환 후 XOR
-    """
-    seed_len = len(seed)
-    if seed_len == 0:
-        return data
+    """cp_xor_with_seed (H3, Q4)"""
+    if not seed: return data
     result = bytearray(len(data))
     for i, b in enumerate(data):
-        s = seed[i % seed_len]
-        if b == s:
-            result[i] = s  # 0 XOR s = s
-        else:
-            result[i] = b ^ s
+        result[i] = b ^ seed[i % len(seed)]
     return bytes(result)
 
 
 def cp_circular_right_shift(data: bytes, shift: int) -> bytes:
-    """cp_circular_right_shift: n만큼 순환 우측 시프트"""
-    length = len(data)
-    if length == 0:
-        return data
-    shift = shift % length
-    if shift < 0:
-        shift += length
-    if shift == 0:
-        return data
-    # 오른쪽 shift개를 앞으로 이동
+    """cp_circular_right_shift (Q3)"""
+    if not data: return data
+    shift %= len(data)
     return data[-shift:] + data[:-shift]
 
 
 def cp_byte_transform(data: bytes) -> str:
-    """cp_byte_transform: 바이트 배열을 '%02x ' 포맷으로 hex 인코딩
-    
-    각 바이트를 2자리 hex + 공백으로 변환 (마지막도 공백 포함)
-    """
+    """cp_byte_transform: 바이트 배열을 '%02x ' 포맷으로 hex 인코딩"""
     return ''.join(f'{b:02x} ' for b in data)
-
-
-def cp_calculate_sha256(data: bytes) -> bytes:
-    """SHA-256 해시 (32바이트 raw)"""
-    return hashlib.sha256(data).digest()
-
-
-def cp_sha256_hex(data: bytes) -> str:
-    """SHA-256 해시 (64자 hex 문자열)"""
-    return hashlib.sha256(data).hexdigest()
-
-
-def cp_get_dynamic_c9_value(timestamp: int) -> int:
-    """c9 동적 값 계산
-    
-    cp_get_dynamic_c9_value_long: 20바이트 함수 (5 instructions)
-    관찰된 값: 63 → timestamp % 100 또는 고정값
-    """
-    # 디스어셈블 결과: 매우 짧은 함수, 아마 timestamp의 마지막 2자리
-    ts_str = str(timestamp)
-    return int(ts_str[-2:]) if len(ts_str) >= 2 else 0
-
-
-def _get_xor_key_from_timestamp(timestamp: int) -> int:
-    """타임스탬프에서 XOR 키 바이트 추출
-    
-    타임스탬프 문자열의 마지막 바이트의 ASCII 값 사용
-    """
-    ts_str = str(timestamp)
-    return ord(ts_str[-1])
-
-
-def _get_shift_amount(timestamp: int) -> int:
-    """circular_right_shift에 사용할 시프트 양
-    
-    타임스탬프의 마지막 몇 자리에서 파생
-    """
-    ts_str = str(timestamp)
-    # 마지막 2자리를 시프트 양으로 사용
-    return int(ts_str[-2:]) if len(ts_str) >= 2 else 0
-
-
-def _get_seed_from_timestamp(timestamp: int) -> bytes:
-    """타임스탬프에서 XOR seed 추출 (마지막 4바이트)
-    
-    디스어셈블: x27 = hex(timestamp)의 마지막 4자 → sub x27, x8, #4
-    """
-    ts_hex = format(timestamp, 'x')
-    # 마지막 4자를 seed로 사용
-    seed = ts_hex[-4:] if len(ts_hex) >= 4 else ts_hex
-    return seed.encode('ascii')
-
-
-def _process_with_msw_key(data: str) -> str:
-    """maxSlidingWindow 변환 - "43210" 키로 10회 circular_right_shift
-    
-    MSW_KEY = "0123456789"에서 각 문자 - '0' = 0~9
-    10회 반복하면서 각 digit 값만큼 circular_right_shift
-    """
-    result = data.encode('utf-8') if isinstance(data, str) else data
-    key = "0123456789"  # 0x1499의 상수
-    for ch in key:
-        shift = ord(ch) - ord('0')
-        result = cp_circular_right_shift(result, shift)
-    return result.decode('utf-8', errors='replace') if isinstance(result, bytes) else result
-
-
-def _process_with_nge_key(data: str) -> str:
-    """nextGreaterElements 변환 - "01234" 키로 5회 circular_right_shift (반대 방향)
-    
-    "01234"에서 각 문자 - '0' = 0~4
-    """
-    result = data.encode('utf-8') if isinstance(data, str) else data
-    key = "01234"  # 0x1637의 상수  
-    for ch in key:
-        shift = ord(ch) - ord('0')
-        # nextGreaterElements는 왼쪽 시프트 (음수 right shift)
-        if len(result) > 0 and shift > 0:
-            shift_eff = shift % len(result)
-            result = result[shift_eff:] + result[:shift_eff]
-    return result.decode('utf-8', errors='replace') if isinstance(result, bytes) else result
 
 
 def generate_x_cp_s(headers_payload: str, query_params: str, 
                      timestamp_ms: int, app_version: str,
                      uuid_raw: str) -> str:
-    """x-cp-s 헤더 값 생성
+    """x-cp-s 헤더 값 생성 (v9.1.5 대응)"""
     
-    Args:
-        headers_payload: coupang-app 헤더 값 (파이프 구분 문자열)
-        query_params: 요청 쿼리 파라미터 문자열
-        timestamp_ms: 현재 타임스탬프 (밀리초)
-        app_version: 앱 버전 (예: "9.1.4")
-        uuid_raw: UUID (대시 제거, 32자 hex)
+    ts_str = str(timestamp_ms)
+    xor_key = ord(ts_str[-1])
+    shift_amount = int(ts_str[-2:]) if len(ts_str) >= 2 else 0
+    seed = format(timestamp_ms, 'x')[-4:].encode('ascii')
     
-    Returns:
-        str: Base64 인코딩된 x-cp-s 헤더 값
-    """
-    # XOR 키 추출
-    xor_key = _get_xor_key_from_timestamp(timestamp_ms)
-    shift_amount = _get_shift_amount(timestamp_ms)
-    seed = _get_seed_from_timestamp(timestamp_ms)
-    
-    # ─── Headers 처리 (s1 생성) ───
+    # ─── s1 생성 (Headers Signature) ───
+    # Native 로직: H1(XOR) -> H2(Reverse) -> ByteTransform -> H3(XOR Seed) -> SHA256
     h_data = headers_payload.encode('utf-8')
-    
-    # H1: XOR with char
     h1 = cp_xor_with_char(h_data, xor_key)
-    # H2: Reverse based on timestamp
     h2 = cp_reverse_based_on_timestamp(h1, timestamp_ms)
-    # Hex encode (byte_transform)
-    h_hex = cp_byte_transform(h2)
-    # H3: XOR with seed (timestamp의 마지막 4 hex chars)
-    h3 = cp_xor_with_seed(h_hex.encode('utf-8'), seed)
-    # SHA-256 → s1
-    s1_bytes = cp_calculate_sha256(h3)
-    s1_b64 = base64.b64encode(s1_bytes).decode('ascii')
+    h_hex = cp_byte_transform(h2).encode('utf-8')
+    h3 = cp_xor_with_seed(h_hex, seed)
+    s1 = hashlib.sha256(h3).digest()
+    s1_b64 = base64.b64encode(s1).decode('ascii')
     
-    # ─── QueryParams 처리 (c4 생성) ───
-    q_data = query_params.encode('utf-8')
-    
-    # Q1: XOR with char
+    # ─── s2 생성 (QueryParams Signature) ───
+    # Native 로직: Q1(XOR) -> Q2(Reverse) -> Q3(Shift) -> ByteTransform -> Q4(XOR Seed) -> SHA256
+    q_data = (query_params or "").encode('utf-8')
     q1 = cp_xor_with_char(q_data, xor_key)
-    # Q2: Reverse based on timestamp
     q2 = cp_reverse_based_on_timestamp(q1, timestamp_ms)
-    # Q3: Circular right shift
     q3 = cp_circular_right_shift(q2, shift_amount)
-    # Hex encode
-    q_hex = cp_byte_transform(q3)
-    # XOR with seed
-    q4 = cp_xor_with_seed(q_hex.encode('utf-8'), seed)
-    # SHA-256
-    s2_bytes = cp_calculate_sha256(q4)
+    q_hex = cp_byte_transform(q3).encode('utf-8')
+    q4 = cp_xor_with_seed(q_hex, seed)
+    s2_hash = hashlib.sha256(q4).hexdigest()
     
-    # ─── 최종 조합 ───
-    # c4: SHA256(s1 + 중간 상수 + s2) → Base64
-    # maxSlidingWindow/nextGreaterElements 변환 적용
-    combined = s1_bytes + s2_bytes
-    c4_hash = cp_calculate_sha256(combined)
-    c4_b64 = base64.b64encode(c4_hash).decode('ascii')
-    
-    # c9 동적 값
-    c9 = cp_get_dynamic_c9_value(timestamp_ms)
-    
-    # 전체 파라미터 문자열 조립
+    # c9: 타임스탬프 기반 동적 값
+    c9 = int(ts_str[-2:]) if len(ts_str) >= 2 else 36
+
+    # 전체 파라미터 조립 (c4, c7은 캡처된 유효값 사용)
     params = (
         f"c1=1"
         f"&c2={SDK_VERSION}"
         f"&c3={timestamp_ms}"
-        f"&c4={c4_b64}"
+        f"&c4={ENCRYPTED_DEVICE_INFO}"
         f"&c5={PACKAGE_NAME}"
         f"&c6={app_version}"
         f"&c7={EC_PUBLIC_KEY}"
@@ -251,8 +111,8 @@ def generate_x_cp_s(headers_payload: str, query_params: str,
         f"&s2={SDK_VERSION}"
     )
     
-    # 최종 Base64 인코딩
     return base64.b64encode(params.encode('utf-8')).decode('ascii')
+
 
 
 if __name__ == '__main__':
