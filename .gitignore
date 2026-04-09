@@ -58,3 +58,10 @@ screenshot/*.html
 screenshot/*.png
 screenshot/*.json
 html/
+apk/
+*.har
+captures/
+110230-random/
+dev/
+apk/
+captures/
